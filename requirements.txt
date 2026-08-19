@@ -7,14 +7,14 @@
 
 # --- Çekirdek ---
 Django==5.2.16
-djangorestframework==3.15.2
+djangorestframework==3.18.0
 django-filter==24.3
-django-cors-headers==4.6.0
+django-cors-headers==4.9.0
 djangorestframework-simplejwt==5.5.1
 
 # --- Gerçek zamanlı (mutfak ekranı / canlı sipariş) ---
-channels==4.2.0
-daphne==4.2.2
+channels==4.3.2
+daphne==4.2.3
 twisted==26.4.0
 
 # --- Yapılandırma ve güvenlik ---
@@ -22,11 +22,11 @@ python-dotenv==1.2.2
 cryptography>=46.0.4
 pyOpenSSL>=26.0.0
 django-axes==7.0.0
-whitenoise==6.8.2
+whitenoise==6.12.0
 
 # --- Görsel / dosya ---
 pillow==12.3.0
-qrcode==8.0
+qrcode==8.2
 
 # --- Raporlama ve dışa aktarma ---
 openpyxl==3.1.5
