@@ -9,7 +9,7 @@ pytest-cov==6.0.0
 ruff==0.8.4
 black==26.3.1
 mypy==1.14.0
-django-stubs==5.1.1
+django-stubs==6.1.0
 
 # --- Güvenlik taraması ---
 bandit==1.8.0
