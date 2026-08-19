@@ -1,0 +1,66 @@
+{% load static i18n %}<!doctype html>
+<html lang="tr"><head>
+<meta charset="utf-8"><title>Adisyon {{ order.number }}</title>
+<style>
+  @page { size: 80mm auto; margin: 3mm; }
+  body { font-family: "Courier New", monospace; font-size: 11px; width: 74mm; margin: 0 auto; color: #000; }
+  .center { text-align: center; } .right { text-align: right; }
+  .big { font-size: 15px; font-weight: bold; }
+  hr { border: 0; border-top: 1px dashed #000; margin: 5px 0; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 1px 0; vertical-align: top; }
+  .total { font-size: 14px; font-weight: bold; border-top: 1px solid #000; padding-top: 3px; }
+  .mod { font-size: 9px; font-style: italic; padding-left: 8px; }
+  .note { font-size: 9px; color: #444; }
+  @media print { .no-print { display: none; } }
+</style></head>
+<body onload="window.print()">
+  <div class="center big">{{ RESTAURANT.NAME }}</div>
+  <div class="center note">{% trans "Bilgi fişi — mali değeri yoktur" %}</div>
+  <hr>
+  <table>
+    <tr><td>{% trans "Adisyon" %}</td><td class="right"><strong>{{ order.number }}</strong></td></tr>
+    <tr><td>{% trans "Tarih" %}</td><td class="right">{{ order.opened_at|date:"d.m.Y H:i" }}</td></tr>
+    <tr><td>{% if order.table %}Masa{% else %}Tür{% endif %}</td>
+      <td class="right">{{ order.table.name|default:order.get_order_type_display }}</td></tr>
+    <tr><td>{% trans "Kişi" %}</td><td class="right">{{ order.guest_count }}</td></tr>
+    <tr><td>{% trans "Garson" %}</td><td class="right">{{ order.waiter.display_name|default:"—" }}</td></tr>
+  </table>
+  <hr>
+  <table>
+    {% for item in order.active_items %}
+      <tr>
+        <td>{{ item.quantity|floatformat:"-2" }} × {{ item.product_name|truncatechars:24 }}</td>
+        <td class="right">{{ item.net_total|floatformat:2 }}</td>
+      </tr>
+      {% if item.modifier_summary %}<tr><td colspan="2" class="mod">+ {{ item.modifier_summary }}</td></tr>{% endif %}
+    {% endfor %}
+  </table>
+  <hr>
+  <table>
+    <tr><td>{% trans "Ara toplam" %}</td><td class="right">{{ order.subtotal|floatformat:2 }}</td></tr>
+    {% if order.order_discount_total %}<tr><td>{% trans "İndirim" %}</td><td class="right">−{{ order.order_discount_total|floatformat:2 }}</td></tr>{% endif %}
+    {% if order.service_charge %}<tr><td>Servis %{{ order.service_charge_rate|floatformat:0 }}</td>
+      <td class="right">{{ order.service_charge|floatformat:2 }}</td></tr>{% endif %}
+    <tr><td>{% trans "KDV (dahil)" %}</td><td class="right">{{ order.tax_total|floatformat:2 }}</td></tr>
+    <tr class="total"><td>TOPLAM</td><td class="right">{{ order.grand_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td></tr>
+  </table>
+  {% if order.payments.all %}
+    <hr>
+    <table>
+      {% for payment in order.payments.all %}
+        <tr><td>{{ payment.get_method_display }}</td><td class="right">{{ payment.amount|floatformat:2 }}</td></tr>
+        {% if payment.change_amount %}<tr><td>{% trans "Para üstü" %}</td><td class="right">{{ payment.change_amount|floatformat:2 }}</td></tr>{% endif %}
+      {% endfor %}
+    </table>
+  {% endif %}
+  <hr>
+  <div class="center">{% trans "Bizi tercih ettiğiniz için teşekkürler!" %}</div>
+  <div class="center note" style="margin-top:6px;">
+    {% trans "Bu belge yasal mali belge (ÖKC fişi / e-fatura) yerine geçmez." %}
+  </div>
+  <div class="no-print center" style="margin-top:14px;">
+    <button onclick="window.print()">{% trans "Yazdır" %}</button>
+    <button onclick="window.close()">{% trans "Kapat" %}</button>
+  </div>
+</body></html>

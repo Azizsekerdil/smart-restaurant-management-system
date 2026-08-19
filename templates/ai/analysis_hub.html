@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+{% if not providers_ready %}
+  <div class="alert alert-warning">
+    <strong><i class="bi bi-exclamation-triangle me-1"></i>{% trans "Yapay zekâ sağlayıcısı yapılandırılmamış." %}</strong>
+    <div class="small mt-1">
+      Analizlerin sayısal kısmı yine de çalışır; yalnızca yorumlama devre dışı kalır.
+      Yerel model için LM Studio'yu açın → bir model yükleyin → <em>{% trans "Developer &gt; Start Server" %}</em>.
+      <a href="{% url 'ai:providers' %}">{% trans "Sağlayıcı ayarları" %}</a>
+    </div>
+  </div>
+{% endif %}
+
+<div class="row g-3">
+  {% for kind, icon, title, description in analyses %}{% endfor %}
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100"><div class="card-body">
+      <span class="stat-icon mb-3"><i class="bi bi-diagram-3"></i></span>
+      <h3 class="h6">{% trans "Menü Mühendisliği" %}</h3>
+      <p class="text-muted small">{% trans "Ürünleri yıldız / işçi / bulmaca / düşük performans olarak sınıflandırır." %}</p>
+      <button class="btn btn-sm btn-primary" onclick="runAnalysis('menu_engineering', 'Menü Mühendisliği')">{% trans "Çalıştır" %}</button>
+    </div></div>
+  </div>
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100"><div class="card-body">
+      <span class="stat-icon mb-3"><i class="bi bi-graph-up-arrow"></i></span>
+      <h3 class="h6">{% trans "Talep Tahmini" %}</h3>
+      <p class="text-muted small">{% trans "Haftanın gününe göre 7 günlük ciro ve sipariş aralığı tahmini." %}</p>
+      <button class="btn btn-sm btn-primary" onclick="runAnalysis('demand_forecast', 'Talep Tahmini')">{% trans "Çalıştır" %}</button>
+    </div></div>
+  </div>
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100"><div class="card-body">
+      <span class="stat-icon mb-3"><i class="bi bi-box-seam"></i></span>
+      <h3 class="h6">{% trans "Stok Tükenme Tahmini" %}</h3>
+      <p class="text-muted small">{% trans "Tüketim hızına göre hangi malzemenin ne zaman biteceği." %}</p>
+      <button class="btn btn-sm btn-primary" onclick="runAnalysis('stock_forecast', 'Stok Tahmini')">{% trans "Çalıştır" %}</button>
+    </div></div>
+  </div>
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100"><div class="card-body">
+      <span class="stat-icon mb-3"><i class="bi bi-trash"></i></span>
+      <h3 class="h6">{% trans "İsraf Analizi" %}</h3>
+      <p class="text-muted small">{% trans "Fire nedenleri, maliyeti ve kök neden değerlendirmesi." %}</p>
+      <button class="btn btn-sm btn-primary" onclick="runAnalysis('waste_analysis', 'İsraf Analizi')">{% trans "Çalıştır" %}</button>
+    </div></div>
+  </div>
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100"><div class="card-body">
+      <span class="stat-icon mb-3"><i class="bi bi-shield-exclamation"></i></span>
+      <h3 class="h6">{% trans "Anormallik Tespiti" %}</h3>
+      <p class="text-muted small">{% trans "İptal, indirim ve iade örüntülerinde istatistiksel sapmalar." %}</p>
+      <button class="btn btn-sm btn-primary" onclick="runAnalysis('anomaly', 'Anormallik Tespiti')">{% trans "Çalıştır" %}</button>
+    </div></div>
+  </div>
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100"><div class="card-body">
+      <span class="stat-icon mb-3"><i class="bi bi-people"></i></span>
+      <h3 class="h6">{% trans "Personel İhtiyacı" %}</h3>
+      <p class="text-muted small">{% trans "Saatlik yoğunluğa göre vardiya personeli önerisi." %}</p>
+      <button class="btn btn-sm btn-primary" onclick="runAnalysis('staffing', 'Personel İhtiyacı')">{% trans "Çalıştır" %}</button>
+    </div></div>
+  </div>
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100"><div class="card-body">
+      <span class="stat-icon mb-3"><i class="bi bi-journal-text"></i></span>
+      <h3 class="h6">{% trans "Günlük Yönetici Özeti" %}</h3>
+      <p class="text-muted small">{% trans "Günün özeti, iyi giden ve dikkat gerektiren konular." %}</p>
+      <button class="btn btn-sm btn-primary" onclick="runAnalysis('daily_summary', 'Günlük Özet')">{% trans "Çalıştır" %}</button>
+    </div></div>
+  </div>
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100"><div class="card-body">
+      <span class="stat-icon mb-3"><i class="bi bi-megaphone"></i></span>
+      <h3 class="h6">{% trans "Kampanya Önerisi" %}</h3>
+      <p class="text-muted small">{% trans "Segment ve satış verilerine göre kampanya fikirleri." %}</p>
+      <button class="btn btn-sm btn-primary" onclick="runAnalysis('campaign', 'Kampanya Önerisi')">{% trans "Çalıştır" %}</button>
+    </div></div>
+  </div>
+</div>
+
+<div id="analysis-output" class="mt-3"></div>
+
+{% if recent_insights %}
+  <div class="card mt-3">
+    <div class="card-header d-flex justify-content-between">
+      <span><i class="bi bi-lightbulb me-2"></i>{% trans "Son içgörüler" %}</span>
+      <a href="{% url 'ai:insights' %}" class="small">{% trans "Tümü" %}</a>
+    </div>
+    <div class="card-body p-0">
+      <table class="table table-sm mb-0"><tbody>
+        {% for insight in recent_insights %}
+          <tr><td class="ps-3"><span class="badge-soft muted">{{ insight.get_kind_display }}</span> {{ insight.title }}</td>
+            <td class="text-end pe-3"><span class="badge-soft {{ insight.confidence_color }}">{{ insight.get_confidence_display }}</span>
+              <small class="text-muted d-block">{{ insight.created_at|date:"d.m H:i" }}</small></td></tr>
+        {% endfor %}
+      </tbody></table>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function runAnalysis(kind, title) {
+  const box = document.getElementById('analysis-output');
+  box.innerHTML = '<div class="card"><div class="card-body text-center py-5">' +
+    '<div class="spinner-border text-primary"></div><p class="mt-3 mb-0 text-muted">' + title + ' hesaplanıyor…</p></div></div>';
+  box.scrollIntoView({ behavior: 'smooth' });
+
+  try {
+    const result = await apiPost('/ai/analiz/' + kind + '/', {});
+    let html = '<div class="card"><div class="card-header d-flex justify-content-between">' +
+      '<span><i class="bi bi-stars me-2"></i>' + title + '</span>';
+    if (result.confidence) {
+      const color = result.confidence === 'high' ? 'ok' : result.confidence === 'medium' ? 'warn' : 'danger';
+      html += '<span class="badge-soft ' + color + '">Güven: ' + result.confidence + ' · ' +
+        (result.data_points || 0) + ' veri noktası</span>';
+    }
+    html += '</div><div class="card-body">';
+
+    if (result.ok === false && result.message) {
+      html += '<div class="alert alert-warning">' + result.message + '</div>';
+    }
+
+    // Menü mühendisliği grupları
+    if (result.groups) {
+      const labels = { star: '⭐ Yıldız', plowhorse: '🐴 İşçi', puzzle: '🧩 Bulmaca', dog: '📉 Düşük performans' };
+      html += '<div class="row g-2 mb-3">';
+      Object.entries(result.groups).forEach(([key, items]) => {
+        html += '<div class="col-12 col-md-6 col-xl-3"><div class="p-2 rounded" style="background:var(--bg-sunken);">' +
+          '<strong>' + (labels[key] || key) + ' (' + items.length + ')</strong><ul class="small mb-0 mt-1 ps-3">' +
+          items.slice(0, 5).map(i => '<li>' + i.name + ' — %' + i.margin_percent + '</li>').join('') +
+          '</ul></div></div>';
+      });
+      html += '</div>';
+    }
+
+    // Talep tahmini tablosu
+    if (result.forecast) {
+      html += '<table class="table table-sm"><thead><tr><th>Tarih</th><th>Gün</th>' +
+        '<th class="text-end">Ciro aralığı</th><th class="text-end">Sipariş aralığı</th><th class="text-end">Örnek</th></tr></thead><tbody>';
+      result.forecast.forEach(f => {
+        html += '<tr><td>' + f.date + '</td><td>' + f.weekday + '</td>' +
+          '<td class="text-end money">' + f.revenue_low + ' – ' + f.revenue_high + ' ₺</td>' +
+          '<td class="text-end">' + f.orders_low + ' – ' + f.orders_high + '</td>' +
+          '<td class="text-end text-muted">' + f.samples + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+
+    // Stok tahmini
+    if (result.rows && kind === 'stock_forecast') {
+      html += '<table class="table table-sm"><thead><tr><th>Malzeme</th><th class="text-end">Mevcut</th>' +
+        '<th class="text-end">Günlük tüketim</th><th class="text-end">Kalan gün</th><th class="text-end">Önerilen sipariş</th></tr></thead><tbody>';
+      result.rows.slice(0, 30).forEach(r => {
+        html += '<tr class="' + (r.critical ? 'table-warning' : '') + '"><td>' + r.name + '</td>' +
+          '<td class="text-end">' + r.on_hand + ' ' + r.unit + '</td><td class="text-end">' + r.daily_usage + '</td>' +
+          '<td class="text-end"><strong>' + (r.days_left ?? '—') + '</strong></td>' +
+          '<td class="text-end">' + r.suggested_order + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+
+    // Anormallik bulguları
+    if (result.findings) {
+      if (!result.findings.length) {
+        html += '<div class="alert alert-success">Dikkat çeken bir örüntü bulunamadı.</div>';
+      }
+      result.findings.forEach(f => {
+        html += '<div class="alert alert-' + (f.severity === 'high' ? 'danger' : 'warning') + '">' +
+          '<strong>' + f.title + '</strong><div class="small">' + f.detail + '</div>' +
+          '<div class="small text-muted mt-1"><em>Masum açıklama olabilir:</em> ' + f.innocent_explanation + '</div></div>';
+      });
+    }
+
+    // Personel önerisi
+    if (result.peak_hours) {
+      html += '<table class="table table-sm"><thead><tr><th>Saat</th><th class="text-end">Ortalama sipariş</th>' +
+        '<th class="text-end">Önerilen personel</th></tr></thead><tbody>';
+      result.peak_hours.forEach(h => {
+        html += '<tr><td>' + h.hour + '</td><td class="text-end">' + h.avg_orders + '</td>' +
+          '<td class="text-end"><strong>' + h.suggested_staff + '</strong></td></tr>';
+      });
+      html += '</tbody></table>';
+    }
+
+    // İsraf
+    if (kind === 'waste_analysis' && result.total_cost !== undefined) {
+      html += '<div class="row g-2 mb-3"><div class="col-6 col-md-3"><div class="p-2 rounded" style="background:var(--bg-sunken);">' +
+        '<div class="text-muted small">Toplam fire</div><div class="h5 mb-0 money">' + result.total_cost + ' ₺</div></div></div>' +
+        '<div class="col-6 col-md-3"><div class="p-2 rounded" style="background:var(--bg-sunken);">' +
+        '<div class="text-muted small">Ciroya oranı</div><div class="h5 mb-0">%' + result.waste_ratio + '</div></div></div></div>';
+    }
+
+    // AI yorumu
+    if (result.narrative) {
+      const cssClass = result.ai_available === false ? 'alert alert-warning' : 'card';
+      html += '<div class="' + cssClass + '"><div class="' + (cssClass === 'card' ? 'card-body' : '') +
+        '" style="white-space:pre-wrap;">' + result.narrative + '</div></div>';
+    }
+
+    if (result.limitations) {
+      html += '<div class="ai-disclaimer mt-3"><strong>Sınırlamalar:</strong> ' + result.limitations + '</div>';
+    }
+    if (result.disclaimer) {
+      html += '<div class="ai-disclaimer mt-3">' + result.disclaimer + '</div>';
+    }
+
+    html += '</div></div>';
+    box.innerHTML = html;
+  } catch (e) {
+    box.innerHTML = '<div class="alert alert-danger">' + e.message + '</div>';
+  }
+}
+</script>
+{% endblock %}

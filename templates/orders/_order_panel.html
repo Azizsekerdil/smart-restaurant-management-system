@@ -1,0 +1,150 @@
+{% load humanize i18n %}
+{# POS sağ paneli — HTMX/fetch ile yenilenen adisyon parçası #}
+<div class="p-3 border-bottom" style="border-color:var(--surface-border)!important;">
+  <div class="d-flex justify-content-between align-items-center mb-1">
+    <div>
+      <div class="fw-bold">{{ order.number }}</div>
+      <small class="text-muted">
+        {{ order.table.name|default:order.get_order_type_display }} ·
+        {{ order.guest_count }} kişi ·
+        {{ order.waiter.display_name|default:"—" }}
+      </small>
+    </div>
+    <span class="badge-soft {{ order.status_color }}">{{ order.get_status_display }}</span>
+  </div>
+  {% if order.customer %}
+    <div class="mt-2 p-2 rounded" style="background:var(--bg-sunken);">
+      <div class="small fw-semibold"><i class="bi bi-person me-1"></i>{{ order.customer.full_name }}
+        <span class="badge-soft info ms-1">{{ order.customer.get_tier_display }}</span></div>
+      {# Alerji notu sağlık verisidir (KVKK m.6 / GDPR m.9): metnini yalnızca #}
+      {# `customer.pii` yetkisi olan görür; diğerlerine uyarı rozeti çıkar.   #}
+      {% if order.customer.allergy_notes %}
+        <div class="small text-danger mt-1"><i class="bi bi-exclamation-triangle me-1"></i>{% if can_see_customer_pii %}{{ order.customer.allergy_notes }}{% else %}{% trans "Alerji kaydı var — ayrıntı için yetki gerekir" %}{% endif %}</div>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+
+<div class="flex-grow-1" style="overflow-y:auto;">
+  {% if order.active_items %}
+    <table class="table table-sm mb-0">
+      <tbody>
+      {% for item in order.active_items %}
+        <tr>
+          <td style="width:26px;" class="ps-2">
+            <input type="checkbox" class="form-check-input split-check" value="{{ item.id }}" title="{% trans 'Hesap bölmek için seç' %}">
+          </td>
+          <td>
+            <div class="fw-semibold" style="font-size:13px;">{{ item.product_name }}</div>
+            {% if item.modifier_summary %}<small class="d-block" style="color:var(--accent);">+ {{ item.modifier_summary }}</small>{% endif %}
+            {% if item.note %}<small class="d-block text-danger">! {{ item.note }}</small>{% endif %}
+            <small class="text-muted">
+              {{ item.effective_unit_price|floatformat:2 }} {{ CURRENCY_SYMBOL }}
+              {% if item.status != 'new' %}· <span class="badge-soft muted">{{ item.get_status_display }}</span>{% endif %}
+              {% if item.seat_number %}· Koltuk {{ item.seat_number }}{% endif %}
+            </small>
+          </td>
+          <td class="text-nowrap" style="width:104px;">
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-secondary" onclick="changeQuantity({{ item.id }}, {{ item.quantity|add:'-1' }})"
+                      {% if item.quantity <= 1 %}disabled{% endif %} aria-label="{% trans 'Azalt' %}">−</button>
+              <span class="btn btn-outline-secondary disabled" style="min-width:34px;">{{ item.quantity|floatformat:"-2" }}</span>
+              <button class="btn btn-outline-secondary" onclick="changeQuantity({{ item.id }}, {{ item.quantity|add:'1' }})" aria-label="{% trans 'Artır' %}">+</button>
+            </div>
+          </td>
+          <td class="text-end money" style="width:82px;">{{ item.net_total|floatformat:2 }}</td>
+          <td class="pe-2" style="width:34px;">
+            <button class="btn btn-sm btn-outline-danger" onclick="cancelItem({{ item.id }})" title="{% trans 'İptal et' %}">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty-state py-4"><i class="bi bi-cart-x"></i>{% trans "Adisyon boş. Soldan ürün seçin." %}</div>
+  {% endif %}
+
+  {% if order.discounts.all %}
+    <div class="px-3 py-2 border-top" style="border-color:var(--surface-border)!important;">
+      {% for discount in order.discounts.all %}
+        <div class="d-flex justify-content-between small">
+          <span><i class="bi bi-tag me-1"></i>{{ discount.label }}</span>
+          <span class="text-success">−{{ discount.amount|floatformat:2 }} {{ CURRENCY_SYMBOL }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if order.payments.all %}
+    <div class="px-3 py-2 border-top" style="border-color:var(--surface-border)!important;">
+      {% for payment in order.payments.all %}
+        <div class="d-flex justify-content-between small">
+          <span><i class="bi bi-credit-card me-1"></i>{{ payment.get_method_display }}</span>
+          <span>{{ payment.amount|floatformat:2 }} {{ CURRENCY_SYMBOL }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<div class="border-top p-3" style="border-color:var(--surface-border)!important;">
+  <div class="d-flex justify-content-between small mb-1">
+    <span class="text-muted">{% trans "Ara toplam" %}</span><span class="money">{{ order.subtotal|floatformat:2 }} {{ CURRENCY_SYMBOL }}</span>
+  </div>
+  {% if order.order_discount_total %}
+    <div class="d-flex justify-content-between small mb-1 text-success">
+      <span>{% trans "İndirim" %}</span><span class="money">−{{ order.order_discount_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</span>
+    </div>
+  {% endif %}
+  {% if order.service_charge %}
+    <div class="d-flex justify-content-between small mb-1">
+      <span class="text-muted">Servis (%{{ order.service_charge_rate|floatformat:0 }})</span>
+      <span class="money">{{ order.service_charge|floatformat:2 }} {{ CURRENCY_SYMBOL }}</span>
+    </div>
+  {% endif %}
+  <div class="d-flex justify-content-between small mb-2">
+    <span class="text-muted">{% trans "KDV (dahil)" %}</span><span class="money text-muted">{{ order.tax_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</span>
+  </div>
+  <div class="d-flex justify-content-between align-items-center mb-3 pt-2 border-top" style="border-color:var(--surface-border)!important;">
+    <span class="fw-bold">TOPLAM</span>
+    <span class="h4 mb-0 money">{{ order.grand_total|floatformat:2|intcomma }} {{ CURRENCY_SYMBOL }}</span>
+  </div>
+  {% if order.paid_total %}
+    <div class="d-flex justify-content-between small mb-2">
+      <span class="text-muted">{% trans "Ödenen" %}</span><span class="money text-success">{{ order.paid_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</span>
+    </div>
+    <div class="d-flex justify-content-between mb-3">
+      <span class="fw-semibold">{% trans "Kalan" %}</span><span class="money fw-bold">{{ order.balance_due|floatformat:2 }} {{ CURRENCY_SYMBOL }}</span>
+    </div>
+  {% endif %}
+
+  <div class="d-grid gap-2">
+    {% if order.is_open %}
+      <button class="btn btn-warning btn-touch" onclick="sendToKitchen()">
+        <i class="bi bi-fire me-1"></i>{% trans "Mutfağa gönder" %}
+      </button>
+      <div class="row g-2">
+        <div class="col-4"><button class="btn btn-outline-secondary w-100" onclick="openDiscount()" title="{% trans 'İndirim' %}">
+          <i class="bi bi-percent"></i></button></div>
+        <div class="col-4"><button class="btn btn-outline-secondary w-100" onclick="openSplit()" title="{% trans 'Hesabı böl' %}">
+          <i class="bi bi-scissors"></i></button></div>
+        <div class="col-4"><a class="btn btn-outline-secondary w-100" href="{% url 'orders:order_receipt' order.pk %}" target="_blank" title="{% trans 'Fiş' %}">
+          <i class="bi bi-printer"></i></a></div>
+      </div>
+      <button class="btn btn-success btn-touch" onclick="openPayment({{ order.balance_due }})">
+        <i class="bi bi-cash-coin me-1"></i>Ödeme al · {{ order.balance_due|floatformat:2 }} {{ CURRENCY_SYMBOL }}
+      </button>
+    {% else %}
+      <div class="alert alert-{{ order.status_color }} mb-2 py-2 text-center">
+        Bu adisyon {{ order.get_status_display|lower }}.
+      </div>
+      <a class="btn btn-outline-primary" href="{% url 'orders:order_detail' order.pk %}">
+        <i class="bi bi-eye me-1"></i>{% trans "Adisyon detayı" %}
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<script>currentOrderId = {{ order.pk }};</script>

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Toplam çağrı (30 gün)" %}</div><div class="value">{{ statistics.total_calls }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Yerel model" %}</div><div class="value text-success">{{ statistics.local_calls }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Bulut model" %}</div><div class="value">{{ statistics.cloud_calls }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Toplam maliyet" %}</div>
+    <div class="value money">${{ statistics.total_cost_usd|floatformat:4 }}</div></div></div>
+</div>
+
+<div class="card"><div class="card-body p-0" style="overflow-x:auto;">
+  <table class="table table-hover table-sticky mb-0">
+    <thead><tr><th class="ps-3">{% trans "Zaman" %}</th><th>{% trans "Kullanıcı" %}</th><th>{% trans "Özellik" %}</th><th>{% trans "Sağlayıcı / model" %}</th>
+      <th class="text-end">{% trans "Token" %}</th><th class="text-end">{% trans "Maliyet" %}</th><th class="text-end">{% trans "Gecikme" %}</th>
+      <th class="pe-3">{% trans "Sonuç" %}</th></tr></thead>
+    <tbody>
+    {% for log in logs %}
+      <tr>
+        <td class="ps-3 small text-nowrap">{{ log.created_at|date:"d.m.Y H:i:s" }}</td>
+        <td class="small">{{ log.user.display_name|default:"sistem" }}</td>
+        <td class="small">{{ log.feature|default:"—" }}</td>
+        <td class="small">{{ log.provider }}<small class="d-block text-muted">{{ log.model|truncatechars:28 }}</small></td>
+        <td class="text-end small">{{ log.total_tokens }}</td>
+        <td class="text-end small money">${{ log.estimated_cost_usd|floatformat:6 }}</td>
+        <td class="text-end small">{{ log.latency_ms }} ms</td>
+        <td class="pe-3"><span class="badge-soft {% if log.outcome == 'success' %}ok{% elif log.outcome == 'fallback' %}warn{% else %}danger{% endif %}">
+          {{ log.get_outcome_display }}</span>
+          {% if log.error_message %}<small class="d-block text-danger">{{ log.error_message|truncatechars:60 }}</small>{% endif %}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="8"><div class="empty-state"><i class="bi bi-cpu"></i>{% trans "Yapay zekâ kullanım kaydı yok." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+
+<p class="text-muted small mt-2">
+  <i class="bi bi-shield-lock me-1"></i>
+  {% trans "İstem ve yanıt önizlemelerinde API anahtarları ve müşteri kişisel verileri otomatik olarak maskelenir." %}
+</p>
+{% endblock %}

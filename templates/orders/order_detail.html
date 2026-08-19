@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'orders:order_receipt' order.pk %}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="bi bi-printer me-1"></i>{% trans "Fiş" %}</a>
+<a href="{% url 'orders:order_receipt_pdf' order.pk %}" target="_blank" class="btn btn-sm btn-outline-secondary"><i class="bi bi-file-pdf"></i></a>
+{% if order.is_open %}<a href="{% url 'orders:pos' %}?order={{ order.pk }}" class="btn btn-sm btn-primary"><i class="bi bi-cart3 me-1"></i>{% trans "POS'ta aç" %}</a>{% endif %}
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between">
+        <span>{{ order.number }}</span>
+        <span class="badge-soft {% if order.status == 'paid' %}ok{% elif order.status == 'cancelled' %}danger{% else %}info{% endif %}">
+          {{ order.get_status_display }}</span>
+      </div>
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead><tr><th class="ps-3">{% trans "Ürün" %}</th><th class="text-end">{% trans "Adet" %}</th><th class="text-end">{% trans "Birim" %}</th>
+            <th class="text-end">{% trans "İndirim" %}</th><th class="text-end">{% trans "Toplam" %}</th><th class="pe-3">{% trans "Durum" %}</th></tr></thead>
+          <tbody>
+          {% for item in order.items.all %}
+            <tr class="{% if item.status == 'cancelled' %}text-decoration-line-through opacity-50{% endif %}">
+              <td class="ps-3">{{ item.product_name }}
+                {% if item.modifier_summary %}<small class="d-block" style="color:var(--accent);">+ {{ item.modifier_summary }}</small>{% endif %}
+                {% if item.note %}<small class="d-block text-danger">! {{ item.note }}</small>{% endif %}
+                {% if item.cancel_reason %}<small class="d-block text-danger">İptal: {{ item.cancel_reason }}</small>{% endif %}</td>
+              <td class="text-end">{{ item.quantity|floatformat:"-2" }}</td>
+              <td class="text-end money">{{ item.effective_unit_price|floatformat:2 }}</td>
+              <td class="text-end money">{% if item.discount_amount %}−{{ item.discount_amount|floatformat:2 }}{% else %}—{% endif %}</td>
+              <td class="text-end money">{{ item.net_total|floatformat:2 }}</td>
+              <td class="pe-3"><span class="badge-soft muted">{{ item.get_status_display }}</span></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if order.tickets.all %}
+      <div class="card mb-3">
+        <div class="card-header"><i class="bi bi-fire me-2"></i>{% trans "Mutfak fişleri" %}</div>
+        <div class="card-body p-0">
+          <table class="table table-sm mb-0">
+            <thead><tr><th class="ps-3">KOT</th><th>{% trans "İstasyon" %}</th><th>{% trans "Durum" %}</th><th>{% trans "Sıraya girme" %}</th><th class="pe-3">{% trans "Hazırlık süresi" %}</th></tr></thead>
+            <tbody>
+            {% for ticket in order.tickets.all %}
+              <tr><td class="ps-3">{{ ticket.number }}</td><td>{{ ticket.station.name }}</td>
+                <td><span class="badge-soft muted">{{ ticket.get_status_display }}</span></td>
+                <td class="small">{{ ticket.queued_at|date:"H:i" }}</td>
+                <td class="pe-3 small">{% if ticket.preparation_minutes %}{{ ticket.preparation_minutes }} dk{% else %}—{% endif %}</td></tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Tutar özeti" %}</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0"><tbody>
+          <tr><td class="text-muted">{% trans "Ara toplam" %}</td><td class="text-end money">{{ order.subtotal|floatformat:2 }}</td></tr>
+          {% if order.item_discount_total %}<tr><td class="text-muted">{% trans "Satır indirimleri" %}</td>
+            <td class="text-end money text-success">−{{ order.item_discount_total|floatformat:2 }}</td></tr>{% endif %}
+          {% if order.order_discount_total %}<tr><td class="text-muted">{% trans "Sipariş indirimi" %}</td>
+            <td class="text-end money text-success">−{{ order.order_discount_total|floatformat:2 }}</td></tr>{% endif %}
+          {% if order.service_charge %}<tr><td class="text-muted">Servis (%{{ order.service_charge_rate|floatformat:0 }})</td>
+            <td class="text-end money">{{ order.service_charge|floatformat:2 }}</td></tr>{% endif %}
+          <tr><td class="text-muted">{% trans "KDV (dahil)" %}</td><td class="text-end money">{{ order.tax_total|floatformat:2 }}</td></tr>
+          <tr class="fw-bold"><td>{% trans "Genel toplam" %}</td><td class="text-end money">{{ order.grand_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td></tr>
+          <tr><td class="text-muted">{% trans "Ödenen" %}</td><td class="text-end money text-success">{{ order.paid_total|floatformat:2 }}</td></tr>
+          {% if order.refunded_total %}<tr><td class="text-muted">{% trans "İade" %}</td>
+            <td class="text-end money text-danger">{{ order.refunded_total|floatformat:2 }}</td></tr>{% endif %}
+          {% if order.balance_due > 0 %}<tr class="fw-bold text-danger"><td>{% trans "Kalan" %}</td>
+            <td class="text-end money">{{ order.balance_due|floatformat:2 }}</td></tr>{% endif %}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Bilgiler" %}</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0"><tbody>
+          <tr><td class="text-muted">{% trans "Tür" %}</td><td class="text-end">{{ order.get_order_type_display }}</td></tr>
+          <tr><td class="text-muted">{% trans "Masa" %}</td><td class="text-end">{{ order.table.name|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Kişi" %}</td><td class="text-end">{{ order.guest_count }}</td></tr>
+          <tr><td class="text-muted">{% trans "Garson" %}</td><td class="text-end">{{ order.waiter.display_name|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Kasiyer" %}</td><td class="text-end">{{ order.cashier.display_name|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Müşteri" %}</td><td class="text-end">
+            {% if order.customer %}<a href="{% url 'crm:customer_detail' order.customer.pk %}">{{ order.customer.full_name }}</a>{% else %}—{% endif %}</td></tr>
+          <tr><td class="text-muted">{% trans "Açılış" %}</td><td class="text-end small">{{ order.opened_at|date:"d.m.Y H:i" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Kapanış" %}</td><td class="text-end small">{{ order.closed_at|date:"d.m.Y H:i"|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Süre" %}</td><td class="text-end">{{ order.duration_minutes }} dk</td></tr>
+        </tbody></table>
+        {% if order.cancel_reason %}
+          <div class="alert alert-danger mt-3 mb-0 py-2 small">İptal gerekçesi: {{ order.cancel_reason }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if order.payments.all %}
+      <div class="card">
+        <div class="card-header">{% trans "Ödemeler" %}</div>
+        <div class="card-body p-0">
+          <table class="table table-sm mb-0"><tbody>
+            {% for payment in order.payments.all %}
+              <tr><td class="ps-3">{{ payment.get_method_display }}
+                <small class="d-block text-muted">{{ payment.paid_at|date:"d.m.Y H:i" }}</small></td>
+                <td class="text-end pe-3 money">{{ payment.amount|floatformat:2 }}</td></tr>
+            {% endfor %}
+          </tbody></table>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-7">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-person me-2"></i>{% trans "Profil bilgileri" %}</div>
+      <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% include "includes/_form_fields.html" %}
+          <button class="btn btn-primary mt-3"><i class="bi bi-save me-1"></i>{% trans "Kaydet" %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-5">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-shield-check me-2"></i>{% trans "Hesap" %}</div>
+      <div class="card-body">
+        <table class="table table-sm">
+          <tbody>
+            <tr><td class="text-muted">{% trans "Kullanıcı adı" %}</td><td class="text-end">{{ user.username }}</td></tr>
+            <tr><td class="text-muted">{% trans "Rol" %}</td><td class="text-end"><span class="badge-soft info">{{ user.get_role_display }}</span></td></tr>
+            <tr><td class="text-muted">{% trans "Personel kodu" %}</td><td class="text-end">{{ user.employee_code|default:"—" }}</td></tr>
+            <tr><td class="text-muted">{% trans "POS PIN" %}</td><td class="text-end">
+              {% if user.has_pin %}<span class="badge-soft ok">{% trans "Tanımlı" %}</span>{% else %}<span class="badge-soft warn">{% trans "Yok" %}</span>{% endif %}</td></tr>
+            <tr><td class="text-muted">{% trans "Son giriş" %}</td><td class="text-end small">{{ user.last_login|date:"d.m.Y H:i"|default:"—" }}</td></tr>
+          </tbody>
+        </table>
+        <div class="d-grid gap-2">
+          <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-key me-1"></i>{% trans "Parola değiştir" %}</a>
+          <a href="{% url 'accounts:set_pin' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-123 me-1"></i>{% trans "PIN kodu belirle" %}</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-3">
+      <div class="card-header"><i class="bi bi-key me-2"></i>Yetkilerim ({{ permissions|length }})</div>
+      <div class="card-body" style="max-height:320px;overflow-y:auto;">
+        <div class="d-flex flex-wrap gap-1">
+          {% for permission in permissions %}
+            <span class="badge-soft muted" style="font-family:monospace;">{{ permission }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

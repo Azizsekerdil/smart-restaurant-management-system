@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-6">
+    {% if session %}
+      <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between">
+          <span><i class="bi bi-cash-coin me-2"></i>Açık kasa: {{ session.number }}</span>
+          <span class="badge-soft ok">{% trans "Açık" %}</span>
+        </div>
+        <div class="card-body">
+          <table class="table table-sm"><tbody>
+            <tr><td class="text-muted">{% trans "Terminal" %}</td><td class="text-end">{{ session.terminal_name }}</td></tr>
+            <tr><td class="text-muted">{% trans "Açan" %}</td><td class="text-end">{{ session.opened_by.display_name }}</td></tr>
+            <tr><td class="text-muted">{% trans "Açılış" %}</td><td class="text-end">{{ session.opened_at|date:"d.m.Y H:i" }}</td></tr>
+            <tr><td class="text-muted">{% trans "Açılış kasası" %}</td><td class="text-end money">{{ session.opening_float|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td></tr>
+            <tr class="fw-bold"><td>{% trans "Beklenen nakit" %}</td><td class="text-end money">{{ session.expected_cash|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td></tr>
+          </tbody></table>
+
+          <hr>
+          <h6>{% trans "Kasa kapanışı" %}</h6>
+          <form method="post" action="{% url 'orders:cash_close' %}"
+                onsubmit="return confirm('Kasa kapatılacak ve gün sonu raporu oluşturulacak. Devam edilsin mi?');">
+            {% csrf_token %}
+            <div class="mb-2"><label class="form-label">{% trans "Sayılan nakit" %}</label>
+              <input type="number" step="0.01" min="0" name="counted_cash" class="form-control form-control-lg text-end" required></div>
+            <div class="mb-3"><label class="form-label">{% trans "Notlar" %}</label>
+              <textarea name="notes" class="form-control" rows="2"></textarea></div>
+            <button class="btn btn-danger w-100 btn-touch"><i class="bi bi-lock me-1"></i>{% trans "Kasayı kapat ve Z raporu al" %}</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">{% trans "Kasa hareketi ekle" %}</div>
+        <div class="card-body">
+          <form method="post" action="{% url 'orders:cash_movement' %}" class="row g-2">
+            {% csrf_token %}
+            <div class="col-12 col-md-4"><label class="form-label">{% trans "Tür" %}</label>
+              <select name="kind" class="form-select">
+                {% for value, label in movement_kinds %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+              </select></div>
+            <div class="col-12 col-md-3"><label class="form-label">{% trans "Tutar" %}</label>
+              <input type="number" step="0.01" min="0" name="amount" class="form-control" required></div>
+            <div class="col-12 col-md-5"><label class="form-label">{% trans "Gerekçe" %}</label>
+              <input type="text" name="reason" class="form-control" required></div>
+            <div class="col-12"><button class="btn btn-primary mt-2">{% trans "Kaydet" %}</button></div>
+          </form>
+
+          {% if session.movements.all %}
+            <table class="table table-sm mt-3 mb-0"><tbody>
+              {% for movement in session.movements.all %}
+                <tr><td>{{ movement.get_kind_display }}<small class="d-block text-muted">{{ movement.reason }}</small></td>
+                  <td class="text-end money {% if movement.amount < 0 %}text-danger{% endif %}">{{ movement.amount|floatformat:2 }}</td></tr>
+              {% endfor %}
+            </tbody></table>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="card">
+        <div class="card-header"><i class="bi bi-unlock me-2"></i>{% trans "Kasa aç" %}</div>
+        <div class="card-body">
+          <div class="alert alert-warning">{% trans "Açık kasa oturumu yok. Ödeme almadan önce kasayı açın." %}</div>
+          <form method="post" action="{% url 'orders:cash_open' %}">
+            {% csrf_token %}
+            <div class="mb-3"><label class="form-label">{% trans "Terminal adı" %}</label>
+              <input type="text" name="terminal_name" class="form-control" value="Kasa-1"></div>
+            <div class="mb-3"><label class="form-label">{% trans "Açılış kasası (bozuk para)" %}</label>
+              <input type="number" step="0.01" min="0" name="opening_float" class="form-control form-control-lg text-end" value="0.00"></div>
+            <button class="btn btn-success w-100 btn-touch"><i class="bi bi-unlock me-1"></i>{% trans "Kasayı aç" %}</button>
+          </form>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card">
+      <div class="card-header">{% trans "Geçmiş kasa oturumları" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th class="ps-3">{% trans "Oturum" %}</th><th>{% trans "Açılış" %}</th><th>{% trans "Kapanış" %}</th><th class="text-end">{% trans "Beklenen" %}</th>
+            <th class="text-end">{% trans "Sayılan" %}</th><th class="text-end pe-3">{% trans "Fark" %}</th></tr></thead>
+          <tbody>
+          {% for item in recent_sessions %}
+            <tr>
+              <td class="ps-3 small">{{ item.number }}</td>
+              <td class="small">{{ item.opened_at|date:"d.m H:i" }}</td>
+              <td class="small">{{ item.closed_at|date:"d.m H:i"|default:"—" }}</td>
+              <td class="text-end money">{{ item.expected_cash|floatformat:2 }}</td>
+              <td class="text-end money">{{ item.counted_cash|floatformat:2 }}</td>
+              <td class="text-end pe-3 money {% if item.cash_variance < 0 %}text-danger{% elif item.cash_variance > 0 %}text-success{% endif %}">
+                {{ item.cash_variance|floatformat:2 }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6"><div class="empty-state py-4"><i class="bi bi-cash"></i>{% trans "Kasa oturumu yok." %}</div></td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

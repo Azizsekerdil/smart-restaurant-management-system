@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'catalog:category_create' %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>{% trans "Yeni kategori" %}</a>
+{% endblock %}
+{% block content %}
+<div class="card"><div class="card-body p-0">
+  <table class="table table-hover mb-0">
+    <thead><tr><th class="ps-3">{% trans "Kategori" %}</th><th>{% trans "Üst kategori" %}</th><th>{% trans "Ürün" %}</th><th>{% trans "Sıra" %}</th><th>{% trans "Durum" %}</th><th class="pe-3 text-end">{% trans "İşlem" %}</th></tr></thead>
+    <tbody>
+    {% for category in categories %}
+      <tr>
+        <td class="ps-3">
+          <span class="d-inline-block rounded me-2" style="width:12px;height:12px;background:{{ category.color }};"></span>
+          <strong>{{ category.name }}</strong>
+          {% if category.description %}<small class="d-block text-muted">{{ category.description }}</small>{% endif %}
+        </td>
+        <td class="text-muted">{{ category.parent.name|default:"—" }}</td>
+        <td><span class="badge-soft info">{{ category.product_count }}</span></td>
+        <td>{{ category.sort_order }}</td>
+        <td>{% if category.is_active %}<span class="badge-soft ok">{% trans "Aktif" %}</span>{% else %}<span class="badge-soft muted">{% trans "Pasif" %}</span>{% endif %}</td>
+        <td class="pe-3 text-end">
+          <a href="{% url 'catalog:category_edit' category.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6"><div class="empty-state"><i class="bi bi-tags"></i>{% trans "Kategori yok." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-file-diff me-2"></i>{% trans "Değişiklik önizlemesi" %}</span>
+        <span>
+          <span class="badge-soft ok">+{{ stats.added }}</span>
+          <span class="badge-soft danger">−{{ stats.removed }}</span>
+        </span>
+      </div>
+      <div class="card-body p-0">
+        <div class="diff-view">
+          {% for line in diff_lines %}<div class="{{ line.css }}">{{ line.text }}</div>{% endfor %}
+        </div>
+      </div>
+    </div>
+
+    {% if proposal.test_output %}
+      <div class="card mt-3">
+        <div class="card-header">
+          <i class="bi bi-clipboard-check me-2"></i>Test çıktısı
+          {% if proposal.tests_passed %}<span class="badge-soft ok ms-2">{% trans "Geçti" %}</span>
+          {% else %}<span class="badge-soft danger ms-2">{% trans "Başarısız" %}</span>{% endif %}
+        </div>
+        <div class="card-body p-0">
+          <div class="terminal-output" style="max-height:340px;">{{ proposal.test_output }}</div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Öneri bilgisi" %}</div>
+      <div class="card-body">
+        <table class="table table-sm mb-3"><tbody>
+          <tr><td class="text-muted">{% trans "Durum" %}</td><td class="text-end">
+            <span class="badge-soft {% if proposal.status == 'applied' %}ok{% elif proposal.status == 'rejected' %}danger{% else %}info{% endif %}">
+              {{ proposal.get_status_display }}</span></td></tr>
+          <tr><td class="text-muted">{% trans "Model" %}</td><td class="text-end small">{{ proposal.provider }} / {{ proposal.model|truncatechars:20 }}</td></tr>
+          <tr><td class="text-muted">{% trans "Dosya sayısı" %}</td><td class="text-end">{{ proposal.file_count }}</td></tr>
+          <tr><td class="text-muted">{% trans "Git dalı" %}</td><td class="text-end small">{{ proposal.branch_name|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Talep eden" %}</td><td class="text-end small">{{ proposal.created_by_user.display_name|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Oluşturulma" %}</td><td class="text-end small">{{ proposal.created_at|date:"d.m.Y H:i" }}</td></tr>
+        </tbody></table>
+
+        <strong class="small">{% trans "Talimat" %}</strong>
+        <p class="small text-muted">{{ proposal.instruction }}</p>
+        <strong class="small">{% trans "AI açıklaması" %}</strong>
+        <p class="small text-muted mb-0">{{ proposal.explanation }}</p>
+
+        <hr>
+        <strong class="small">{% trans "Değişecek dosyalar" %}</strong>
+        <ul class="small mb-0">
+          {% for path in proposal.target_files %}<li class="font-monospace">{{ path }}</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">{% trans "İşlemler" %}</div>
+      <div class="card-body">
+        {% if proposal.status == 'applied' %}
+          <div class="alert alert-success py-2 small">
+            Bu değişiklik {{ proposal.applied_at|date:"d.m.Y H:i" }} tarihinde uygulandı.
+            {% if proposal.branch_name %}Dal: <code>{{ proposal.branch_name }}</code>{% endif %}
+          </div>
+          <button class="btn btn-outline-danger w-100" onclick="revertProposal()">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>{% trans "Değişikliği geri al" %}</button>
+        {% elif proposal.status == 'rejected' or proposal.status == 'reverted' %}
+          <div class="alert alert-secondary py-2 small mb-0">
+            Bu öneri {{ proposal.get_status_display|lower }}.
+            {% if proposal.rejection_reason %}<br>Gerekçe: {{ proposal.rejection_reason }}{% endif %}
+          </div>
+        {% else %}
+          <div class="mb-3">
+            <label class="form-label small">{% trans "Test komutu" %}</label>
+            <input type="text" class="form-control form-control-sm" id="test-command" value="pytest -q">
+            <button class="btn btn-outline-primary w-100 mt-2" onclick="runTests()">
+              <i class="bi bi-play me-1"></i>{% trans "Testleri çalıştır" %}</button>
+          </div>
+          {% if proposal.tests_run and not proposal.tests_passed %}
+            <div class="alert alert-danger py-2 small">
+              {% trans "Testler başarısız. Değişiklik uygulanamaz." %}
+            </div>
+          {% endif %}
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="create-branch" checked>
+            <label class="form-check-label small" for="create-branch">{% trans "Ayrı Git dalı oluştur (önerilir)" %}</label>
+          </div>
+          {% if can_apply %}
+            <button class="btn btn-success w-100 mb-2" onclick="applyProposal()"
+                    {% if proposal.tests_run and not proposal.tests_passed %}disabled{% endif %}>
+              <i class="bi bi-check-lg me-1"></i>{% trans "Onayla ve uygula" %}</button>
+          {% else %}
+            <div class="alert alert-warning py-2 small">Uygulama için <code>devcenter.apply</code> yetkisi gerekir.</div>
+          {% endif %}
+          <button class="btn btn-outline-danger w-100" onclick="rejectProposal()">
+            <i class="bi bi-x-lg me-1"></i>{% trans "Reddet" %}</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const PROPOSAL_ID = {{ proposal.pk }};
+
+async function runTests() {
+  showToast('Testler çalıştırılıyor…', 'info');
+  try {
+    const result = await apiPost('/devcenter/oneri/' + PROPOSAL_ID + '/test/',
+      { command: document.getElementById('test-command').value });
+    showToast(result.passed ? 'Testler geçti.' : 'Testler başarısız.', result.passed ? 'success' : 'danger');
+    setTimeout(() => location.reload(), 1200);
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+async function applyProposal() {
+  if (!confirm('Değişiklik dosyalara yazılacak. Önce geri alma noktası oluşturulacak. Devam edilsin mi?')) return;
+  try {
+    const result = await apiPost('/devcenter/oneri/' + PROPOSAL_ID + '/uygula/',
+      { create_branch: document.getElementById('create-branch').checked ? 'true' : 'false' });
+    showToast(result.message, 'success');
+    setTimeout(() => location.reload(), 1500);
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+async function revertProposal() {
+  if (!confirm('Değişiklikler geri alınacak ve dosyalar önceki haline dönecek. Devam edilsin mi?')) return;
+  try {
+    const result = await apiPost('/devcenter/oneri/' + PROPOSAL_ID + '/geri-al/', {});
+    showToast(result.message, 'success');
+    setTimeout(() => location.reload(), 1200);
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+async function rejectProposal() {
+  const reason = prompt('Ret gerekçesi (isteğe bağlı):') || '';
+  try {
+    await apiPost('/devcenter/oneri/' + PROPOSAL_ID + '/reddet/', { reason });
+    location.href = '{% url "devcenter:index" %}';
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+</script>
+{% endblock %}

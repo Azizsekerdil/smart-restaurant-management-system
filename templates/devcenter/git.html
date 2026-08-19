@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-6">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-git me-2"></i>Durum
+        <span class="badge-soft info ms-2">{{ branch|default:"—" }}</span>
+        <span class="badge-soft muted">{{ commit|default:"—" }}</span></div>
+      <div class="card-body p-0"><div class="terminal-output" style="max-height:400px;">{{ status }}</div></div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-6">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-file-diff me-2"></i>{% trans "Değişiklik özeti" %}</div>
+      <div class="card-body p-0"><div class="terminal-output" style="max-height:400px;">{{ diff }}</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-3">
+  <div class="card-header"><i class="bi bi-stars me-2"></i>{% trans "Commit mesajı önerisi" %}</div>
+  <div class="card-body">
+    <button class="btn btn-outline-primary" onclick="suggestCommit()">
+      <i class="bi bi-magic me-1"></i>{% trans "Yapay zekâdan öneri al" %}</button>
+    <div class="input-group mt-3">
+      <input type="text" class="form-control font-monospace" id="commit-message" placeholder="{% trans 'feat: ...' %}">
+      <button class="btn btn-outline-secondary" onclick="copyMessage()"><i class="bi bi-clipboard"></i></button>
+    </div>
+    <div class="form-text">
+      Commit işlemi güvenlik gereği bu ekrandan yapılmaz. Mesajı kopyalayıp güvenli
+      terminalden <code>git add .</code> ve <code>git commit -m "..."</code> komutlarıyla
+      (onay isteyerek) uygulayabilirsiniz.
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function suggestCommit() {
+  showToast('Yapay zekâ değişiklikleri inceliyor…', 'info');
+  try {
+    const result = await apiPost('{% url "devcenter:git_commit_suggestion" %}', {});
+    if (result.ok) {
+      document.getElementById('commit-message').value = result.message;
+      showToast('Öneri hazır.', 'success');
+    } else { showToast(result.message, 'warning'); }
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+function copyMessage() {
+  const field = document.getElementById('commit-message');
+  field.select();
+  navigator.clipboard.writeText(field.value).then(() => showToast('Kopyalandı.', 'success'));
+}
+</script>
+{% endblock %}

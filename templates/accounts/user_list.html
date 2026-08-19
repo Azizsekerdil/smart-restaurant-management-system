@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'accounts:user_create' %}" class="btn btn-sm btn-primary"><i class="bi bi-person-plus me-1"></i>{% trans "Yeni kullanıcı" %}</a>
+{% endblock %}
+{% block content %}
+<div class="card mb-3"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-12 col-md-4">
+      <label class="form-label">{% trans "Rol" %}</label>
+      <select name="role" class="form-select">
+        <option value="">{% trans "Tüm roller" %}</option>
+        {% for value, label in roles %}<option value="{{ value }}" {% if current_role == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-12 col-md-6">
+      <label class="form-label">{% trans "Ara" %}</label>
+      <input type="search" name="q" class="form-control" value="{{ search }}" placeholder="{% trans 'Ad, kullanıcı adı veya e-posta' %}">
+    </div>
+    <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Filtrele" %}</button></div>
+  </form>
+</div></div>
+
+<div class="card"><div class="card-body p-0" style="overflow-x:auto;">
+  <table class="table table-hover mb-0">
+    <thead><tr>
+      <th class="ps-3">{% trans "Kullanıcı" %}</th><th>{% trans "Rol" %}</th><th>{% trans "E-posta" %}</th><th>{% trans "Telefon" %}</th>
+      <th>PIN</th><th>{% trans "Durum" %}</th><th>{% trans "Son giriş" %}</th><th class="pe-3 text-end">{% trans "İşlem" %}</th>
+    </tr></thead>
+    <tbody>
+    {% for u in users %}
+      <tr>
+        <td class="ps-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="rounded-circle d-grid" style="width:30px;height:30px;place-items:center;background:var(--brand-soft);color:var(--brand);font-size:11px;font-weight:700;">{{ u.initials }}</span>
+            <div><div class="fw-semibold">{{ u.display_name }}</div><small class="text-muted">{{ u.username }}</small></div>
+          </div>
+        </td>
+        <td><span class="badge-soft info">{{ u.get_role_display }}</span></td>
+        <td class="small">{{ u.email|default:"—" }}</td>
+        <td class="small">{{ u.phone|default:"—" }}</td>
+        <td>{% if u.has_pin %}<i class="bi bi-check-circle text-success"></i>{% else %}<i class="bi bi-dash text-muted"></i>{% endif %}</td>
+        <td>{% if u.is_active %}<span class="badge-soft ok">{% trans "Aktif" %}</span>{% else %}<span class="badge-soft muted">{% trans "Pasif" %}</span>{% endif %}</td>
+        <td class="small text-muted">{{ u.last_login|date:"d.m.Y H:i"|default:"—" }}</td>
+        <td class="pe-3 text-end text-nowrap">
+          <a href="{% url 'accounts:user_edit' u.pk %}" class="btn btn-sm btn-outline-secondary" title="{% trans 'Düzenle' %}"><i class="bi bi-pencil"></i></a>
+          <a href="{% url 'accounts:user_permissions' u.pk %}" class="btn btn-sm btn-outline-secondary" title="{% trans 'İzinler' %}"><i class="bi bi-key"></i></a>
+          <form method="post" action="{% url 'accounts:user_toggle_active' u.pk %}" class="d-inline">{% csrf_token %}
+            <button class="btn btn-sm btn-outline-{% if u.is_active %}danger{% else %}success{% endif %}" title="{% trans 'Aktif/pasif' %}">
+              <i class="bi bi-{% if u.is_active %}slash-circle{% else %}check-circle{% endif %}"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="8"><div class="empty-state"><i class="bi bi-people"></i>{% trans "Kullanıcı bulunamadı." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}

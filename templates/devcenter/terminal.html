@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+{% if not terminal_enabled %}
+  <div class="alert alert-danger">
+    Güvenli terminal kapalı. <code>.env</code> dosyasında <code>DEVCENTER_TERMINAL_ENABLED=True</code> yapın.
+  </div>
+{% endif %}
+
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <span><i class="bi bi-terminal me-2"></i>{% trans "Güvenli Terminal" %}</span>
+        <small class="text-muted font-monospace">{{ project_root }}</small>
+      </div>
+      <div class="card-body">
+        <div class="terminal-output mb-3" id="output">Akıllı Restaurant Yönetim Sistemi — güvenli terminal
+Çalışma dizini: {{ project_root }}
+Zaman aşımı: {{ timeout }} saniye
+
+Yalnızca izin verilen komutlar çalıştırılabilir. Komut yazıp Enter'a basın.
+İpucu: önce "Kontrol et" ile komutun izinli olup olmadığını görebilirsiniz.
+</div>
+
+        <div class="input-group">
+          <span class="input-group-text terminal-input">$</span>
+          <input type="text" class="form-control terminal-input" id="command" autocomplete="off" spellcheck="false"
+                 placeholder="{% trans 'python manage.py check' %}" {% if not terminal_enabled %}disabled{% endif %}
+                 onkeydown="handleKey(event)">
+          <button class="btn btn-outline-secondary" onclick="checkCommand()" {% if not terminal_enabled %}disabled{% endif %}>{% trans "Kontrol et" %}</button>
+          <button class="btn btn-primary" onclick="runCommand(false)" {% if not terminal_enabled %}disabled{% endif %}>{% trans "Çalıştır" %}</button>
+        </div>
+        <div id="check-result" class="mt-2"></div>
+      </div>
+    </div>
+
+    <div class="card mt-3">
+      <div class="card-header">{% trans "Hazır komutlar" %}</div>
+      <div class="card-body d-flex flex-wrap gap-2">
+        <button class="btn btn-sm btn-outline-secondary" onclick="fill('python manage.py check')">{% trans "django check" %}</button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="fill('pytest -q')">{% trans "pytest" %}</button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="fill('ruff check .')">{% trans "ruff" %}</button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="fill('black --check .')">{% trans "black" %}</button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="fill('git status')">{% trans "git status" %}</button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="fill('git diff --stat')">{% trans "git diff" %}</button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="fill('pip list')">{% trans "pip list" %}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card mb-3">
+      <div class="card-header text-danger"><i class="bi bi-shield-x me-2"></i>{% trans "Engellenen işlemler" %}</div>
+      <div class="card-body small">
+        <ul class="mb-0 ps-3">
+          <li>Dosya silme (<code>rm</code>, <code>del</code>, <code>Remove-Item</code>)</li>
+          <li>{% trans "Disk biçimlendirme ve bölümleme" %}</li>
+          <li>{% trans "Kayıt defteri değişiklikleri" %}</li>
+          <li>{% trans "Kullanıcı / grup yönetimi" %}</li>
+          <li>Kimlik bilgisi ve <code>.env</code> okuma</li>
+          <li>Ağdan indirme (<code>curl</code>, <code>wget</code>)</li>
+          <li>Komut zincirleme (<code>&amp;&amp;</code>, <code>|</code>, <code>;</code>)</li>
+          <li>Çıktı yönlendirme (<code>&gt;</code>, <code>&lt;</code>)</li>
+          <li><code>git push</code>, <code>git reset --hard</code></li>
+          <li>{% trans "Veritabanı boşaltma / DROP TABLE" %}</li>
+          <li>{% trans "Proje klasörü dışına erişim" %}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">{% trans "Komut geçmişi" %}</div>
+      <div class="card-body p-0" style="max-height:360px;overflow-y:auto;">
+        <table class="table table-sm mb-0"><tbody>
+          {% for run in history %}
+            <tr class="cursor-pointer" onclick="fill('{{ run.command|escapejs }}')">
+              <td class="ps-3 font-monospace small">{{ run.command|truncatechars:36 }}</td>
+              <td class="text-end pe-3"><span class="badge-soft {% if run.status == 'success' %}ok{% elif run.status == 'blocked' %}danger{% else %}warn{% endif %}">
+                {{ run.get_status_display }}</span></td>
+            </tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Geçmiş yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const output = document.getElementById('output');
+const input = document.getElementById('command');
+const historyStack = [];
+let historyIndex = -1;
+
+function fill(command) { input.value = command; input.focus(); }
+
+function append(text, cssClass) {
+  const span = document.createElement('span');
+  if (cssClass) span.className = cssClass;
+  span.textContent = text + '\n';
+  output.appendChild(span);
+  output.scrollTop = output.scrollHeight;
+}
+
+function handleKey(event) {
+  if (event.key === 'Enter') { event.preventDefault(); runCommand(false); }
+  else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    if (historyIndex < historyStack.length - 1) { historyIndex++; input.value = historyStack[historyIndex]; }
+  } else if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    if (historyIndex > 0) { historyIndex--; input.value = historyStack[historyIndex]; }
+    else { historyIndex = -1; input.value = ''; }
+  }
+}
+
+async function checkCommand() {
+  const box = document.getElementById('check-result');
+  try {
+    const result = await apiPost('{% url "devcenter:terminal_check" %}', { command: input.value });
+    box.innerHTML = '<div class="alert alert-' + (result.allowed ? (result.needs_confirmation ? 'warning' : 'success') : 'danger') +
+      ' py-2 mb-0 small">' +
+      (result.allowed
+        ? (result.needs_confirmation
+            ? '⚠ İzinli fakat yan etkili — çalıştırmadan önce onay istenecek.'
+            : '✓ Bu komut çalıştırılabilir.')
+        : '✗ ' + result.reason) +
+      (result.parsed.length ? '<div class="font-monospace mt-1">' + result.parsed.join(' ') + '</div>' : '') +
+      '</div>';
+  } catch (e) { box.innerHTML = '<div class="alert alert-danger py-2 mb-0 small">' + e.message + '</div>'; }
+}
+
+async function runCommand(confirmed) {
+  const command = input.value.trim();
+  if (!command) return;
+  if (!confirmed) { historyStack.unshift(command); historyIndex = -1; input.value = ''; }
+  append('$ ' + command, 'cmd');
+
+  try {
+    const result = await apiPost('{% url "devcenter:terminal_run" %}',
+      { command: command, confirmed: confirmed ? 'true' : 'false' });
+
+    if (result.needs_confirmation) {
+      append('[ONAY GEREKİYOR] ' + result.block_reason, 'err');
+      if (confirm('Bu komut yan etkilidir:\n\n' + command + '\n\nÇalıştırılsın mı?')) {
+        input.value = command;
+        await runCommand(true);
+      } else {
+        append('Kullanıcı komutu iptal etti.', 'err');
+      }
+      return;
+    }
+    if (result.status === 'blocked') { append('[ENGELLENDİ] ' + result.block_reason, 'err'); return; }
+    if (result.stdout) append(result.stdout);
+    if (result.stderr) append(result.stderr, 'err');
+    append('[' + result.status_label + '] çıkış kodu: ' + result.exit_code + ' · ' + result.duration_ms + ' ms',
+      result.status === 'success' ? 'ok' : 'err');
+  } catch (e) {
+    append('[HATA] ' + e.message, 'err');
+  }
+}
+</script>
+{% endblock %}

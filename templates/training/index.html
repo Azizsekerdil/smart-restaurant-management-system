@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Kullanım kılavuzu" %} · {{ RESTAURANT.NAME }}{% endblock %}
+{% block page_heading %}{% trans "Kullanım kılavuzu" %}{% endblock %}
+
+{% block content %}
+
+<div class="card mb-3"><div class="card-body">
+  <div class="row align-items-center g-3">
+    <div class="col-12 col-md-8">
+      <h2 class="h6 mb-1">{% trans "Kendi hızınızda öğrenin" %}</h2>
+      <p class="text-muted small mb-2">
+        {% blocktrans %}Dersler size açık olan bölümlere göre listelenir; yetkiniz olmayan
+        ekranlar için ders gösterilmez. Her ders kısa adımlardan oluşur ve sonunda
+        birkaç soruyla anladığınızı kontrol edersiniz.{% endblocktrans %}
+      </p>
+      <small class="text-muted">
+        <i class="bi bi-clock"></i>
+        {% blocktrans %}Toplam yaklaşık {{ total_minutes }} dakika{% endblocktrans %}
+      </small>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="d-flex justify-content-between small mb-1">
+        <span class="text-muted">{% trans "İlerlemeniz" %}</span>
+        <strong>{{ completed }}/{{ total }}</strong>
+      </div>
+      <div class="progress" style="height:10px">
+        <div class="progress-bar {% if percent == 100 %}bg-success{% endif %}"
+             style="width: {{ percent }}%"></div>
+      </div>
+      {% if percent == 100 %}
+        <small class="text-success d-block mt-1">
+          <i class="bi bi-check-circle"></i> {% trans "Tüm dersleri tamamladınız" %}
+        </small>
+      {% endif %}
+    </div>
+  </div>
+</div></div>
+
+{% for group in groups %}
+<div class="mb-4">
+  <h2 class="h6 text-uppercase text-muted mb-1">{{ group.track.display_title }}</h2>
+  <p class="small text-muted mb-3">{{ group.track.display_description }}</p>
+
+  <div class="row g-3">
+    {% for item in group.items %}
+    <div class="col-12 col-md-6 col-xl-4">
+      <div class="card h-100 {% if item.progress.is_completed %}border-success{% endif %}">
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex align-items-start gap-2 mb-2">
+            <span class="stat-icon"><i class="bi bi-{{ item.lesson.icon }}"></i></span>
+            {% if item.progress.is_completed %}
+              <span class="badge-soft success ms-auto">
+                <i class="bi bi-check2"></i> {% trans "Tamamlandı" %}
+              </span>
+            {% elif item.progress %}
+              <span class="badge-soft muted ms-auto">{% trans "Başlandı" %}</span>
+            {% endif %}
+          </div>
+
+          <h3 class="h6 mb-1">{{ item.lesson.display_title }}</h3>
+          <p class="text-muted small flex-grow-1">{{ item.lesson.display_summary }}</p>
+
+          <div class="d-flex align-items-center gap-2">
+            <a href="{% url 'training:lesson' item.lesson.key %}" class="btn btn-sm btn-primary">
+              {% if item.progress.is_completed %}{% trans "Tekrar oku" %}{% else %}{% trans "Başla" %}{% endif %}
+            </a>
+            <small class="text-muted ms-auto">
+              <i class="bi bi-clock"></i> {{ item.lesson.minutes }} {% trans "dk" %}
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% empty %}
+  <div class="empty-state"><i class="bi bi-mortarboard"></i>{% trans "Gösterilecek ders yok." %}</div>
+{% endfor %}
+
+<div class="card">
+  <div class="card-body small text-muted">
+    {% blocktrans %}Daha ayrıntılı bilgi için proje klasöründeki USER_GUIDE.md ve
+    ADMIN_GUIDE.md belgelerine bakabilirsiniz. Bu ekran, o belgelerin günlük
+    kullanımda en çok gereken bölümlerini adım adım anlatır.{% endblocktrans %}
+  </div>
+</div>
+
+{% endblock %}

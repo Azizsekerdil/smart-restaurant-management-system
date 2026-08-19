@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-4">
+    <div class="card">
+      <div class="card-header">{% trans "Proje dosyaları" %}</div>
+      <div class="card-body">
+        <form method="get" class="mb-2">
+          <input type="search" name="q" class="form-control form-control-sm" value="{{ pattern }}" placeholder="{% trans 'Dosya ara…' %}">
+        </form>
+        <div class="list-group" style="max-height:600px;overflow-y:auto;">
+          {% for path in files %}
+            <a href="?file={{ path|urlencode }}&q={{ pattern }}"
+               class="list-group-item list-group-item-action small font-monospace py-1 {% if selected == path %}active{% endif %}">
+              {{ path }}</a>
+          {% empty %}
+            <div class="text-muted small text-center py-3">{% trans "Dosya bulunamadı." %}</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-8">
+    <div class="card">
+      <div class="card-header font-monospace">{{ selected|default:"Bir dosya seçin" }}</div>
+      <div class="card-body p-0">
+        {% if error %}
+          <div class="alert alert-danger m-3">{{ error }}</div>
+        {% elif content %}
+          <div class="terminal-output" style="max-height:640px;">{{ content }}</div>
+        {% else %}
+          <div class="empty-state"><i class="bi bi-file-code"></i>{% trans "Soldan bir dosya seçin." %}</div>
+        {% endif %}
+      </div>
+    </div>
+    <p class="text-muted small mt-2">
+      <i class="bi bi-info-circle me-1"></i>
+      Bu görüntüleyici salt okunurdur. Değişiklik yapmak için Geliştirme Merkezinden
+      kod önerisi oluşturun; öneri diff olarak sunulur ve onayınızla uygulanır.
+      <code>.env</code>, veritabanı ve <code>media/</code> gibi korumalı yollar listelenmez.
+    </p>
+  </div>
+</div>
+{% endblock %}

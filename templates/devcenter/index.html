@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'devcenter:files' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-folder me-1"></i>{% trans "Dosyalar" %}</a>
+<a href="{% url 'devcenter:git' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-git me-1"></i>{% trans "Git" %}</a>
+<a href="{% url 'devcenter:snapshots' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-clock-history"></i></a>
+{% if terminal_enabled %}<a href="{% url 'devcenter:terminal' %}" class="btn btn-sm btn-primary"><i class="bi bi-terminal me-1"></i>{% trans "Terminal" %}</a>{% endif %}
+{% endblock %}
+{% block content %}
+<div class="alert alert-warning">
+  <strong><i class="bi bi-shield-exclamation me-1"></i>{% trans "Güvenlik modeli" %}</strong>
+  <ul class="mb-0 mt-2 small">
+    <li>Çalışma dizini <code>{{ project_root }}</code> ile sınırlıdır; dışına yazılamaz.</li>
+    <li>{% trans "Yapay zekânın önerdiği hiçbir kod, siz diff'i görüp onaylamadan uygulanmaz." %}</li>
+    <li>{% trans "Her uygulamadan önce otomatik geri alma noktası oluşturulur ve ayrı Git dalı açılır." %}</li>
+    <li>{% trans "Testler başarısızsa değişiklik uygulanamaz." %}</li>
+    <li>{% trans "Terminal yalnızca izinli komutları çalıştırır; silme/biçimlendirme/ağ komutları engellidir." %}</li>
+    <li>{% trans "Bu bölüm üretim ortamında varsayılan olarak kapalıdır." %}</li>
+  </ul>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-7">
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-magic me-2"></i>{% trans "Yeni kod önerisi iste" %}</div>
+      <div class="card-body">
+        <form onsubmit="event.preventDefault(); createProposal();">
+          <div class="mb-3">
+            <label class="form-label">{% trans "Ne yapılmasını istiyorsunuz?" %}</label>
+            <textarea class="form-control" id="instruction" rows="4" required
+                      placeholder="Örnek: POS ekranında ürün kartlarına stok durumu rozeti ekle. Stoku bitmiş ürünlerde kırmızı 'Tükendi' etiketi görünsün."></textarea>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-12 col-md-6">
+              <label class="form-label">{% trans "Hedef dosyalar (en fazla 6)" %}</label>
+              <select class="form-select" id="files" multiple size="8" required>
+                {% for path in project_files %}<option value="{{ path }}">{{ path }}</option>{% endfor %}
+              </select>
+              <div class="form-text">{% trans "Ctrl ile çoklu seçim yapabilirsiniz." %}</div>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">{% trans "Sağlayıcı" %}</label>
+              <select class="form-select mb-2" id="provider">
+                <option value="">{% trans "Otomatik" %}</option>
+                {% for provider in providers %}<option value="{{ provider.key }}">{{ provider.label }}</option>{% endfor %}
+              </select>
+              <div class="alert alert-info small mb-0">
+                {% trans "Kod üretimi güçlü bir model gerektirir. Yerel küçük modeller geçerli JSON üretmekte zorlanabilir; o durumda bulut sağlayıcı deneyin." %}
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-touch" id="propose-btn">
+            <i class="bi bi-stars me-1"></i>{% trans "Öneri oluştur (diff olarak)" %}</button>
+        </form>
+        <div id="proposal-result" class="mt-3"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="bi bi-list-check me-2"></i>{% trans "Kod önerileri" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th class="ps-3">{% trans "Başlık" %}</th><th>{% trans "Dosya" %}</th><th>{% trans "Durum" %}</th><th>{% trans "Test" %}</th><th class="pe-3">{% trans "Tarih" %}</th></tr></thead>
+          <tbody>
+          {% for proposal in proposals %}
+            <tr class="cursor-pointer" onclick="location.href='{% url 'devcenter:proposal_detail' proposal.pk %}'">
+              <td class="ps-3">{{ proposal.title|truncatechars:52 }}</td>
+              <td>{{ proposal.file_count }}</td>
+              <td><span class="badge-soft {% if proposal.status == 'applied' %}ok{% elif proposal.status == 'rejected' or proposal.status == 'failed' %}danger{% else %}info{% endif %}">
+                {{ proposal.get_status_display }}</span></td>
+              <td>{% if proposal.tests_run %}
+                    {% if proposal.tests_passed %}<i class="bi bi-check-circle text-success"></i>
+                    {% else %}<i class="bi bi-x-circle text-danger"></i>{% endif %}
+                  {% else %}<span class="text-muted">—</span>{% endif %}</td>
+              <td class="pe-3 small text-muted">{{ proposal.created_at|date:"d.m H:i" }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5"><div class="empty-state py-4"><i class="bi bi-code-slash"></i>{% trans "Henüz öneri yok." %}</div></td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-5">
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-git me-2"></i>{% trans "Depo durumu" %}</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0"><tbody>
+          <tr><td class="text-muted">{% trans "Proje kökü" %}</td><td class="text-end small font-monospace">{{ project_root }}</td></tr>
+          <tr><td class="text-muted">{% trans "Git dalı" %}</td><td class="text-end">{{ git_branch|default:"— git deposu yok —" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Son commit" %}</td><td class="text-end font-monospace">{{ git_commit|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Terminal" %}</td><td class="text-end">
+            {% if terminal_enabled %}<span class="badge-soft warn">{% trans "Açık" %}</span>{% else %}<span class="badge-soft ok">{% trans "Kapalı" %}</span>{% endif %}</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-terminal me-2"></i>{% trans "Son komutlar" %}</div>
+      <div class="card-body p-0" style="max-height:260px;overflow-y:auto;">
+        <table class="table table-sm mb-0"><tbody>
+          {% for run in recent_commands %}
+            <tr><td class="ps-3 small font-monospace">{{ run.command|truncatechars:40 }}
+              <small class="d-block text-muted">{{ run.created_at|date:"d.m H:i" }} · {{ run.duration_ms }} ms</small></td>
+              <td class="text-end pe-3"><span class="badge-soft {% if run.status == 'success' %}ok{% elif run.status == 'blocked' %}danger{% else %}warn{% endif %}">
+                {{ run.get_status_display }}</span></td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Komut geçmişi yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="bi bi-shield-check me-2"></i>{% trans "İzin verilen komutlar" %}</div>
+      <div class="card-body p-0" style="max-height:300px;overflow-y:auto;">
+        <table class="table table-sm mb-0"><tbody>
+          {% for row in allowed_commands %}
+            <tr><td class="ps-3 font-monospace small">{{ row.program }}</td>
+              <td class="pe-3 small text-muted">
+                {% if row.subcommands == "tüm argümanlar" %}{{ row.subcommands }}
+                {% else %}{{ row.subcommands|join:", "|truncatechars:60 }}{% endif %}
+                {% if row.needs_confirmation %}<span class="badge-soft warn d-block mt-1">onay gerekir: {{ row.needs_confirmation|join:", " }}</span>{% endif %}
+              </td></tr>
+          {% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function createProposal() {
+  const box = document.getElementById('proposal-result');
+  const button = document.getElementById('propose-btn');
+  const files = Array.from(document.getElementById('files').selectedOptions).map(o => o.value);
+  if (!files.length) { showToast('En az bir hedef dosya seçin.', 'warning'); return; }
+
+  button.disabled = true;
+  box.innerHTML = '<div class="alert alert-info"><span class="spinner-border spinner-border-sm me-2"></span>' +
+    'Yapay zekâ kodu inceliyor ve değişiklik öneriyor… Bu işlem yerel modellerde 1-2 dakika sürebilir.</div>';
+
+  try {
+    const result = await apiPost('{% url "devcenter:proposal_create" %}', {
+      instruction: document.getElementById('instruction').value,
+      files: files,
+      provider: document.getElementById('provider').value,
+    });
+    box.innerHTML = '<div class="alert alert-success">' +
+      '<strong>Öneri hazır.</strong> ' + result.stats.added + ' satır eklendi, ' +
+      result.stats.removed + ' satır silindi (' + result.files.length + ' dosya).<br>' +
+      '<div class="small mt-1">' + result.explanation + '</div>' +
+      '<a href="/devcenter/oneri/' + result.proposal_id + '/" class="btn btn-sm btn-primary mt-2">' +
+      'Diff\'i incele ve onayla</a></div>';
+  } catch (e) {
+    box.innerHTML = '<div class="alert alert-danger">' + e.message + '</div>';
+  } finally {
+    button.disabled = false;
+  }
+}
+</script>
+{% endblock %}

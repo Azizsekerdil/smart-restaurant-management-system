@@ -1,0 +1,42 @@
+{% load static i18n %}<!doctype html>
+<html lang="tr"><head>
+<meta charset="utf-8"><title>KOT {{ ticket.number }}</title>
+<style>
+  @page { size: 80mm auto; margin: 3mm; }
+  body { font-family: "Courier New", monospace; font-size: 12px; width: 74mm; margin: 0 auto; color: #000; }
+  .center { text-align: center; }
+  .big { font-size: 17px; font-weight: bold; }
+  hr { border: 0; border-top: 1px dashed #000; margin: 5px 0; }
+  .item { margin: 4px 0; font-size: 14px; }
+  .qty { font-weight: bold; font-size: 16px; }
+  .mod { padding-left: 16px; font-size: 11px; font-style: italic; }
+  .note { padding-left: 16px; font-size: 11px; font-weight: bold; }
+  .rush { border: 2px solid #000; padding: 3px; text-align: center; font-weight: bold; margin: 5px 0; }
+  @media print { .no-print { display: none; } }
+</style></head>
+<body onload="window.print()">
+  <div class="center big">{{ ticket.station.name|upper }}</div>
+  <hr>
+  <div>KOT: <strong>{{ ticket.number }}</strong></div>
+  <div>Adisyon: {{ ticket.order.number }}</div>
+  <div class="big">Masa: {{ ticket.table_label }}</div>
+  <div>Saat: {{ ticket.queued_at|date:"d.m.Y H:i" }}</div>
+  <div>Garson: {{ ticket.order.waiter.display_name|default:"—" }}</div>
+  {% if ticket.course > 1 %}<div>Servis sırası: {{ ticket.course }}</div>{% endif %}
+  <hr>
+  {% for line in ticket.lines.all %}
+    {% if line.order_item.status != 'cancelled' %}
+      <div class="item"><span class="qty">{{ line.order_item.quantity|floatformat:"-2" }}×</span> {{ line.order_item.product_name }}</div>
+      {% if line.order_item.modifier_summary %}<div class="mod">+ {{ line.order_item.modifier_summary }}</div>{% endif %}
+      {% if line.order_item.note %}<div class="note">! {{ line.order_item.note }}</div>{% endif %}
+    {% endif %}
+  {% endfor %}
+  <hr>
+  {% if ticket.note %}<div class="note">NOT: {{ ticket.note }}</div>{% endif %}
+  {% if ticket.priority >= 3 %}<div class="rush">*** {{ ticket.get_priority_display|upper }} ***</div>{% endif %}
+  <div class="center" style="margin-top:8px;">— {{ ticket.number }} —</div>
+  <div class="no-print center" style="margin-top:14px;">
+    <button onclick="window.print()">{% trans "Yazdır" %}</button>
+    <button onclick="window.close()">{% trans "Kapat" %}</button>
+  </div>
+</body></html>

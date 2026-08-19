@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="?start={{ prev_week }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-chevron-left"></i></a>
+<span class="badge-soft muted">{{ week_start|date:"d.m.Y" }} haftası</span>
+<a href="?start={{ next_week }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-chevron-right"></i></a>
+<button class="btn btn-sm btn-outline-info" onclick="suggestStaffing()"><i class="bi bi-stars me-1"></i>{% trans "AI önerisi" %}</button>
+{% endblock %}
+{% block content %}
+<div id="staffing-suggestion"></div>
+
+<div class="card"><div class="card-body p-0" style="overflow-x:auto;">
+  <table class="table table-bordered mb-0" style="min-width:900px;">
+    <thead><tr>
+      <th class="ps-3" style="min-width:170px;">{% trans "Personel" %}</th>
+      {% for day in days %}<th class="text-center">{{ day|date:"D" }}<br><small class="text-muted">{{ day|date:"d.m" }}</small></th>{% endfor %}
+    </tr></thead>
+    <tbody>
+    {% for employee in employees %}
+      <tr>
+        <td class="ps-3">{{ employee.user.display_name }}
+          <small class="d-block text-muted">{{ employee.user.get_role_display }}</small></td>
+        {% for day in days %}
+          <td class="text-center align-middle" style="min-width:110px;">
+            {% with key=day|date:"Y-m-d" %}
+              {% for assignment in grid|default_if_none:'' %}{% endfor %}
+              <div id="cell-{{ employee.pk }}-{{ key }}">
+                {% for emp_id, day_map in grid.items %}
+                  {% if emp_id == employee.pk %}
+                    {% for date_key, assignments in day_map.items %}
+                      {% if date_key == key %}
+                        {% for assignment in assignments %}
+                          <span class="badge-soft info d-block mb-1" style="cursor:pointer;"
+                                onclick="removeShift({{ assignment.pk }})" title="{% trans 'Kaldırmak için tıklayın' %}">
+                            {{ assignment.shift.name }}</span>
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+              <button class="btn btn-sm btn-outline-secondary py-0 px-1"
+                      onclick="assignShift({{ employee.pk }}, '{{ key }}')" title="{% trans 'Vardiya ata' %}">
+                <i class="bi bi-plus"></i></button>
+            {% endwith %}
+          </td>
+        {% endfor %}
+      </tr>
+    {% empty %}
+      <tr><td colspan="8"><div class="empty-state"><i class="bi bi-calendar-week"></i>{% trans "Personel kaydı yok." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+
+<div class="modal fade" id="shiftModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">{% trans "Vardiya seç" %}</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <select class="form-select" id="shift-select">
+        {% for shift in shifts %}<option value="{{ shift.pk }}">{{ shift.name }} ({{ shift.start_time|time:"H:i" }}–{{ shift.end_time|time:"H:i" }})</option>{% endfor %}
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Vazgeç" %}</button>
+      <button class="btn btn-primary" onclick="confirmShift()">{% trans "Ata" %}</button>
+    </div>
+  </div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let pendingEmployee = null, pendingDate = null;
+
+function assignShift(employeeId, date) {
+  pendingEmployee = employeeId; pendingDate = date;
+  new bootstrap.Modal(document.getElementById('shiftModal')).show();
+}
+async function confirmShift() {
+  try {
+    await apiPost('{% url "hr:shift_assign" %}', {
+      employee_id: pendingEmployee, shift_id: document.getElementById('shift-select').value, work_date: pendingDate
+    });
+    location.reload();
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+async function removeShift(id) {
+  if (!confirm('Bu vardiya ataması kaldırılsın mı?')) return;
+  try { await apiPost('/personel/vardiya/' + id + '/sil/', {}); location.reload(); }
+  catch (e) { showToast(e.message, 'danger'); }
+}
+async function suggestStaffing() {
+  const box = document.getElementById('staffing-suggestion');
+  box.innerHTML = '<div class="alert alert-info">Yapay zekâ yoğunluk verisini analiz ediyor…</div>';
+  try {
+    const result = await apiPost('/ai/analiz/staffing/', {});
+    let html = '<div class="card mb-3"><div class="card-header"><i class="bi bi-stars me-2"></i>Personel ihtiyacı önerisi</div><div class="card-body">';
+    html += '<table class="table table-sm"><thead><tr><th>Saat</th><th>Ortalama sipariş</th><th>Önerilen personel</th></tr></thead><tbody>';
+    (result.peak_hours || []).forEach(h => {
+      html += '<tr><td>' + h.hour + '</td><td>' + h.avg_orders + '</td><td><strong>' + h.suggested_staff + '</strong></td></tr>';
+    });
+    html += '</tbody></table>';
+    if (result.narrative) html += '<div class="ai-disclaimer" style="white-space:pre-wrap;">' + result.narrative + '</div>';
+    html += '<div class="ai-disclaimer mt-2">' + result.limitations + '</div>';
+    html += '</div></div>';
+    box.innerHTML = html;
+  } catch (e) { box.innerHTML = '<div class="alert alert-danger">' + e.message + '</div>'; }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'catalog:recipe_edit' product.pk %}" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>{% trans "Düzenle" %}</a>
+{% endblock %}
+{% block content %}
+{% if missing %}
+  <div class="alert alert-warning">
+    <strong><i class="bi bi-exclamation-triangle me-1"></i>{% trans "Eksik malzeme uyarısı" %}</strong>
+    <ul class="mb-0 mt-2">
+      {% for row in missing %}
+        <li>{{ row.ingredient.name }}: gereken {{ row.needed|floatformat:3 }}, mevcut {{ row.on_hand|floatformat:3 }}
+          ({{ row.ingredient.base_unit.code }}) — eksik {{ row.shortage|floatformat:3 }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<div class="card">
+  <div class="card-header">{{ product.name }} reçetesi</div>
+  <div class="card-body p-0">
+    {% if recipe %}
+      <table class="table mb-0">
+        <thead><tr><th class="ps-3">{% trans "Malzeme" %}</th><th class="text-end">{% trans "Miktar" %}</th><th class="text-end">{% trans "Fire" %}</th>
+          <th class="text-end">{% trans "Temel birim" %}</th><th class="text-end">{% trans "Birim maliyet" %}</th><th class="text-end pe-3">{% trans "Satır maliyeti" %}</th></tr></thead>
+        <tbody>
+        {% for item in recipe.items.all %}
+          <tr>
+            <td class="ps-3"><a href="{% url 'inventory:ingredient_detail' item.ingredient.pk %}">{{ item.ingredient.name }}</a>
+              {% if item.is_optional %}<span class="badge-soft muted ms-1">{% trans "opsiyonel" %}</span>{% endif %}
+              {% if item.note %}<small class="d-block text-muted">{{ item.note }}</small>{% endif %}</td>
+            <td class="text-end">{{ item.quantity|floatformat:3 }} {{ item.unit.code }}</td>
+            <td class="text-end">%{{ item.waste_percent|floatformat:0 }}</td>
+            <td class="text-end">{{ item.base_quantity|floatformat:3 }} {{ item.ingredient.base_unit.code }}</td>
+            <td class="text-end money">{{ item.ingredient.average_cost|floatformat:4 }}</td>
+            <td class="text-end pe-3 money">{{ item.line_cost|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr><td class="ps-3" colspan="5">{% trans "Malzeme toplamı" %}</td><td class="text-end pe-3 money">{{ recipe.ingredient_cost|floatformat:2 }}</td></tr>
+          <tr><td class="ps-3" colspan="5">{% trans "İşçilik + genel gider" %}</td>
+            <td class="text-end pe-3 money">{{ recipe.labor_cost|add:recipe.overhead_cost|floatformat:2 }}</td></tr>
+          <tr class="fw-bold"><td class="ps-3" colspan="5">Porsiyon maliyeti ({{ recipe.yield_quantity|floatformat:"-3" }} porsiyon)</td>
+            <td class="text-end pe-3 money">{{ recipe.total_cost|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td></tr>
+        </tfoot>
+      </table>
+      {% if recipe.preparation_notes %}
+        <div class="p-3 border-top" style="border-color:var(--surface-border)!important;">
+          <strong>{% trans "Hazırlık notları" %}</strong><p class="mb-0 mt-1 text-muted">{{ recipe.preparation_notes|linebreaksbr }}</p>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="empty-state"><i class="bi bi-list-check"></i>Bu ürün için reçete tanımlanmamış.
+        <div class="mt-3"><a href="{% url 'catalog:recipe_edit' product.pk %}" class="btn btn-primary">{% trans "Reçete oluştur" %}</a></div></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

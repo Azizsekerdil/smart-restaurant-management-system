@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'kitchen:performance' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-speedometer me-1"></i>{% trans "Performans" %}</a>
+{% endblock %}
+{% block content %}
+{% if delayed %}
+  <div class="alert alert-danger">
+    <strong><i class="bi bi-clock-history me-1"></i>{{ delayed|length }} gecikmiş sipariş var.</strong>
+    <div class="small">{% for ticket in delayed|slice:":6" %}{{ ticket.number }} ({{ ticket.elapsed_minutes }} dk){% if not forloop.last %} · {% endif %}{% endfor %}</div>
+  </div>
+{% endif %}
+
+<div class="row g-3">
+  <div class="col-12 col-lg-7">
+    <div class="card"><div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead><tr><th class="ps-3">{% trans "İstasyon" %}</th><th>{% trans "Tür" %}</th><th>{% trans "Uyarı" %}</th><th>{% trans "Kritik" %}</th><th>{% trans "Aktif KOT" %}</th><th class="pe-3">{% trans "Durum" %}</th></tr></thead>
+        <tbody>
+        {% for station in stations %}
+          <tr class="cursor-pointer" onclick="editStation({{ station.pk }}, '{{ station.name|escapejs }}', '{{ station.kind }}', '{{ station.color }}', {{ station.warning_minutes }}, {{ station.critical_minutes }}, '{{ station.printer_name|escapejs }}', {{ station.sort_order }}, {{ station.is_active|yesno:'true,false' }})">
+            <td class="ps-3">
+              <span class="d-inline-block rounded me-2" style="width:12px;height:12px;background:{{ station.color }};"></span>
+              <strong>{{ station.name }}</strong></td>
+            <td>{{ station.get_kind_display }}</td>
+            <td>{{ station.warning_minutes }} dk</td>
+            <td>{{ station.critical_minutes }} dk</td>
+            <td><span class="badge-soft info">{{ station.active_ticket_count }}</span></td>
+            <td class="pe-3">{% if station.is_active %}<span class="badge-soft ok">{% trans "Aktif" %}</span>{% else %}<span class="badge-soft muted">{% trans "Pasif" %}</span>{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6"><div class="empty-state"><i class="bi bi-fire"></i>{% trans "İstasyon tanımlı değil." %}</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+
+  <div class="col-12 col-lg-5">
+    <div class="card">
+      <div class="card-header" id="station-form-title">{% trans "Yeni istasyon" %}</div>
+      <div class="card-body">
+        <form method="post" action="{% url 'kitchen:station_save' %}" id="station-form">
+          {% csrf_token %}
+          <input type="hidden" name="station_id" id="station-id">
+          <div class="mb-2"><label class="form-label">{% trans "Ad" %}</label><input type="text" name="name" id="st-name" class="form-control" required></div>
+          <div class="row g-2">
+            <div class="col-6"><label class="form-label">{% trans "Tür" %}</label>
+              <select name="kind" id="st-kind" class="form-select">
+                <option value="kitchen">{% trans "Mutfak" %}</option><option value="grill">{% trans "Izgara" %}</option>
+                <option value="cold">{% trans "Soğuk mutfak" %}</option><option value="bar">{% trans "Bar" %}</option>
+                <option value="dessert">{% trans "Tatlı" %}</option><option value="pastry">{% trans "Pastane" %}</option>
+              </select></div>
+            <div class="col-6"><label class="form-label">{% trans "Renk" %}</label>
+              <input type="color" name="color" id="st-color" class="form-control form-control-color w-100" value="#fd7e14"></div>
+            <div class="col-6"><label class="form-label">{% trans "Uyarı (dk)" %}</label>
+              <input type="number" name="warning_minutes" id="st-warning" class="form-control" value="10" min="1"></div>
+            <div class="col-6"><label class="form-label">{% trans "Kritik (dk)" %}</label>
+              <input type="number" name="critical_minutes" id="st-critical" class="form-control" value="20" min="1"></div>
+            <div class="col-8"><label class="form-label">{% trans "Yazıcı adı" %}</label>
+              <input type="text" name="printer_name" id="st-printer" class="form-control"></div>
+            <div class="col-4"><label class="form-label">{% trans "Sıra" %}</label>
+              <input type="number" name="sort_order" id="st-sort" class="form-control" value="100"></div>
+          </div>
+          <div class="form-check mt-3">
+            <input class="form-check-input" type="checkbox" name="is_active" id="st-active" checked>
+            <label class="form-check-label" for="st-active">{% trans "Aktif" %}</label>
+          </div>
+          <div class="d-flex gap-2 mt-3">
+            <button class="btn btn-primary"><i class="bi bi-save me-1"></i>{% trans "Kaydet" %}</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="resetStationForm()">{% trans "Yeni" %}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editStation(id, name, kind, color, warning, critical, printer, sort, active) {
+  document.getElementById('station-form-title').textContent = 'İstasyonu düzenle: ' + name;
+  document.getElementById('station-id').value = id;
+  document.getElementById('st-name').value = name;
+  document.getElementById('st-kind').value = kind;
+  document.getElementById('st-color').value = color;
+  document.getElementById('st-warning').value = warning;
+  document.getElementById('st-critical').value = critical;
+  document.getElementById('st-printer').value = printer;
+  document.getElementById('st-sort').value = sort;
+  document.getElementById('st-active').checked = active;
+}
+function resetStationForm() {
+  document.getElementById('station-form').reset();
+  document.getElementById('station-id').value = '';
+  document.getElementById('station-form-title').textContent = 'Yeni istasyon';
+}
+</script>
+{% endblock %}

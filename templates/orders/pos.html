@@ -1,0 +1,497 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block page_heading %}POS — Satış Ekranı{% endblock %}
+
+{% block topbar_actions %}
+  {% if cash_session %}
+    <span class="badge-soft ok"><i class="bi bi-cash-coin me-1"></i>{% blocktrans with number=cash_session.number %}Kasa açık: {{ number }}{% endblocktrans %}</span>
+  {% else %}
+    <a href="{% url 'orders:cash_session' %}" class="badge-soft warn text-decoration-none">
+      <i class="bi bi-exclamation-triangle me-1"></i>{% trans "Kasa kapalı" %}
+    </a>
+  {% endif %}
+  <a href="{% url 'floor:table_map' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-grid-3x3-gap"></i></a>
+  <a href="{% url 'kitchen:display' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-fire"></i></a>
+{% endblock %}
+
+{% block content %}
+<div class="pos-layout" x-data="posScreen()">
+
+  {# ================= SOL: ÜRÜNLER ================= #}
+  <div class="pos-products">
+    <div class="d-flex gap-2 mb-2">
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control" placeholder="{% trans 'Ürün ara (ad veya kod)…' %}" x-model="search" aria-label="{% trans 'Ürün ara' %}">
+      </div>
+      <button class="btn btn-outline-secondary" @click="search=''; activeCategory='all'" title="{% trans 'Filtreleri temizle' %}">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="category-chips mb-2">
+      <button class="category-chip" :class="{active: activeCategory === 'all'}" @click="activeCategory='all'">{% trans "Tümü" %}</button>
+      {% for category in categories %}
+        <button class="category-chip" :class="{active: activeCategory === '{{ category.id }}'}"
+                @click="activeCategory='{{ category.id }}'"
+                style="border-left:4px solid {{ category.color }};">{{ category.name }}</button>
+      {% endfor %}
+    </div>
+
+    <div class="pos-grid">
+      {% for product in products %}
+        <button type="button"
+                class="product-tile {% if not product.is_available %}unavailable{% endif %}"
+                data-category="{{ product.category_id }}"
+                data-name="{{ product.name|lower }}"
+                data-sku="{{ product.sku|default:''|lower }}"
+                style="border-left-color: {{ product.color|default:product.category.color }};"
+                x-show="matches($el)"
+                {% if product.is_available %}
+                  @click="addProduct({{ product.id }}, '{{ product.name|escapejs }}', {{ product.price }},
+                          {{ product.variants.all|length }}, {{ product.modifier_groups.all|length }})"
+                {% else %}
+                  disabled title="{{ product.unavailable_reason|default:'Satışa kapalı' }}"
+                {% endif %}>
+          <span class="name">{{ product.name }}</span>
+          <span class="d-flex justify-content-between align-items-end mt-2">
+            <span class="price">{{ product.price|floatformat:2 }} {{ CURRENCY_SYMBOL }}</span>
+            {% if not product.is_available %}<span class="badge-soft danger">{% trans "Kapalı" %}</span>{% endif %}
+          </span>
+        </button>
+      {% endfor %}
+    </div>
+    <div class="empty-state" x-show="visibleCount === 0"><i class="bi bi-search"></i>{% trans "Eşleşen ürün bulunamadı" %}</div>
+  </div>
+
+  {# ================= SAĞ: ADİSYON ================= #}
+  <div class="card pos-cart">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span x-text="order ? ('Adisyon ' + order.number) : 'Adisyon seçilmedi'"></span>
+      <div class="d-flex gap-1">
+        <button class="btn btn-sm btn-outline-primary" @click="newOrderModal()" title="{% trans 'Yeni adisyon' %}">
+          <i class="bi bi-plus-lg"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#openOrdersModal" title="{% trans 'Açık adisyonlar' %}">
+          <i class="bi bi-list-ul"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="pos-cart-items" id="order-panel">
+      {% if active_order %}
+        {% include "orders/_order_panel.html" with order=active_order %}
+      {% else %}
+        <div class="empty-state">
+          <i class="bi bi-cart"></i>
+          {% trans "Başlamak için bir masa seçin veya yeni adisyon açın." %}
+          <div class="mt-3"><button class="btn btn-primary btn-touch" @click="newOrderModal()">
+            <i class="bi bi-plus-lg me-1"></i>{% trans "Yeni adisyon" %}</button></div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{# ================= MODALLAR ================= #}
+{# Yeni adisyon #}
+<div class="modal fade" id="newOrderModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">{% trans "Yeni Adisyon" %}</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <form onsubmit="event.preventDefault(); createOrder(this);">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">{% trans "Sipariş türü" %}</label>
+            <select name="order_type" class="form-select" id="new-order-type"
+                    onchange="document.getElementById('table-wrap').style.display = this.value === 'dine_in' ? '' : 'none';">
+              {% for value, label in order_types %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-3" id="table-wrap">
+            <label class="form-label">{% trans "Masa" %}</label>
+            <select name="table_id" class="form-select">
+              {% for table in tables %}
+                <option value="{{ table.id }}" {% if table.status != 'free' %}disabled{% endif %}>
+                  {{ table.area.name }} · {{ table.name }} ({{ table.capacity }} kişi)
+                  {% if table.status != 'free' %} — {{ table.get_status_display }}{% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">{% trans "Kişi sayısı" %}</label>
+            <input type="number" name="guest_count" class="form-control" value="2" min="1" max="200">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">{% trans "Müşteri (isteğe bağlı)" %}</label>
+            <input type="text" class="form-control" id="customer-search" placeholder="{% trans 'Ad veya telefon ile ara…' %}"
+                   oninput="searchCustomer(this.value)" autocomplete="off">
+            <input type="hidden" name="customer_id" id="customer-id">
+            <div id="customer-results" class="list-group mt-1"></div>
+          </div>
+          <div>
+            <label class="form-label">{% trans "Not" %}</label>
+            <textarea name="note" class="form-control" rows="2" placeholder="{% trans 'Sipariş notu…' %}"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Vazgeç" %}</button>
+          <button type="submit" class="btn btn-primary btn-touch">{% trans "Adisyon aç" %}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{# Açık adisyonlar #}
+<div class="modal fade" id="openOrdersModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">{% trans "Açık Adisyonlar" %}</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th class="ps-3">{% trans "Adisyon" %}</th><th>{% trans "Yer" %}</th><th>{% trans "Garson" %}</th><th>{% trans "Durum" %}</th><th class="text-end pe-3">{% trans "Tutar" %}</th></tr></thead>
+          <tbody>
+          {% for open_order in open_orders %}
+            <tr class="cursor-pointer" onclick="location.href='?order={{ open_order.id }}'">
+              <td class="ps-3 fw-semibold">{{ open_order.number }}</td>
+              <td>{{ open_order.table.name|default:open_order.get_order_type_display }}</td>
+              <td>{{ open_order.waiter.display_name|default:"—" }}</td>
+              <td><span class="badge-soft {{ open_order.status_color }}">{{ open_order.get_status_display }}</span></td>
+              <td class="text-end pe-3 money">{{ open_order.grand_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5" class="text-center text-muted py-4">{% trans "Açık adisyon yok." %}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# Ödeme #}
+<div class="modal fade" id="paymentModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">{% trans "Ödeme Al" %}</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <div class="text-muted small">{% trans "Kalan bakiye" %}</div>
+          <div class="h2 money mb-0" id="pay-balance">0,00 {{ CURRENCY_SYMBOL }}</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">{% trans "Ödeme yöntemi" %}</label>
+          <div class="d-flex flex-wrap gap-2" id="pay-methods">
+            {% for value, label in payment_methods %}
+              {% if value != 'tip' %}
+                <button type="button" class="btn btn-outline-primary btn-sm" data-method="{{ value }}"
+                        onclick="selectMethod(this)">{{ label }}</button>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">{% trans "Tutar" %}</label>
+          <input type="number" step="0.01" min="0" class="form-control form-control-lg text-end money" id="pay-amount">
+        </div>
+        <div class="mb-3" id="cash-received-wrap">
+          <label class="form-label">{% trans "Alınan nakit" %}</label>
+          <input type="number" step="0.01" min="0" class="form-control text-end" id="pay-received"
+                 oninput="calcChange()">
+          <div class="form-text">Para üstü: <strong id="pay-change">0,00 {{ CURRENCY_SYMBOL }}</strong></div>
+        </div>
+        <div class="keypad mb-2">
+          {% for digit in "789456123" %}<button class="btn btn-outline-secondary" onclick="keypad('{{ digit }}')">{{ digit }}</button>{% endfor %}
+          <button class="btn btn-outline-secondary" onclick="keypad('.')">,</button>
+          <button class="btn btn-outline-secondary" onclick="keypad('0')">0</button>
+          <button class="btn btn-outline-danger" onclick="keypad('C')"><i class="bi bi-backspace"></i></button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Vazgeç" %}</button>
+        <button type="button" class="btn btn-success btn-touch" onclick="submitPayment()">
+          <i class="bi bi-check-lg me-1"></i>{% trans "Ödemeyi tamamla" %}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# İndirim #}
+<div class="modal fade" id="discountModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">{% trans "İndirim Uygula" %}</h5>
+      <button class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <ul class="nav nav-tabs mb-3">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#disc-manual">{% trans "Elle" %}</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#disc-coupon">{% trans "Kupon" %}</button></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="disc-manual">
+          <div class="mb-2"><label class="form-label">{% trans "Yüzde (%)" %}</label>
+            <input type="number" step="0.01" min="0" max="100" class="form-control" id="disc-percent"></div>
+          <div class="mb-2"><label class="form-label">veya tutar ({{ CURRENCY_SYMBOL }})</label>
+            <input type="number" step="0.01" min="0" class="form-control" id="disc-amount"></div>
+          <div class="mb-2"><label class="form-label">Gerekçe <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="disc-reason" placeholder="{% trans 'Ör. müşteri şikâyeti telafisi' %}"></div>
+        </div>
+        <div class="tab-pane fade" id="disc-coupon">
+          <label class="form-label">{% trans "Kupon kodu" %}</label>
+          <input type="text" class="form-control text-uppercase" id="disc-coupon-code" placeholder="ORNEK10">
+        </div>
+      </div>
+      <div id="approval-box" class="mt-3 p-3 rounded" style="background:var(--bg-sunken);display:none;">
+        <div class="small text-muted mb-2"><i class="bi bi-shield-lock me-1"></i>{% trans "Bu işlem yetkili onayı gerektiriyor." %}</div>
+        <input type="text" class="form-control mb-2" id="approver-username" placeholder="{% trans 'Yetkili kullanıcı adı' %}">
+        <input type="password" class="form-control" id="approver-pin" placeholder="{% trans 'Yetkili PIN' %}" inputmode="numeric">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Vazgeç" %}</button>
+      <button type="button" class="btn btn-primary" onclick="applyDiscount()">{% trans "Uygula" %}</button>
+    </div>
+  </div></div>
+</div>
+
+{# Hesap bölme #}
+<div class="modal fade" id="splitModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">{% trans "Hesabı Böl" %}</h5>
+      <button class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="mb-3">
+        <label class="form-label">{% trans "Bölme yöntemi" %}</label>
+        <select class="form-select" id="split-mode" onchange="document.getElementById('split-parts-wrap').style.display = this.value==='even' ? '' : 'none';">
+          <option value="even">{% trans "Eşit böl" %}</option>
+          <option value="seat">{% trans "Koltuk numarasına göre" %}</option>
+          <option value="items">{% trans "Seçili ürünleri ayır" %}</option>
+        </select>
+      </div>
+      <div class="mb-3" id="split-parts-wrap">
+        <label class="form-label">{% trans "Kaç kişiye bölünsün?" %}</label>
+        <input type="number" class="form-control" id="split-parts" value="2" min="2" max="20">
+      </div>
+      <div id="split-result"></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Kapat" %}</button>
+      <button type="button" class="btn btn-primary" onclick="doSplit()">{% trans "Hesapla" %}</button>
+    </div>
+  </div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const ACTIVE_ORDER_ID = {{ active_order.pk|default:"null" }};
+let currentOrderId = ACTIVE_ORDER_ID;
+let payMethod = 'cash';
+
+/* ---------------------------------------------- Alpine bileşeni */
+function posScreen() {
+  return {
+    search: '',
+    activeCategory: 'all',
+    visibleCount: 1,
+    order: {{ active_order|yesno:"true,null" }} ? { number: '{{ active_order.number|default:"" }}' } : null,
+    matches(el) {
+      const term = this.search.trim().toLowerCase();
+      const okCategory = this.activeCategory === 'all' || el.dataset.category === this.activeCategory;
+      const okSearch = !term || el.dataset.name.includes(term) || el.dataset.sku.includes(term);
+      return okCategory && okSearch;
+    },
+    newOrderModal() { newOrderModal(); },
+    init() {
+      this.$watch('search', () => this.recount());
+      this.$watch('activeCategory', () => this.recount());
+      this.recount();
+    },
+    recount() {
+      this.$nextTick(() => {
+        this.visibleCount = document.querySelectorAll('.product-tile:not([style*="display: none"])').length;
+      });
+    },
+  };
+}
+
+function newOrderModal() { new bootstrap.Modal(document.getElementById('newOrderModal')).show(); }
+
+/* ---------------------------------------------- adisyon */
+async function createOrder(form) {
+  const data = Object.fromEntries(new FormData(form).entries());
+  try {
+    const result = await apiPost('{% url "orders:order_create" %}', data);
+    location.href = '?order=' + result.order_id;
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+async function refreshPanel() {
+  if (!currentOrderId) return;
+  const response = await fetch('/siparis/' + currentOrderId + '/panel/');
+  document.getElementById('order-panel').innerHTML = await response.text();
+}
+
+async function addProduct(productId, name, price, variantCount, modifierCount) {
+  if (!currentOrderId) { showToast('Önce bir adisyon açın.', 'warning'); newOrderModal(); return; }
+  try {
+    await apiPost('/siparis/' + currentOrderId + '/satir-ekle/', { product_id: productId, quantity: 1 });
+    await refreshPanel();
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+async function changeQuantity(itemId, quantity) {
+  if (quantity < 1) return;
+  try {
+    await apiPost('/siparis/' + currentOrderId + '/satir/' + itemId + '/guncelle/', { quantity });
+    await refreshPanel();
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+async function cancelItem(itemId) {
+  const reason = prompt('İptal gerekçesi (zorunlu):');
+  if (!reason) return;
+  try {
+    await apiPost('/siparis/' + currentOrderId + '/satir/' + itemId + '/iptal/', { reason });
+    await refreshPanel();
+    showToast('Satır iptal edildi.', 'warning');
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+async function sendToKitchen() {
+  try {
+    const result = await apiPost('/siparis/' + currentOrderId + '/mutfaga-gonder/', {});
+    showToast('Mutfağa gönderildi: ' + result.tickets.join(', '), 'success');
+    await refreshPanel();
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+/* ---------------------------------------------- ödeme */
+function openPayment(balance) {
+  document.getElementById('pay-balance').textContent = Number(balance).toFixed(2).replace('.', ',') + ' {{ CURRENCY_SYMBOL }}';
+  document.getElementById('pay-amount').value = Number(balance).toFixed(2);
+  document.getElementById('pay-received').value = '';
+  document.getElementById('pay-change').textContent = '0,00 {{ CURRENCY_SYMBOL }}';
+  new bootstrap.Modal(document.getElementById('paymentModal')).show();
+}
+function selectMethod(button) {
+  document.querySelectorAll('#pay-methods .btn').forEach(b => b.classList.remove('active', 'btn-primary'));
+  button.classList.add('active', 'btn-primary');
+  payMethod = button.dataset.method;
+  document.getElementById('cash-received-wrap').style.display = payMethod === 'cash' ? '' : 'none';
+}
+function calcChange() {
+  const amount = parseFloat(document.getElementById('pay-amount').value || 0);
+  const received = parseFloat(document.getElementById('pay-received').value || 0);
+  const change = Math.max(received - amount, 0);
+  document.getElementById('pay-change').textContent = change.toFixed(2).replace('.', ',') + ' {{ CURRENCY_SYMBOL }}';
+}
+function keypad(key) {
+  const field = document.getElementById('pay-received');
+  if (key === 'C') { field.value = field.value.slice(0, -1); }
+  else { field.value = (field.value || '') + (key === '.' ? '.' : key); }
+  calcChange();
+}
+async function submitPayment() {
+  const amount = document.getElementById('pay-amount').value;
+  const received = document.getElementById('pay-received').value;
+  try {
+    const result = await apiPost('/siparis/' + currentOrderId + '/odeme/', {
+      method: payMethod, amount, received: payMethod === 'cash' ? received : ''
+    });
+    bootstrap.Modal.getInstance(document.getElementById('paymentModal')).hide();
+    if (result.is_paid) {
+      showToast('Ödeme tamamlandı. Para üstü: ' + result.change + ' {{ CURRENCY_SYMBOL }}', 'success');
+      setTimeout(() => location.href = '{% url "orders:pos" %}', 900);
+    } else {
+      showToast('Kısmi ödeme alındı. Kalan: ' + result.balance_due + ' {{ CURRENCY_SYMBOL }}', 'info');
+      await refreshPanel();
+    }
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+/* ---------------------------------------------- indirim */
+function openDiscount() { new bootstrap.Modal(document.getElementById('discountModal')).show(); }
+async function applyDiscount() {
+  const payload = {
+    percent: document.getElementById('disc-percent').value,
+    amount: document.getElementById('disc-amount').value,
+    reason: document.getElementById('disc-reason').value,
+    coupon_code: document.getElementById('disc-coupon-code').value,
+    approver_username: document.getElementById('approver-username').value,
+    approver_pin: document.getElementById('approver-pin').value,
+  };
+  try {
+    await apiPost('/siparis/' + currentOrderId + '/indirim/', payload);
+    bootstrap.Modal.getInstance(document.getElementById('discountModal')).hide();
+    await refreshPanel();
+    showToast('İndirim uygulandı.', 'success');
+  } catch (e) {
+    if (e.message.includes('yetkili onayı')) { document.getElementById('approval-box').style.display = 'block'; }
+    showToast(e.message, 'danger');
+  }
+}
+
+/* ---------------------------------------------- bölme */
+function openSplit() { new bootstrap.Modal(document.getElementById('splitModal')).show(); }
+async function doSplit() {
+  const mode = document.getElementById('split-mode').value;
+  const payload = { mode, parts: document.getElementById('split-parts').value };
+  if (mode === 'items') {
+    payload.item_ids = Array.from(document.querySelectorAll('.split-check:checked')).map(c => c.value);
+    if (!payload.item_ids.length) { showToast('Ayırmak istediğiniz satırları işaretleyin.', 'warning'); return; }
+  }
+  try {
+    const result = await apiPost('/siparis/' + currentOrderId + '/bol/', payload);
+    if (result.mode === 'items') {
+      showToast('Yeni adisyon oluşturuldu: ' + result.number, 'success');
+      setTimeout(() => location.href = '?order=' + result.new_order_id, 800);
+      return;
+    }
+    document.getElementById('split-result').innerHTML =
+      '<table class="table table-sm mt-3"><tbody>' +
+      result.plan.map(p => '<tr><td>' + (p.part || p.seat) + '</td><td class="text-end money">' +
+        Number(p.amount).toFixed(2) + ' {{ CURRENCY_SYMBOL }}</td></tr>').join('') + '</tbody></table>';
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+/* ---------------------------------------------- müşteri arama */
+let customerTimer;
+function searchCustomer(query) {
+  clearTimeout(customerTimer);
+  if (query.length < 2) { document.getElementById('customer-results').innerHTML = ''; return; }
+  customerTimer = setTimeout(async () => {
+    const response = await fetch('{% url "crm:customer_search" %}?q=' + encodeURIComponent(query));
+    const data = await response.json();
+    document.getElementById('customer-results').innerHTML = data.results.map(c =>
+      '<button type="button" class="list-group-item list-group-item-action" onclick="pickCustomer(' + c.id + ',\'' +
+      c.name.replace(/'/g, "") + '\')">' + c.name + ' <small class="text-muted">' + c.phone +
+      ' · ' + c.points + ' puan</small>' + (c.allergy ? '<span class="badge-soft danger ms-2">Alerji</span>' : '') +
+      '</button>').join('');
+  }, 280);
+}
+function pickCustomer(id, name) {
+  document.getElementById('customer-id').value = id;
+  document.getElementById('customer-search').value = name;
+  document.getElementById('customer-results').innerHTML = '';
+}
+
+/* ---------------------------------------------- canlı güncelleme */
+(function connectOrderStream() {
+  if (!window.WebSocket) return;
+  const scheme = location.protocol === 'https:' ? 'wss' : 'ws';
+  const socket = new WebSocket(scheme + '://' + location.host + '/ws/orders/');
+  socket.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    if (data.event === 'order' && data.order_id === currentOrderId) { refreshPanel(); }
+  };
+  socket.onclose = () => setTimeout(connectOrderStream, 5000);
+})();
+</script>
+{% endblock %}

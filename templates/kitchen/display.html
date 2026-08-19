@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block page_heading %}Mutfak Ekranı{% endblock %}
+
+{% block topbar_actions %}
+  <div class="btn-group btn-group-sm">
+    <a href="?station=all" class="btn btn-outline-secondary {% if current_station == 'all' %}active{% endif %}">{% trans "Tümü" %}</a>
+    {% for station in stations %}
+      <a href="?station={{ station.code }}" class="btn btn-outline-secondary {% if current_station == station.code %}active{% endif %}"
+         style="{% if current_station == station.code %}border-color:{{ station.color }};{% endif %}">
+        {{ station.name }}
+      </a>
+    {% endfor %}
+  </div>
+  <button class="btn btn-sm btn-outline-secondary" onclick="toggleSound()" id="sound-btn" title="{% trans 'Sesli uyarı' %}">
+    <i class="bi bi-volume-up"></i>
+  </button>
+  <span class="badge-soft muted" id="ws-status"><span class="provider-dot offline"></span> Bağlanıyor…</span>
+{% endblock %}
+
+{% block content %}
+<div id="kds-root" class="kds-board">
+  {% include "kitchen/_ticket_board.html" %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const STATION = '{{ current_station }}';
+let soundEnabled = localStorage.getItem('kds-sound') !== 'off';
+updateSoundButton();
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem('kds-sound', soundEnabled ? 'on' : 'off');
+  updateSoundButton();
+}
+function updateSoundButton() {
+  const button = document.getElementById('sound-btn');
+  if (button) button.innerHTML = '<i class="bi bi-volume-' + (soundEnabled ? 'up' : 'mute') + '"></i>';
+}
+
+/** Yeni sipariş ve gecikme uyarısı için kısa bip sesi (dış dosya gerektirmez). */
+function beep(frequency, duration) {
+  if (!soundEnabled) return;
+  try {
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.connect(gain); gain.connect(context.destination);
+    oscillator.frequency.value = frequency;
+    oscillator.type = 'sine';
+    gain.gain.setValueAtTime(0.18, context.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + duration / 1000);
+    oscillator.start(); oscillator.stop(context.currentTime + duration / 1000);
+  } catch (_) { /* ses desteklenmiyorsa sessizce geç */ }
+}
+
+async function transition(ticketId, action) {
+  try {
+    await apiPost('/mutfak/kot/' + ticketId + '/' + action + '/', {});
+    await reloadBoard();
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+async function reloadBoard() {
+  const response = await fetch('{% url "kitchen:ticket_board" %}?station=' + STATION);
+  document.getElementById('kds-root').innerHTML = await response.text();
+  refreshTimers();
+}
+
+/* Süre sayaçlarını istemci tarafında canlı tut (sunucuya yük bindirmeden). */
+function refreshTimers() {
+  document.querySelectorAll('[data-queued]').forEach(function (element) {
+    const queuedAt = new Date(element.dataset.queued);
+    const minutes = Math.floor((Date.now() - queuedAt.getTime()) / 60000);
+    element.textContent = minutes + ' dk';
+    const card = element.closest('.kds-ticket');
+    const warning = parseInt(card.dataset.warning, 10);
+    const critical = parseInt(card.dataset.critical, 10);
+    card.classList.remove('urgency-warning', 'urgency-critical');
+    if (minutes >= critical) {
+      card.classList.add('urgency-critical');
+      if (!card.dataset.alerted) { beep(880, 350); card.dataset.alerted = '1'; }
+    } else if (minutes >= warning) {
+      card.classList.add('urgency-warning');
+    }
+  });
+}
+setInterval(refreshTimers, 15000);
+refreshTimers();
+
+/* ---------------- WebSocket canlı akış ---------------- */
+(function connect() {
+  const statusEl = document.getElementById('ws-status');
+  if (!window.WebSocket) { statusEl.innerHTML = '<span class="provider-dot error"></span> WebSocket desteklenmiyor'; return; }
+  const scheme = location.protocol === 'https:' ? 'wss' : 'ws';
+  const socket = new WebSocket(scheme + '://' + location.host + '/ws/kitchen/' + STATION + '/');
+
+  socket.onopen = () => { statusEl.innerHTML = '<span class="provider-dot online"></span> Canlı'; };
+  socket.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    if (data.event === 'created') { beep(660, 250); showToast('Yeni sipariş: ' + data.ticket.table, 'info'); }
+    if (['created', 'updated', 'ready', 'completed'].includes(data.event)) { reloadBoard(); }
+  };
+  socket.onclose = function () {
+    statusEl.innerHTML = '<span class="provider-dot offline"></span> Bağlantı koptu, yeniden deneniyor…';
+    setTimeout(connect, 4000);
+  };
+  socket.onerror = () => { statusEl.innerHTML = '<span class="provider-dot error"></span> Hata'; };
+})();
+
+/* WebSocket çalışmazsa yedek yoklama */
+setInterval(reloadBoard, 30000);
+</script>
+{% endblock %}

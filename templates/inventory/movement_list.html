@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="card mb-3"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-12 col-md-4"><label class="form-label">{% trans "Malzeme" %}</label>
+      <select name="ingredient" class="form-select"><option value="">{% trans "Tümü" %}</option>
+        {% for ingredient in ingredients %}<option value="{{ ingredient.pk }}" {% if filters.ingredient == ingredient.pk|stringformat:"s" %}selected{% endif %}>{{ ingredient.name }}</option>{% endfor %}
+      </select></div>
+    <div class="col-12 col-md-4"><label class="form-label">{% trans "Hareket türü" %}</label>
+      <select name="type" class="form-select"><option value="">{% trans "Tümü" %}</option>
+        {% for value, label in types %}<option value="{{ value }}" {% if filters.type == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select></div>
+    <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Filtrele" %}</button></div>
+  </form>
+</div></div>
+
+<div class="card"><div class="card-body p-0" style="overflow-x:auto;">
+  <table class="table table-hover table-sticky mb-0">
+    <thead><tr><th class="ps-3">{% trans "Tarih" %}</th><th>{% trans "Malzeme" %}</th><th>{% trans "Depo" %}</th><th>{% trans "Tür" %}</th>
+      <th class="text-end">{% trans "Miktar" %}</th><th class="text-end">{% trans "Birim maliyet" %}</th><th class="text-end">{% trans "Bakiye" %}</th>
+      <th>{% trans "Kullanıcı" %}</th><th class="pe-3">{% trans "Not" %}</th></tr></thead>
+    <tbody>
+    {% for movement in page_obj %}
+      <tr>
+        <td class="ps-3 small text-nowrap">{{ movement.created_at|date:"d.m.Y H:i" }}</td>
+        <td><a href="{% url 'inventory:ingredient_detail' movement.ingredient.pk %}">{{ movement.ingredient.name }}</a></td>
+        <td class="small">{{ movement.warehouse.code }}</td>
+        <td><span class="badge-soft muted">{{ movement.get_movement_type_display }}</span></td>
+        <td class="text-end money {% if movement.quantity < 0 %}text-danger{% else %}text-success{% endif %}">{{ movement.quantity|floatformat:3 }}</td>
+        <td class="text-end money">{{ movement.unit_cost|floatformat:4 }}</td>
+        <td class="text-end money">{{ movement.balance_after|floatformat:3 }}</td>
+        <td class="small text-muted">{{ movement.created_by.display_name|default:"sistem" }}</td>
+        <td class="pe-3 small text-muted">{{ movement.note|truncatechars:40 }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="9"><div class="empty-state"><i class="bi bi-arrow-left-right"></i>{% trans "Hareket bulunamadı." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% include "includes/_pagination.html" %}
+{% endblock %}

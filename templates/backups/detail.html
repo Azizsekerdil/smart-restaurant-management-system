@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ record.filename }} · {{ RESTAURANT.NAME }}{% endblock %}
+{% block page_heading %}Yedek ayrıntısı{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'backups:index' %}" class="btn btn-sm btn-outline-secondary">
+  <i class="bi bi-arrow-left"></i> {% trans "Yedekler" %}
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-7">
+    <div class="card mb-3">
+      <div class="card-header">{{ record.filename }}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr><td class="ps-3 text-muted">{% trans "Alınma zamanı" %}</td>
+                <td class="text-end pe-3">{{ record.started_at|date:"d.m.Y H:i:s" }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Tür" %}</td>
+                <td class="text-end pe-3">{{ record.get_kind_display }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Durum" %}</td>
+                <td class="text-end pe-3">
+                  {% if record.status == 'success' %}
+                    <span class="badge-soft success">{% trans "Başarılı" %}</span>
+                  {% elif record.status == 'failed' %}
+                    <span class="badge-soft danger">{% trans "Başarısız" %}</span>
+                  {% else %}
+                    <span class="badge-soft muted">{% trans "Sürüyor" %}</span>
+                  {% endif %}
+                </td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Boyut" %}</td>
+                <td class="text-end pe-3 money">{{ record.size_mb }} MB</td></tr>
+            {% if record.duration_seconds %}
+            <tr><td class="ps-3 text-muted">{% trans "Süre" %}</td>
+                <td class="text-end pe-3">{{ record.duration_seconds }} saniye</td></tr>
+            {% endif %}
+            <tr><td class="ps-3 text-muted">{% trans "Alan kullanıcı" %}</td>
+                <td class="text-end pe-3">{{ record.created_by.get_username|default:"sistem" }}</td></tr>
+            {% if record.note %}
+            <tr><td class="ps-3 text-muted">{% trans "Not" %}</td>
+                <td class="text-end pe-3">{{ record.note }}</td></tr>
+            {% endif %}
+            <tr><td class="ps-3 text-muted">{% trans "Dosya bütünlüğü" %}</td>
+                <td class="text-end pe-3">
+                  {% if checksum_ok is None %}
+                    <span class="text-muted">—</span>
+                  {% elif checksum_ok %}
+                    <span class="text-success"><i class="bi bi-check-circle"></i> {% trans "Doğrulandı" %}</span>
+                  {% else %}
+                    <span class="text-danger"><i class="bi bi-x-circle"></i> {% trans "Uyuşmuyor" %}</span>
+                  {% endif %}
+                </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if record.error_message %}
+    <div class="alert alert-danger">
+      <strong>{% trans "Hata:" %}</strong>
+      <pre class="mb-0 small" style="white-space:pre-wrap">{{ record.error_message }}</pre>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-warning">{{ error }}</div>
+    {% endif %}
+
+    {% if manifest %}
+    <div class="card">
+      <div class="card-header">{% trans "Arşiv içeriği" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            {% if manifest.icerik.veritabani %}
+            <tr><td class="ps-3">{% trans "Veritabanı" %}</td>
+                <td class="text-end pe-3 small">
+                  {{ manifest.icerik.veritabani.motor }} ·
+                  {{ manifest.icerik.veritabani.bayt|filesizeformat }}
+                </td></tr>
+            {% endif %}
+            {% if manifest.icerik.json_dokum %}
+            <tr><td class="ps-3">{% trans "Taşınabilir döküm (JSON)" %}</td>
+                <td class="text-end pe-3 small">{{ manifest.icerik.json_dokum.bayt|filesizeformat }}</td></tr>
+            {% endif %}
+            {% if manifest.icerik.medya %}
+            <tr><td class="ps-3">{% trans "Yüklenen dosyalar" %}</td>
+                <td class="text-end pe-3 small">
+                  {{ manifest.icerik.medya.dosya_sayisi }} dosya ·
+                  {{ manifest.icerik.medya.bayt|filesizeformat }}
+                </td></tr>
+            {% endif %}
+            {% if manifest.icerik.gizli_ayarlar %}
+            <tr class="table-warning"><td class="ps-3">{% trans "Ayar dosyası (.env)" %}</td>
+                <td class="text-end pe-3 small">{% trans "API anahtarları içerir" %}</td></tr>
+            {% endif %}
+            <tr><td class="ps-3 text-muted">{% trans "Django sürümü" %}</td>
+                <td class="text-end pe-3 small">{{ manifest.django }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if manifest.uyarilar %}
+    <div class="card mt-3">
+      <div class="card-header">{% trans "Yedekleme sırasındaki uyarılar" %}</div>
+      <ul class="list-group list-group-flush">
+        {% for warning in manifest.uyarilar %}
+          <li class="list-group-item small">{{ warning }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    {% endif %}
+  </div>
+
+  <div class="col-12 col-lg-5">
+    {% if record.exists %}
+      {% if can_download %}
+      <div class="card mb-3">
+        <div class="card-header">{% trans "İndir" %}</div>
+        <div class="card-body">
+          <p class="small text-muted">
+            {% trans "Arşivi başka bir diske veya harici belleğe kopyalamak, disk arızasına karşı tek gerçek korumadır." %}
+          </p>
+          <a href="{% url 'backups:download' record.pk %}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-download"></i>
+            {% blocktrans with size=record.size_mb %}Yedeği indir ({{ size }} MB){% endblocktrans %}
+          </a>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if can_restore %}
+      <div class="card border-danger">
+        <div class="card-header text-danger">{% trans "Geri yükle" %}</div>
+        <div class="card-body">
+          <div class="alert alert-danger small">
+            <strong>{% trans "Bu işlem geri alınamaz." %}</strong>
+            <ul class="mb-0 mt-2 ps-3">
+              <li>{% trans "Şu anki tüm veriler bu yedekteki hâliyle değiştirilir." %}</li>
+              <li>{% blocktrans %}Yedek alındıktan sonra girilen <strong>her sipariş, ödeme ve müşteri kaydı silinir</strong>.{% endblocktrans %}</li>
+              <li>{% trans "İşlemden hemen önce otomatik bir güvenlik yedeği alınır, böylece gerekirse bu andaki duruma dönebilirsiniz." %}</li>
+            </ul>
+          </div>
+
+          <form method="post" action="{% url 'backups:restore' record.pk %}"
+                onsubmit="return confirm('Geri yükleme başlatılsın mı? Mevcut verilerin üzerine yazılacak.');">
+            {% csrf_token %}
+            <label class="form-label small">
+              {% blocktrans with phrase=restore_confirmation %}Onaylamak için <code>{{ phrase }}</code> yazın:{% endblocktrans %}
+            </label>
+            <input type="text" name="confirmation" class="form-control mb-2"
+                   autocomplete="off" placeholder="{{ restore_confirmation }}" required>
+            <button class="btn btn-danger w-100">
+              <i class="bi bi-arrow-counterclockwise"></i> {% trans "Geri yükle" %}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <form method="post" action="{% url 'backups:delete' record.pk %}" class="mt-3"
+            onsubmit="return confirm('Bu yedek kalıcı olarak silinsin mi?');">
+        {% csrf_token %}
+        <button class="btn btn-sm btn-outline-danger w-100">
+          <i class="bi bi-trash"></i> {% trans "Yedeği sil" %}
+        </button>
+      </form>
+      {% endif %}
+    {% else %}
+      <div class="alert alert-warning">
+        {% trans "Yedek dosyası diskte bulunamadı. Elle silinmiş veya taşınmış olabilir." %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

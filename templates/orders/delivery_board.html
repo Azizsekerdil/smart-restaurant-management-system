@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="card"><div class="card-body p-0" style="overflow-x:auto;">
+  <table class="table table-hover mb-0">
+    <thead><tr><th class="ps-3">{% trans "Sipariş" %}</th><th>{% trans "Müşteri" %}</th><th>{% trans "Adres" %}</th><th>{% trans "Kurye" %}</th>
+      <th>{% trans "Durum" %}</th><th class="text-end">{% trans "Tutar" %}</th><th class="pe-3 text-end">{% trans "İşlem" %}</th></tr></thead>
+    <tbody>
+    {% for order in orders %}
+      <tr>
+        <td class="ps-3 fw-semibold">{{ order.number }}
+          <small class="d-block text-muted">{{ order.opened_at|date:"d.m H:i" }}</small></td>
+        <td>{{ order.customer.full_name|default:"—" }}
+          {% if order.delivery_phone %}<small class="d-block text-muted">{{ order.delivery_phone }}</small>{% endif %}</td>
+        <td class="small" style="max-width:260px;">{{ order.delivery_address|truncatechars:70|default:"—" }}</td>
+        <td>
+          <form method="post" action="{% url 'orders:delivery_assign' order.pk %}" class="d-flex gap-1">
+            {% csrf_token %}
+            <select name="courier_id" class="form-select form-select-sm">
+              <option value="">{% trans "— Kurye seç —" %}</option>
+              {% for courier in couriers %}
+                <option value="{{ courier.pk }}" {% if order.courier_id == courier.pk %}selected{% endif %}>{{ courier.display_name }}</option>
+              {% endfor %}
+            </select>
+            <button class="btn btn-sm btn-outline-primary"><i class="bi bi-check"></i></button>
+          </form>
+        </td>
+        <td><span class="badge-soft {% if order.delivered_at %}ok{% else %}info{% endif %}">
+          {% if order.delivered_at %}Teslim edildi{% else %}{{ order.get_status_display }}{% endif %}</span></td>
+        <td class="text-end money">{{ order.grand_total|floatformat:2 }}</td>
+        <td class="pe-3 text-end">
+          {% if not order.delivered_at %}
+            <form method="post" action="{% url 'orders:delivery_complete' order.pk %}" class="d-inline">{% csrf_token %}
+              <button class="btn btn-sm btn-success"><i class="bi bi-box-arrow-right me-1"></i>{% trans "Teslim" %}</button>
+            </form>
+          {% endif %}
+          <a href="{% url 'orders:order_detail' order.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7"><div class="empty-state"><i class="bi bi-truck"></i>{% trans "Teslimat siparişi yok." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+{% if order.status == 'draft' or order.status == 'requested' %}
+  <form method="post" action="{% url 'inventory:purchase_approve' order.pk %}">{% csrf_token %}
+    <button class="btn btn-sm btn-success"><i class="bi bi-check-lg me-1"></i>{% trans "Onayla" %}</button></form>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between">
+        <span>{{ order.number }} — {{ order.supplier.name }}</span>
+        <span class="badge-soft info">{{ order.get_status_display }}</span>
+      </div>
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead><tr><th class="ps-3">{% trans "Malzeme" %}</th><th class="text-end">{% trans "Miktar" %}</th><th>{% trans "Birim" %}</th>
+            <th class="text-end">{% trans "Birim fiyat" %}</th><th class="text-end">KDV</th><th class="text-end">{% trans "Toplam" %}</th>
+            <th class="text-end pe-3">{% trans "Teslim alınan" %}</th></tr></thead>
+          <tbody>
+          {% for line in order.lines.all %}
+            <tr>
+              <td class="ps-3">{{ line.ingredient.name }}
+                {% if line.expiry_date %}<small class="d-block text-muted">SKT: {{ line.expiry_date|date:"d.m.Y" }}</small>{% endif %}</td>
+              <td class="text-end">{{ line.quantity|floatformat:3 }}</td>
+              <td>{{ line.unit.code }}</td>
+              <td class="text-end money">{{ line.unit_price|floatformat:4 }}</td>
+              <td class="text-end">%{{ line.tax_rate|floatformat:0 }}</td>
+              <td class="text-end money">{{ line.line_total|floatformat:2 }}</td>
+              <td class="text-end pe-3">
+                {% if line.is_fully_received %}<span class="badge-soft ok">{{ line.received_quantity|floatformat:2 }}</span>
+                {% else %}<span class="text-muted">{{ line.received_quantity|floatformat:2 }} / {{ line.quantity|floatformat:2 }}</span>{% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="7" class="text-center text-muted py-4">{% trans "Henüz satır eklenmedi." %}</td></tr>
+          {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr><td class="ps-3" colspan="5">{% trans "Ara toplam" %}</td><td class="text-end money">{{ order.subtotal|floatformat:2 }}</td><td></td></tr>
+            <tr><td class="ps-3" colspan="5">KDV</td><td class="text-end money">{{ order.tax_total|floatformat:2 }}</td><td></td></tr>
+            <tr class="fw-bold"><td class="ps-3" colspan="5">{% trans "Genel toplam" %}</td>
+              <td class="text-end money">{{ order.grand_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td><td></td></tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    {% if order.is_editable %}
+      <div class="card">
+        <div class="card-header">{% trans "Satır ekle" %}</div>
+        <div class="card-body">
+          <form method="post" action="{% url 'inventory:purchase_add_line' order.pk %}" class="row g-2 align-items-end">
+            {% csrf_token %}
+            <div class="col-12 col-md-4"><label class="form-label">{% trans "Malzeme" %}</label>
+              <select name="ingredient_id" class="form-select" required>
+                {% for ingredient in ingredients %}<option value="{{ ingredient.pk }}">{{ ingredient.name }}</option>{% endfor %}
+              </select></div>
+            <div class="col-6 col-md-2"><label class="form-label">{% trans "Miktar" %}</label>
+              <input type="number" step="0.001" min="0.001" name="quantity" class="form-control" required></div>
+            <div class="col-6 col-md-2"><label class="form-label">{% trans "Birim" %}</label>
+              <select name="unit_id" class="form-select">
+                {% for unit in units %}<option value="{{ unit.pk }}">{{ unit.code }}</option>{% endfor %}
+              </select></div>
+            <div class="col-6 col-md-2"><label class="form-label">{% trans "Birim fiyat" %}</label>
+              <input type="number" step="0.0001" min="0" name="unit_price" class="form-control" required></div>
+            <div class="col-6 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Ekle" %}</button></div>
+          </form>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="col-12 col-lg-4">
+    {% if order.status == 'approved' or order.status == 'ordered' or order.status == 'partial' %}
+      <div class="card">
+        <div class="card-header"><i class="bi bi-box-arrow-in-down me-2"></i>{% trans "Teslim alma" %}</div>
+        <div class="card-body">
+          <form method="post" action="{% url 'inventory:purchase_receive' order.pk %}">
+            {% csrf_token %}
+            {% for line in order.lines.all %}
+              <div class="mb-2">
+                <label class="form-label small">{{ line.ingredient.name }} ({{ line.unit.code }})</label>
+                <input type="number" step="0.001" min="0" name="received_{{ line.pk }}"
+                       class="form-control form-control-sm" value="{{ line.quantity|floatformat:3 }}">
+              </div>
+            {% endfor %}
+            <div class="mb-3"><label class="form-label small">{% trans "Fatura no" %}</label>
+              <input type="text" name="invoice_number" class="form-control form-control-sm" value="{{ order.invoice_number }}"></div>
+            <button class="btn btn-success w-100"><i class="bi bi-check-lg me-1"></i>{% trans "Teslim al ve stoğa ekle" %}</button>
+          </form>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="card mt-3">
+      <div class="card-header">{% trans "Bilgiler" %}</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0"><tbody>
+          <tr><td class="text-muted">{% trans "Oluşturulma" %}</td><td class="text-end">{{ order.created_at|date:"d.m.Y H:i" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Onaylayan" %}</td><td class="text-end">{{ order.approved_by.display_name|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Beklenen teslim" %}</td><td class="text-end">{{ order.expected_date|date:"d.m.Y"|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Teslim zamanı" %}</td><td class="text-end">{{ order.received_at|date:"d.m.Y H:i"|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Fatura no" %}</td><td class="text-end">{{ order.invoice_number|default:"—" }}</td></tr>
+        </tbody></table>
+        {% if order.notes %}<hr><p class="small text-muted mb-0">{{ order.notes }}</p>{% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

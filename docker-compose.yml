@@ -1,0 +1,112 @@
+# ============================================================
+#  Akıllı Restaurant Yönetim Sistemi — Docker Compose
+#
+#  Kullanım:
+#      cp .env.example .env
+#      docker compose up -d --build
+#      docker compose exec web python manage.py createsuperuser
+#      docker compose exec web python manage.py seed_demo
+#
+#  Uygulama: http://localhost:8000
+# ============================================================
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: restaurant-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-restaurant}
+      POSTGRES_USER: ${DB_USER:-restaurant}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-restaurant-degistir}
+      # Türkçe sıralama ve karakter desteği
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-restaurant} -d ${DB_NAME:-restaurant}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Veritabanı yalnızca iç ağa açıktır; dışarıya port yayınlanmaz.
+
+  redis:
+    image: redis:7-alpine
+    container_name: restaurant-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build: .
+    container_name: restaurant-web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # Kapsayıcı içi bağlantılar .env değerlerini geçersiz kılar
+      DB_ENGINE: postgres
+      DB_HOST: db
+      DB_PORT: "5432"
+      CHANNEL_LAYER: redis
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,web}
+      # LM Studio ana makinede çalışıyorsa kapsayıcıdan böyle erişilir
+      LMSTUDIO_BASE_URL: ${LMSTUDIO_BASE_URL:-http://host.docker.internal:1234/v1}
+      # Geliştirme merkezi kapsayıcıda varsayılan olarak kapalıdır
+      DEVCENTER_ENABLED: "False"
+      DEVCENTER_TERMINAL_ENABLED: "False"
+    ports:
+      - "8000:8000"
+    volumes:
+      - media_data:/app/media
+      - logs_data:/app/logs
+    extra_hosts:
+      # Linux'ta host.docker.internal'ın çalışması için
+      - "host.docker.internal:host-gateway"
+
+  # --------------------------------------------------------------
+  # Arka plan görevleri (isteğe bağlı)
+  #     docker compose --profile workers up -d
+  # --------------------------------------------------------------
+  worker:
+    build: .
+    container_name: restaurant-worker
+    restart: unless-stopped
+    profiles: ["workers"]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DB_ENGINE: postgres
+      DB_HOST: db
+      CELERY_ENABLED: "True"
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+    command: celery -A config.celery:app worker --loglevel=info
+    volumes:
+      - media_data:/app/media
+      - logs_data:/app/logs
+
+volumes:
+  db_data:
+  redis_data:
+  media_data:
+  logs_data:

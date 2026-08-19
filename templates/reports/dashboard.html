@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+{% load static humanize i18n %}
+
+{% block topbar_actions %}
+  <a href="{% url 'reports:report_index' %}" class="btn btn-sm btn-outline-primary">
+    <i class="bi bi-bar-chart me-1"></i>{% trans "Raporlar" %}
+  </a>
+{% endblock %}
+
+{% block content %}
+{# ------------------------------- uyarılar ------------------------------- #}
+{% if alerts %}
+  <div class="row g-2 mb-3">
+    {% for alert in alerts %}
+      <div class="col-12 col-lg-6">
+        <a href="{{ alert.url }}" class="text-decoration-none">
+          <div class="alert alert-{{ alert.level }} mb-0 d-flex gap-3 align-items-start">
+            <i class="bi bi-{{ alert.icon }} fs-5"></i>
+            <div>
+              <div class="fw-semibold">{{ alert.title }}</div>
+              <div class="small opacity-75">{{ alert.detail }}</div>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{# ------------------------------- özet kartları ------------------------------- #}
+<div class="row g-3 mb-3">
+  <div class="col-6 col-xl-3">
+    <div class="card stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="label">{% trans "Bugünkü ciro" %}</div>
+          <div class="value money">{{ metrics.revenue|floatformat:2|intcomma }} {{ CURRENCY_SYMBOL }}</div>
+          <div class="delta {% if metrics.revenue_change_percent >= 0 %}up{% else %}down{% endif %}">
+            <i class="bi bi-arrow-{% if metrics.revenue_change_percent >= 0 %}up{% else %}down{% endif %}"></i>
+            %{{ metrics.revenue_change_percent }} <span class="text-muted fw-normal">{% trans "düne göre" %}</span>
+          </div>
+        </div>
+        <span class="stat-icon"><i class="bi bi-cash-stack"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-xl-3">
+    <div class="card stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="label">{% trans "Sipariş sayısı" %}</div>
+          <div class="value">{{ metrics.order_count }}</div>
+          <div class="delta {% if metrics.order_change_percent >= 0 %}up{% else %}down{% endif %}">
+            <i class="bi bi-arrow-{% if metrics.order_change_percent >= 0 %}up{% else %}down{% endif %}"></i>
+            %{{ metrics.order_change_percent }} <span class="text-muted fw-normal">{{ metrics.guest_count }} misafir</span>
+          </div>
+        </div>
+        <span class="stat-icon"><i class="bi bi-receipt"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-xl-3">
+    <div class="card stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="label">{% trans "Ortalama sepet" %}</div>
+          <div class="value money">{{ metrics.average_ticket|floatformat:2|intcomma }} {{ CURRENCY_SYMBOL }}</div>
+          <div class="delta text-muted fw-normal">
+            {% blocktrans with amount=metrics.average_per_guest|floatformat:2 currency=CURRENCY_SYMBOL %}Kişi başı {{ amount }} {{ currency }}{% endblocktrans %}
+          </div>
+        </div>
+        <span class="stat-icon"><i class="bi bi-basket"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-xl-3">
+    <div class="card stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="label">{% trans "Masa doluluğu" %}</div>
+          <div class="value">%{{ metrics.occupancy_rate }}</div>
+          <div class="delta text-muted fw-normal">
+            {{ metrics.table_occupied }} / {{ metrics.table_total }} masa dolu
+          </div>
+        </div>
+        <span class="stat-icon"><i class="bi bi-grid-3x3-gap"></i></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ------------------------------- grafikler ------------------------------- #}
+<div class="row g-3 mb-3">
+  <div class="col-12 col-xl-8">
+    <div class="card h-100">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-graph-up me-2"></i>{% trans "Son 14 günün cirosu" %}</span>
+        <small class="text-muted">Hafta: {{ metrics.week_revenue|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }} · Ay: {{ metrics.month_revenue|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }}</small>
+      </div>
+      <div class="card-body"><canvas id="revenueChart" height="110"></canvas></div>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-pie-chart me-2"></i>{% trans "Kategori dağılımı (7 gün)" %}</div>
+      <div class="card-body">
+        {% if categories %}
+          <canvas id="categoryChart" height="180"></canvas>
+        {% else %}
+          <div class="empty-state"><i class="bi bi-inbox"></i>{% trans "Bu dönemde satış yok" %}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-12 col-xl-8">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-clock-history me-2"></i>{% trans "Saatlik yoğunluk (14 gün ortalaması)" %}</div>
+      <div class="card-body"><canvas id="hourlyChart" height="90"></canvas></div>
+    </div>
+  </div>
+  <div class="col-12 col-xl-4">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-trophy me-2"></i>{% trans "En çok satanlar (7 gün)" %}</div>
+      <div class="card-body p-0">
+        {% if top_products %}
+          <table class="table table-hover mb-0">
+            <tbody>
+            {% for item in top_products %}
+              <tr>
+                <td class="ps-3">
+                  <div class="fw-semibold" style="font-size:13px;">{{ item.product__name }}</div>
+                  <small class="text-muted">{{ item.product__category__name|default:"—" }}</small>
+                </td>
+                <td class="text-end"><span class="badge-soft info">{{ item.total_quantity|floatformat:0 }} adet</span></td>
+                <td class="text-end pe-3 money">{{ item.revenue|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="empty-state"><i class="bi bi-inbox"></i>{% trans "Henüz satış kaydı yok" %}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ------------------------------- karşılaştırma & risk ------------------------------- #}
+<div class="row g-3">
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-calendar-range me-2"></i>{% trans "Dönem karşılaştırması" %}</div>
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead><tr><th class="ps-3">{% trans "Dönem" %}</th><th class="text-end">{% trans "Bu" %}</th><th class="text-end pe-3">{% trans "Değişim" %}</th></tr></thead>
+          <tbody>
+            <tr><td class="ps-3">{% trans "Bugün" %}</td><td class="text-end money">{{ comparison.day.current_revenue|floatformat:0|intcomma }}</td>
+              <td class="text-end pe-3"><span class="delta {% if comparison.day.revenue_change >= 0 %}up{% else %}down{% endif %}">%{{ comparison.day.revenue_change }}</span></td></tr>
+            <tr><td class="ps-3">{% trans "Bu hafta" %}</td><td class="text-end money">{{ comparison.week.current_revenue|floatformat:0|intcomma }}</td>
+              <td class="text-end pe-3"><span class="delta {% if comparison.week.revenue_change >= 0 %}up{% else %}down{% endif %}">%{{ comparison.week.revenue_change }}</span></td></tr>
+            <tr><td class="ps-3">{% trans "Bu ay" %}</td><td class="text-end money">{{ comparison.month.current_revenue|floatformat:0|intcomma }}</td>
+              <td class="text-end pe-3"><span class="delta {% if comparison.month.revenue_change >= 0 %}up{% else %}down{% endif %}">%{{ comparison.month.revenue_change }}</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-x-octagon me-2"></i>{% trans "İptal ve iade (bugün)" %}</div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">{% trans "İptal edilen adisyon" %}</span>
+          <strong>{{ metrics.cancel_count }} <small class="text-muted">(%{{ metrics.cancel_rate }})</small></strong>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">{% trans "İptal tutarı" %}</span>
+          <strong class="money">{{ metrics.cancel_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</strong>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">{% trans "İade sayısı" %}</span><strong>{{ metrics.refund_count }}</strong>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-muted">{% trans "İade tutarı" %}</span>
+          <strong class="money text-danger">{{ metrics.refund_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</strong>
+        </div>
+        {% if can_see_financial %}
+          <hr>
+          <div class="d-flex justify-content-between"><span class="text-muted">{% trans "Toplam indirim" %}</span>
+            <strong class="money">{{ metrics.discount_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-muted">{% trans "KDV (dahil)" %}</span>
+            <strong class="money">{{ metrics.tax_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</strong></div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-credit-card me-2"></i>{% trans "Ödeme dağılımı (bugün)" %}</div>
+      <div class="card-body">
+        {% for payment in payments %}
+          <div class="mb-2">
+            <div class="d-flex justify-content-between" style="font-size:13px;">
+              <span>{{ payment.label }}</span>
+              <strong class="money">{{ payment.total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</strong>
+            </div>
+            <div class="stock-bar mt-1"><span style="width:{{ payment.percent }}%;background:var(--brand);"></span></div>
+          </div>
+        {% empty %}
+          <div class="empty-state py-4"><i class="bi bi-wallet2"></i>{% trans "Bugün henüz ödeme alınmadı" %}</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'vendor/js/chart.umd.min.js' %}"></script>
+{{ revenue_series|json_script:"revenue-data" }}
+{{ hourly|json_script:"hourly-data" }}
+{{ categories|json_script:"category-data" }}
+<script>
+(function () {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const grid = isDark ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.07)';
+  const tick = isDark ? '#9198a1' : '#5b6773';
+  Chart.defaults.color = tick;
+  Chart.defaults.font.family = 'Segoe UI, system-ui, sans-serif';
+
+  const revenue = JSON.parse(document.getElementById('revenue-data').textContent);
+  new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: {
+      labels: revenue.labels,
+      datasets: [
+        { label: 'Ciro (₺)', data: revenue.revenue, borderColor: '#1f6feb',
+          backgroundColor: 'rgba(31,111,235,.14)', fill: true, tension: .35, borderWidth: 2, pointRadius: 3 },
+        { label: 'Sipariş', data: revenue.orders, borderColor: '#f0883e',
+          borderWidth: 2, tension: .35, pointRadius: 2, yAxisID: 'y1' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { position: 'bottom' } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: grid } },
+        y1: { beginAtZero: true, position: 'right', grid: { display: false } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  const hourly = JSON.parse(document.getElementById('hourly-data').textContent);
+  new Chart(document.getElementById('hourlyChart'), {
+    type: 'bar',
+    data: { labels: hourly.labels, datasets: [{ label: 'Ortalama sipariş', data: hourly.orders, backgroundColor: '#1f6feb', borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, grid: { color: grid } }, x: { grid: { display: false } } } }
+  });
+
+  const categoryEl = document.getElementById('categoryChart');
+  if (categoryEl) {
+    const categories = JSON.parse(document.getElementById('category-data').textContent);
+    new Chart(categoryEl, {
+      type: 'doughnut',
+      data: {
+        labels: categories.map(c => c.category),
+        datasets: [{ data: categories.map(c => parseFloat(c.revenue)),
+          backgroundColor: ['#1f6feb', '#f0883e', '#2da44e', '#d29922', '#8250df', '#cf222e', '#0969da', '#57606a'] }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '58%',
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } } }
+    });
+  }
+})();
+</script>
+{% endblock %}

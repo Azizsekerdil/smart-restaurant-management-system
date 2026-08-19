@@ -1,0 +1,121 @@
+[project]
+name = "smart-restaurant-management-system"
+version = "1.0.0"
+description = "Akıllı Restaurant Yönetim Sistemi — POS, stok, mutfak ekranı, raporlama ve yapay zekâ entegrasyonları"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+# ============================================================
+#  Ruff — linter
+# ============================================================
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [
+    "*/migrations/*",
+    ".venv",
+    "staticfiles",
+    "media",
+    "node_modules",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle hataları
+    "W",    # pycodestyle uyarıları
+    "F",    # pyflakes
+    "I",    # isort (import sıralaması)
+    "B",    # bugbear (yaygın hatalar)
+    "C4",   # comprehension iyileştirmeleri
+    "UP",   # pyupgrade
+    "DJ",   # Django'ya özgü kurallar
+    "S",    # bandit (güvenlik)
+    "T20",  # print() kullanımı
+]
+ignore = [
+    "E501",   # satır uzunluğu — formatter zaten yönetiyor
+    "B008",   # varsayılan argümanda fonksiyon çağrısı (Django'da yaygın)
+    "S101",   # assert — testlerde gerekli
+    "DJ001",  # null=True on CharField — bazı alanlarda bilinçli tercih
+    "UP038",  # isinstance tuple sözdizimi
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "T20", "B"]
+"conftest.py" = ["S"]
+# Bakım scriptleri komut satırı aracıdır: print çıktısı ve denetlenmiş
+# subprocess kullanımı beklenen davranıştır.
+"scripts/*" = ["T20", "S404", "S603", "S607"]
+# Paketlenmiş uygulamanın konsol başlatıcısı: kullanıcıya durum bilgisi
+# print ile gösterilir, kurulum sihirbazı input alır.
+"launcher.py" = ["T20", "S310"]
+"apps/*/migrations/*" = ["ALL"]
+"apps/devcenter/sandbox.py" = ["S404", "S603", "S607"]  # allowlist + shell=False ile korunuyor
+"apps/devcenter/services.py" = ["S404", "S603", "S607"]
+"apps/core/management/commands/seed_demo.py" = ["S311"]  # demo verisi için random yeterli
+"apps/ai/analytics.py" = ["S311"]
+"config/settings.py" = ["E402"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+
+# ============================================================
+#  Black — biçimlendirici
+# ============================================================
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+extend-exclude = '''
+/(
+  | migrations
+  | \.venv
+  | staticfiles
+  | media
+)/
+'''
+
+# ============================================================
+#  Mypy — tip denetimi
+# ============================================================
+[tool.mypy]
+python_version = "3.11"
+plugins = ["mypy_django_plugin.main"]
+ignore_missing_imports = true
+warn_unused_configs = true
+warn_redundant_casts = true
+show_error_codes = true
+exclude = ["migrations/", ".venv/", "staticfiles/", "tests/"]
+# Kademeli tip denetimi: mevcut kod kırılmadan tip güvenliği artırılır.
+check_untyped_defs = false
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["*.migrations.*"]
+ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+
+# ============================================================
+#  Bandit — güvenlik taraması
+# ============================================================
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "migrations", "staticfiles", "node_modules"]
+# B101 assert (testlerde), B311 random (demo verisi), B404/B603/B607 subprocess
+# (güvenli terminal allowlist + shell=False ile korunuyor)
+skips = ["B101", "B311"]
+
+# ============================================================
+#  Coverage
+# ============================================================
+[tool.coverage.run]
+source = ["apps"]
+omit = ["*/migrations/*", "*/tests/*", "*/__init__.py", "*/apps.py"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]

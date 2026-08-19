@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}Yetkisiz erişim{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body text-center p-5">
+    <i class="bi bi-shield-exclamation text-warning" style="font-size:52px;"></i>
+    <h2 class="h4 mt-3">{% trans "Erişim yetkiniz yok" %}</h2>
+    <p class="text-muted">{{ message|default:"Bu sayfaya erişmek için gerekli yetkiye sahip değilsiniz." }}</p>
+    {% if required %}<p class="small text-muted">Gerekli izin: <code>{{ required }}</code></p>{% endif %}
+    <a href="{% url 'core:home' %}" class="btn btn-primary mt-2"><i class="bi bi-house me-1"></i>{% trans "Ana ekrana dön" %}</a>
+  </div>
+</div>
+{% endblock %}

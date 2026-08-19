@@ -1,0 +1,141 @@
+# ============================================================
+#  Akıllı Restaurant Yönetim Sistemi - Git yoksayma kuralları
+#  ÖNEMLİ: Gizli anahtarlar, veritabanı ve kullanıcı verileri
+#  hiçbir koşulda depoya girmemelidir.
+# ============================================================
+
+# --- Gizli bilgiler / ortam değişkenleri ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+secrets.json
+credentials.json
+*_secret*
+*apikey*
+*api_key*
+
+# --- Veritabanı ---
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+*.db
+*.db-wal
+*.db-shm
+*.sql
+*.dump
+db.sqlite3
+
+# --- Yedekler ve geri yükleme ---
+# DİKKAT: Kalıp köke sabitlenmelidir. Sabitlenmemiş "backups/" her
+# seviyedeki aynı adlı klasörü eşleştirir ve "apps/backups" (yedekleme
+# modülünün kaynak kodu) ile "templates/backups" sessizce depo dışında
+# kalır.
+/backups/
+/Uygulama/backups/
+*.bak
+*.backup
+restore_temp/
+
+# --- Kullanıcı yüklemeleri ---
+media/
+uploads/
+!media/.gitkeep
+
+# --- Loglar ---
+logs/
+*.log
+!logs/.gitkeep
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Sanal ortam ---
+.venv/
+venv/
+ENV/
+env/
+.python-version
+
+# --- Test / kapsam ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.tox/
+.nox/
+.hypothesis/
+
+# --- Tip denetimi / linter önbellekleri ---
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+
+# --- Paketlenmiş uygulama ---
+# "Uygulama" klasörü exe'nin kurulu sürümünü ve onun YANINDA oluşan
+# veritabanı/günlük/medya dosyalarını barındırır; hiçbiri depoya girmez.
+Uygulama/
+*.exe
+
+# --- Django ---
+staticfiles/
+static_collected/
+local_settings.py
+
+# --- AI Geliştirme Merkezi çalışma alanı ---
+.devcenter/
+.ai_workspace/
+.ai_snapshots/
+
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# --- Editör / IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Geçici ---
+tmp/
+temp/
+*.tmp
+
+# --- Dahili / yayımlanmamış çalışma dizinleri ---
+# Bu klasörler ürünün parçası değildir; yerel çalışma malzemesidir ve
+# depoya HİÇBİR KOŞULDA girmemelidir. Yayın kapısı
+# (scripts/public_release_check.py) izlenip izlenmediklerini denetler.
+/patent/
+/.claude/
+/internal/

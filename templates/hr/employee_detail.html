@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h2 class="h5">{{ employee.user.display_name }}</h2>
+        <p class="text-muted">{{ employee.user.get_role_display }} · {{ employee.get_employment_type_display }}</p>
+        <table class="table table-sm mb-0"><tbody>
+          <tr><td class="text-muted">{% trans "İşe giriş" %}</td><td class="text-end">{{ employee.hire_date|date:"d.m.Y" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Kıdem" %}</td><td class="text-end">{{ employee.tenure_days }} gün</td></tr>
+          <tr><td class="text-muted">{% trans "Haftalık hedef" %}</td><td class="text-end">{{ employee.weekly_hours_target }} saat</td></tr>
+          <tr><td class="text-muted">{% trans "Bu ay çalışma" %}</td><td class="text-end fw-semibold">{{ month_hours }} saat</td></tr>
+          <tr><td class="text-muted">{% trans "Bu ay satış" %}</td><td class="text-end money">{{ month_sales|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td></tr>
+          <tr><td class="text-muted">{% trans "Acil durum" %}</td><td class="text-end small">{{ employee.emergency_contact|default:"—" }}<br>{{ employee.emergency_phone }}</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-8">
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-clock me-2"></i>{% trans "Puantaj kayıtları" %}</div>
+      <div class="card-body p-0" style="max-height:340px;overflow-y:auto;">
+        <table class="table table-sm mb-0">
+          <thead><tr><th class="ps-3">{% trans "Giriş" %}</th><th>{% trans "Çıkış" %}</th><th class="text-end">{% trans "Mola" %}</th><th class="text-end pe-3">{% trans "Süre" %}</th></tr></thead>
+          <tbody>
+          {% for attendance in attendances %}
+            <tr class="{% if attendance.is_late %}table-warning{% endif %}">
+              <td class="ps-3 small">{{ attendance.check_in|date:"d.m.Y H:i" }}{% if attendance.is_late %} <span class="badge-soft warn">{% trans "geç" %}</span>{% endif %}</td>
+              <td class="small">{{ attendance.check_out|date:"H:i"|default:"— devam ediyor" }}</td>
+              <td class="text-end small">{{ attendance.break_minutes }} dk</td>
+              <td class="text-end pe-3 fw-semibold">{{ attendance.worked_hours }} sa</td>
+            </tr>
+          {% empty %}<tr><td colspan="4" class="text-center text-muted py-4">{% trans "Kayıt yok." %}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <div class="card h-100">
+          <div class="card-header">{% trans "Yaklaşan vardiyalar" %}</div>
+          <div class="card-body p-0">
+            <table class="table table-sm mb-0"><tbody>
+              {% for assignment in assignments %}
+                <tr><td class="ps-3 small">{{ assignment.work_date|date:"d.m.Y" }}</td>
+                  <td class="text-end pe-3 small">{{ assignment.shift.name }}</td></tr>
+              {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Vardiya yok." %}</td></tr>{% endfor %}
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="card h-100">
+          <div class="card-header">{% trans "İzinler" %}</div>
+          <div class="card-body p-0">
+            <table class="table table-sm mb-0"><tbody>
+              {% for leave in leaves %}
+                <tr><td class="ps-3 small">{{ leave.start_date|date:"d.m" }}–{{ leave.end_date|date:"d.m" }}
+                  <small class="d-block text-muted">{{ leave.get_kind_display }}</small></td>
+                  <td class="text-end pe-3"><span class="badge-soft {% if leave.status == 'approved' %}ok{% elif leave.status == 'rejected' %}danger{% else %}warn{% endif %}">
+                    {{ leave.get_status_display }}</span></td></tr>
+              {% empty %}<tr><td class="text-center text-muted py-3">{% trans "İzin kaydı yok." %}</td></tr>{% endfor %}
+            </tbody></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load humanize i18n %}
+{% block content %}
+<div class="card mb-3"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-6 col-md-3"><label class="form-label">{% trans "Başlangıç" %}</label>
+      <input type="date" name="from" class="form-control" value="{{ start|date:'Y-m-d' }}"></div>
+    <div class="col-6 col-md-3"><label class="form-label">{% trans "Bitiş" %}</label>
+      <input type="date" name="to" class="form-control" value="{{ end|date:'Y-m-d' }}"></div>
+    <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Uygula" %}</button></div>
+  </form>
+</div></div>
+
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Toplam ciro" %}</div>
+    <div class="value money">{{ total_revenue|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Toplam maliyet" %}</div>
+    <div class="value money">{{ total_cost|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Brüt kâr" %}</div>
+    <div class="value money text-success">{{ total_profit|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Reçetesiz ürün" %}</div>
+    <div class="value text-warning">{{ no_recipe_count }}</div>
+    <small class="text-muted">{% trans "Maliyeti 0 sayıldı" %}</small></div></div>
+</div>
+
+{% if no_recipe_count %}
+  <div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle me-1"></i>
+    {% blocktrans with count=no_recipe_count %}<strong>{{ count }} ürünün reçetesi tanımlı değil.</strong> Bu ürünlerin maliyeti sıfır kabul edildiği için kâr rakamları olduğundan yüksek görünür.{% endblocktrans %}
+  </div>
+{% endif %}
+
+<div class="card"><div class="card-body p-0" style="overflow-x:auto;">
+  <table class="table table-hover mb-0">
+    <thead><tr><th class="ps-3">{% trans "Ürün" %}</th><th class="text-end">{% trans "Adet" %}</th><th class="text-end">{% trans "Ciro" %}</th>
+      <th class="text-end">{% trans "Birim maliyet" %}</th><th class="text-end">{% trans "Toplam maliyet" %}</th>
+      <th class="text-end">{% trans "Kâr" %}</th><th class="text-end">{% trans "Marj" %}</th><th class="pe-3 text-end">{% trans "Gıda maliyeti" %}</th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td class="ps-3">
+          <a href="{% url 'catalog:product_detail' row.product.pk %}">{{ row.product.name }}</a>
+          {% if not row.has_recipe %}<span class="badge-soft warn ms-1">{% trans "reçetesiz" %}</span>{% endif %}
+        </td>
+        <td class="text-end">{{ row.quantity|floatformat:0 }}</td>
+        <td class="text-end money">{{ row.revenue|floatformat:2 }}</td>
+        <td class="text-end money">{{ row.unit_cost|floatformat:2 }}</td>
+        <td class="text-end money">{{ row.total_cost|floatformat:2 }}</td>
+        <td class="text-end money fw-semibold">{{ row.profit|floatformat:2 }}</td>
+        <td class="text-end"><span class="badge-soft {% if row.margin_percent >= 60 %}ok{% elif row.margin_percent >= 40 %}warn{% else %}danger{% endif %}">
+          %{{ row.margin_percent }}</span></td>
+        <td class="text-end pe-3">%{{ row.food_cost_percent|floatformat:1 }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="8"><div class="empty-state"><i class="bi bi-cash-coin"></i>{% trans "Bu dönemde satış yok." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}

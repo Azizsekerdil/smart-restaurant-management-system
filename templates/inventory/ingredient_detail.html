@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'inventory:ingredient_edit' ingredient.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil me-1"></i>{% trans "Düzenle" %}</a>
+<button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#receiveModal"><i class="bi bi-box-arrow-in-down me-1"></i>{% trans "Stok girişi" %}</button>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-4">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h2 class="h5">{{ ingredient.name }}</h2>
+        <p class="text-muted mb-3">{{ ingredient.category.name|default:"Kategorisiz" }} · {{ ingredient.sku|default:"kodsuz" }}</p>
+        <div class="text-center py-3" style="background:var(--bg-sunken);border-radius:var(--radius);">
+          <div class="h2 money mb-0">{{ ingredient.total_on_hand|floatformat:3 }}</div>
+          <div class="text-muted">{{ ingredient.base_unit.name }}</div>
+          <div class="mt-2">
+            {% if ingredient.stock_status == 'out' %}<span class="badge-soft danger">{% trans "Tükendi" %}</span>
+            {% elif ingredient.stock_status == 'critical' %}<span class="badge-soft danger">{% trans "Kritik seviye" %}</span>
+            {% elif ingredient.stock_status == 'low' %}<span class="badge-soft warn">{% trans "Azalıyor" %}</span>
+            {% else %}<span class="badge-soft ok">{% trans "Normal" %}</span>{% endif %}
+          </div>
+        </div>
+        <table class="table table-sm mt-3 mb-0"><tbody>
+          <tr><td class="text-muted">{% trans "Kritik seviye" %}</td><td class="text-end">{{ ingredient.critical_level|floatformat:3 }}</td></tr>
+          <tr><td class="text-muted">{% trans "Ortalama maliyet" %}</td><td class="text-end money">{{ ingredient.average_cost|floatformat:4 }} {{ CURRENCY_SYMBOL }}</td></tr>
+          <tr><td class="text-muted">{% trans "Stok değeri" %}</td><td class="text-end money">{{ ingredient.stock_value|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td></tr>
+          <tr><td class="text-muted">{% trans "Günlük tüketim" %}</td><td class="text-end">{{ daily_usage|floatformat:3 }}</td></tr>
+          <tr><td class="text-muted">{% trans "Tahminî tükenme" %}</td><td class="text-end">
+            {% if days_left %}<span class="{% if days_left <= 7 %}text-danger fw-bold{% endif %}">{{ days_left }} gün</span>{% else %}—{% endif %}</td></tr>
+          <tr><td class="text-muted">{% trans "Tüketim yöntemi" %}</td><td class="text-end">{{ ingredient.get_rotation_display }}</td></tr>
+          <tr><td class="text-muted">{% trans "Bozulabilir" %}</td><td class="text-end">{{ ingredient.is_perishable|yesno:"Evet,Hayır" }}
+            {% if ingredient.shelf_life_days %}({{ ingredient.shelf_life_days }} gün){% endif %}</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">{% trans "Depo dağılımı" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          {% for item in stock_items %}
+            <tr><td class="ps-3">{{ item.warehouse.name }}</td>
+              <td class="text-end pe-3 money">{{ item.quantity|floatformat:3 }} {{ ingredient.base_unit.code }}</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Depo kaydı yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-8">
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-boxes me-2"></i>{% trans "Aktif partiler (FIFO/FEFO)" %}</div>
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead><tr><th class="ps-3">{% trans "Parti" %}</th><th>{% trans "Depo" %}</th><th class="text-end">{% trans "Kalan" %}</th>
+            <th class="text-end">{% trans "Birim maliyet" %}</th><th>{% trans "Giriş" %}</th><th class="pe-3">SKT</th></tr></thead>
+          <tbody>
+          {% for batch in batches %}
+            <tr class="{% if batch.is_expired %}table-danger{% elif batch.days_to_expiry and batch.days_to_expiry <= 7 %}table-warning{% endif %}">
+              <td class="ps-3 small">{{ batch.lot_code|default:batch.pk }}</td>
+              <td class="small">{{ batch.warehouse.code }}</td>
+              <td class="text-end money">{{ batch.remaining_quantity|floatformat:3 }}</td>
+              <td class="text-end money">{{ batch.unit_cost|floatformat:4 }}</td>
+              <td class="small">{{ batch.received_at|date:"d.m.Y" }}</td>
+              <td class="pe-3 small">
+                {% if batch.expiry_date %}{{ batch.expiry_date|date:"d.m.Y" }}
+                  {% if batch.days_to_expiry <= 7 %}<span class="badge-soft danger">{{ batch.days_to_expiry }} gün</span>{% endif %}
+                {% else %}—{% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6" class="text-center text-muted py-3">{% trans "Aktif parti yok." %}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-arrow-left-right me-2"></i>{% trans "Son hareketler" %}</div>
+      <div class="card-body p-0" style="max-height:340px;overflow-y:auto;">
+        <table class="table table-sm mb-0">
+          <thead><tr><th class="ps-3">{% trans "Tarih" %}</th><th>{% trans "Tür" %}</th><th class="text-end">{% trans "Miktar" %}</th><th class="text-end">{% trans "Bakiye" %}</th><th class="pe-3">{% trans "Not" %}</th></tr></thead>
+          <tbody>
+          {% for movement in movements %}
+            <tr>
+              <td class="ps-3 small">{{ movement.created_at|date:"d.m.Y H:i" }}</td>
+              <td><span class="badge-soft {% if movement.quantity > 0 %}ok{% else %}muted{% endif %}">{{ movement.get_movement_type_display }}</span></td>
+              <td class="text-end money {% if movement.quantity < 0 %}text-danger{% else %}text-success{% endif %}">{{ movement.quantity|floatformat:3 }}</td>
+              <td class="text-end money">{{ movement.balance_after|floatformat:3 }}</td>
+              <td class="pe-3 small text-muted">{{ movement.note|truncatechars:44 }}</td>
+            </tr>
+          {% empty %}<tr><td colspan="5" class="text-center text-muted py-3">{% trans "Hareket yok." %}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if used_in %}
+      <div class="card">
+        <div class="card-header"><i class="bi bi-diagram-3 me-2"></i>{% trans "Bu malzemeyi kullanan ürünler" %}</div>
+        <div class="card-body">
+          <div class="d-flex flex-wrap gap-2">
+            {% for item in used_in %}
+              <a href="{% url 'catalog:product_detail' item.recipe.product.pk %}" class="badge-soft info text-decoration-none">
+                {{ item.recipe.product.name }} ({{ item.quantity|floatformat:"-3" }} {{ item.unit.code }})
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{# Stok girişi modalı #}
+<div class="modal fade" id="receiveModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <form method="post" action="{% url 'inventory:stock_receive' ingredient.pk %}">
+      {% csrf_token %}
+      <div class="modal-header"><h5 class="modal-title">Stok Girişi — {{ ingredient.name }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-6"><label class="form-label">{% trans "Miktar" %}</label>
+            <input type="number" step="0.001" min="0.001" name="quantity" class="form-control" required></div>
+          <div class="col-6"><label class="form-label">{% trans "Birim" %}</label>
+            <select name="unit_id" class="form-select">
+              {% for unit in units %}<option value="{{ unit.pk }}" {% if unit.pk == ingredient.base_unit_id %}selected{% endif %}>{{ unit.code }} — {{ unit.name }}</option>{% endfor %}
+            </select></div>
+          <div class="col-6"><label class="form-label">Birim maliyet ({{ CURRENCY_SYMBOL }})</label>
+            <input type="number" step="0.0001" min="0" name="unit_cost" class="form-control" value="{{ ingredient.average_cost }}"></div>
+          <div class="col-6"><label class="form-label">{% trans "Depo" %}</label>
+            <select name="warehouse_id" class="form-select">
+              {% for warehouse in warehouses %}<option value="{{ warehouse.pk }}">{{ warehouse.name }}</option>{% endfor %}
+            </select></div>
+          <div class="col-6"><label class="form-label">{% trans "Son kullanma" %}</label>
+            <input type="date" name="expiry_date" class="form-control"></div>
+          <div class="col-6"><label class="form-label">{% trans "Parti kodu" %}</label>
+            <input type="text" name="lot_code" class="form-control"></div>
+          <div class="col-12"><label class="form-label">{% trans "Not" %}</label>
+            <input type="text" name="note" class="form-control"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Vazgeç" %}</button>
+        <button class="btn btn-primary">{% trans "Girişi kaydet" %}</button>
+      </div>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Kampanyalar" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th class="ps-3">{% trans "Kampanya" %}</th><th>{% trans "Hedef" %}</th><th>{% trans "Kupon" %}</th><th>{% trans "Başlangıç" %}</th><th>{% trans "Durum" %}</th><th class="pe-3"></th></tr></thead>
+          <tbody>
+          {% for campaign in campaigns %}
+            <tr>
+              <td class="ps-3"><strong>{{ campaign.name }}</strong>
+                {% if campaign.is_ai_suggested %}<span class="badge-soft info ms-1">{% trans "AI önerisi" %}</span>{% endif %}
+                <small class="d-block text-muted">{{ campaign.description|truncatechars:70 }}</small></td>
+              <td class="small">{% for segment in campaign.target_segments %}{{ segment }} {% empty %}Tümü{% endfor %}</td>
+              <td class="small">{{ campaign.coupon.code|default:"—" }}</td>
+              <td class="small">{{ campaign.starts_at|date:"d.m.Y" }}</td>
+              <td><span class="badge-soft {% if campaign.is_running %}ok{% else %}muted{% endif %}">{{ campaign.get_status_display }}</span></td>
+              <td class="pe-3 text-end">
+                <form method="post" action="{% url 'crm:campaign_status' campaign.pk %}" class="d-inline">{% csrf_token %}
+                  <input type="hidden" name="status" value="{% if campaign.status == 'active' %}paused{% else %}active{% endif %}">
+                  <button class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-{% if campaign.status == 'active' %}pause{% else %}play{% endif %}"></i></button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="6"><div class="empty-state"><i class="bi bi-megaphone"></i>{% trans "Kampanya yok." %}</div></td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">{% trans "Yeni kampanya" %}</div>
+      <div class="card-body">
+        <form method="post" action="{% url 'crm:campaign_create' %}" class="row g-2">
+          {% csrf_token %}
+          <div class="col-12 col-md-5"><label class="form-label">{% trans "Ad" %}</label>
+            <input type="text" name="name" class="form-control" required></div>
+          <div class="col-12 col-md-7"><label class="form-label">{% trans "Açıklama" %}</label>
+            <input type="text" name="description" class="form-control"></div>
+          <div class="col-12"><button class="btn btn-primary mt-2">{% trans "Oluştur" %}</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card">
+      <div class="card-header text-warning"><i class="bi bi-person-exclamation me-2"></i>{% trans "Kayıp riski yüksek müşteriler" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          {% for customer in churn_risk %}
+            <tr><td class="ps-3"><a href="{% url 'crm:customer_detail' customer.pk %}">{{ customer.full_name }}</a>
+              <small class="d-block text-muted">{{ customer.days_since_last_visit }} gündür gelmedi</small></td>
+              <td class="text-end pe-3 money">{{ customer.lifetime_value|floatformat:0 }} {{ CURRENCY_SYMBOL }}</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-4">{% trans "Risk altında müşteri yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card mt-3">
+      <div class="card-body">
+        <button class="btn btn-outline-info w-100" onclick="suggestCampaign()">
+          <i class="bi bi-stars me-1"></i>{% trans "Yapay zekâdan kampanya önerisi al" %}</button>
+        <div id="campaign-suggestion" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function suggestCampaign() {
+  const box = document.getElementById('campaign-suggestion');
+  box.innerHTML = '<div class="text-muted small">Yapay zekâ analiz ediyor…</div>';
+  try {
+    const result = await apiPost('/ai/analiz/campaign/', {});
+    box.innerHTML = result.ok
+      ? '<div class="ai-disclaimer" style="white-space:pre-wrap;">' + result.narrative + '</div>'
+      : '<div class="alert alert-warning small mb-0">' + result.narrative + '</div>';
+  } catch (e) { box.innerHTML = '<div class="alert alert-danger small mb-0">' + e.message + '</div>'; }
+}
+</script>
+{% endblock %}

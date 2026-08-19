@@ -1,0 +1,269 @@
+{% load static i18n %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'tr' }}" data-theme="{{ theme_preference|default:'light' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>{% block title %}{{ page_title|default:"Panel" }} · {{ RESTAURANT.NAME }}{% endblock %}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+  <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block extra_css %}{% endblock %}
+  <script>
+    // Tema, sayfa boyanmadan önce uygulanır (yanıp sönmeyi önler).
+    (function () {
+      var stored = localStorage.getItem('rest-theme');
+      var preference = '{{ theme_preference|default:"auto" }}';
+      var theme = stored || (preference === 'auto'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : preference);
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">{% trans "İçeriğe geç" %}</a>
+
+<div class="app-shell">
+  {% if not hide_sidebar %}
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo"><i class="bi bi-shop"></i></span>
+      <span class="text-truncate">{{ RESTAURANT.NAME }}</span>
+    </div>
+    <ul class="nav-list">
+      {% for item in nav_items %}
+        <li>
+          <a href="{% url item.url_name %}" {% if request.resolver_match.namespace and item.url_name|slice:":10" in request.path %}class="active"{% endif %}>
+            <i class="bi bi-{{ item.icon }}"></i><span>{{ item.label }}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+    <div class="p-2 border-top" style="border-color: var(--surface-border)!important;">
+      <a href="{% url 'accounts:profile' %}" class="d-flex align-items-center gap-2 p-2 rounded text-decoration-none" style="color: var(--text);">
+        <span class="rounded-circle d-grid" style="width:32px;height:32px;place-items:center;background:var(--brand);color:#fff;font-size:12px;font-weight:700;">{{ user.initials }}</span>
+        <span class="flex-grow-1 min-width-0">
+          <span class="d-block text-truncate fw-semibold" style="font-size:13px;">{{ user.display_name }}</span>
+          <small class="text-muted d-block text-truncate" style="font-size:11px;">{{ user.get_role_display }}</small>
+        </span>
+      </a>
+    </div>
+  </aside>
+  {% endif %}
+
+  <div class="main-area {% if hide_sidebar %}full{% endif %}">
+    <header class="topbar">
+      {% if not hide_sidebar %}
+      <button class="btn btn-sm btn-outline-secondary d-lg-none" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="{% trans 'Menüyü aç/kapat' %}">
+        <i class="bi bi-list"></i>
+      </button>
+      {% else %}
+      <a href="{% url 'core:home' %}" class="btn btn-sm btn-outline-secondary" title="{% trans 'Ana ekran' %}"><i class="bi bi-house"></i></a>
+      {% endif %}
+
+      <h1 class="me-auto text-truncate">{% block page_heading %}{{ page_title|default:"Panel" }}{% endblock %}</h1>
+
+      {% block topbar_actions %}{% endblock %}
+
+      <!-- Yardım -->
+      <a href="{% url 'training:index' %}" class="btn btn-sm btn-outline-secondary"
+         title="{% trans 'Kullanım kılavuzu ve eğitim' %}" aria-label="{% trans 'Yardım' %}">
+        <i class="bi bi-question-circle"></i>
+      </a>
+
+      <!-- Bildirimler -->
+      <div class="dropdown">
+        <button class="btn btn-sm btn-outline-secondary position-relative" data-bs-toggle="dropdown" aria-label="{% trans 'Bildirimler' %}" id="notif-btn">
+          <i class="bi bi-bell"></i>
+          {% if unread_notification_count %}
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notif-count">{{ unread_notification_count }}</span>
+          {% endif %}
+        </button>
+        <div class="dropdown-menu dropdown-menu-end p-0" style="width:340px;max-height:420px;overflow-y:auto;">
+          <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom" style="border-color:var(--surface-border)!important;">
+            <strong style="font-size:13px;">{% trans "Bildirimler" %}</strong>
+            <a href="{% url 'core:notifications' %}" style="font-size:12px;">{% trans "Tümü" %}</a>
+          </div>
+          <div id="notif-list" class="p-2"><div class="text-muted small text-center py-3">{% trans "Yükleniyor" %}…</div></div>
+        </div>
+      </div>
+
+      <!-- Dil -->
+      <div class="dropdown">
+        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown"
+                aria-label="{% trans 'Dil seç' %}" title="{% trans 'Dil' %}">
+          <i class="bi bi-translate"></i>
+          <span class="d-none d-md-inline ms-1 text-uppercase">{{ LANGUAGE_CODE|default:'tr' }}</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          {% get_available_languages as available_languages %}
+          {% for code, name in available_languages %}
+            <li>
+              <form method="post" action="{% url 'accounts:switch_language' %}">
+                {% csrf_token %}
+                <input type="hidden" name="language" value="{{ code }}">
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button class="dropdown-item {% if code == LANGUAGE_CODE %}active{% endif %}" type="submit">
+                  {% if code == LANGUAGE_CODE %}<i class="bi bi-check2 me-1"></i>{% else %}<span class="me-3"></span>{% endif %}
+                  {{ name }}
+                </button>
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Tema -->
+      <button class="btn btn-sm btn-outline-secondary" onclick="toggleTheme()" aria-label="{% trans 'Temayı değiştir' %}" title="{% trans 'Açık/koyu tema' %}">
+        <i class="bi bi-circle-half"></i>
+      </button>
+
+      <!-- Kullanıcı -->
+      <div class="dropdown">
+        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown" aria-label="{% trans 'Kullanıcı menüsü' %}">
+          <i class="bi bi-person-circle"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><h6 class="dropdown-header">{{ user.display_name }}<br><small class="text-muted">{{ user.get_role_display }}</small></h6></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person me-2"></i>{% trans "Profilim" %}</a></li>
+          <li><a class="dropdown-item" href="{% url 'accounts:password_change' %}"><i class="bi bi-key me-2"></i>{% trans "Parola değiştir" %}</a></li>
+          <li><a class="dropdown-item" href="{% url 'accounts:set_pin' %}"><i class="bi bi-123 me-2"></i>{% trans "PIN kodu" %}</a></li>
+          <li><a class="dropdown-item" href="{% url 'training:index' %}"><i class="bi bi-mortarboard me-2"></i>{% trans "Kullanım kılavuzu" %}</a></li>
+          {% if perms_user_manage or user.is_superuser %}
+            <li><a class="dropdown-item" href="/admin/"><i class="bi bi-gear me-2"></i>{% trans "Django yönetimi" %}</a></li>
+          {% endif %}
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}
+              <button class="dropdown-item text-danger" type="submit"><i class="bi bi-box-arrow-right me-2"></i>{% trans "Çıkış" %}</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <main class="content" id="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle me-2"></i>{{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% trans 'Kapat' %}"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+
+<script src="{% static 'vendor/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'vendor/js/htmx.min.js' %}"></script>
+<script defer src="{% static 'vendor/js/alpine.min.js' %}"></script>
+<script>
+  // ---------- Tema ----------
+  function toggleTheme() {
+    var root = document.documentElement;
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem('rest-theme', next);
+  }
+
+  // ---------- CSRF ----------
+  function getCookie(name) {
+    var match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return match ? decodeURIComponent(match.pop()) : '';
+  }
+  const CSRF_TOKEN = getCookie('csrftoken') || '{{ csrf_token }}';
+  document.body.addEventListener('htmx:configRequest', function (e) {
+    e.detail.headers['X-CSRFToken'] = CSRF_TOKEN;
+  });
+
+  /**
+   * Uygulama genelinde kullanılan POST yardımcısı.
+   * Sunucudan gelen hata mesajlarını kullanıcıya anlaşılır şekilde gösterir.
+   */
+  async function apiPost(url, data) {
+    const body = new FormData();
+    // CSRF token gövdeye de eklenir. Bu hem ek bir koruma katmanıdır hem de
+    // gövdeyi asla boş bırakmaz: boş bir multipart gövdesi Django tarafından
+    // geçersiz sayılır ve gövdesiz 400 döner.
+    body.append('csrfmiddlewaretoken', CSRF_TOKEN);
+    Object.entries(data || {}).forEach(([k, v]) => {
+      if (Array.isArray(v)) { v.forEach(item => body.append(k, item)); }
+      else if (v !== undefined && v !== null) { body.append(k, v); }
+    });
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': CSRF_TOKEN, 'Accept': 'application/json' },
+      body: body,
+    });
+    let payload = {};
+    try { payload = await response.json(); } catch (_) { payload = {}; }
+    if (!response.ok) {
+      throw new Error(payload.detail || 'İşlem tamamlanamadı (HTTP ' + response.status + ').');
+    }
+    return payload;
+  }
+
+  function showToast(message, level) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'position-fixed top-0 end-0 p-3';
+    wrapper.style.zIndex = 2000;
+    wrapper.innerHTML =
+      '<div class="toast show align-items-center text-bg-' + (level || 'primary') + ' border-0">' +
+      '<div class="d-flex"><div class="toast-body">' + message + '</div>' +
+      '<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>';
+    document.body.appendChild(wrapper);
+    setTimeout(() => wrapper.remove(), 5200);
+  }
+
+  // ---------- Bildirim akışı ----------
+  async function loadNotifications() {
+    try {
+      const response = await fetch('{% url "core:notification_feed" %}', { headers: { 'Accept': 'application/json' } });
+      const data = await response.json();
+      const list = document.getElementById('notif-list');
+      if (!list) return;
+      if (!data.items.length) {
+        list.innerHTML = '<div class="text-muted small text-center py-3">Okunmamış bildirim yok.</div>';
+      } else {
+        list.innerHTML = data.items.map(function (n) {
+          return '<a class="d-block p-2 rounded text-decoration-none mb-1" style="background:var(--bg-sunken);color:var(--text);" href="' + (n.url || '#') + '">' +
+            '<div class="d-flex gap-2"><span class="badge-soft ' + (n.level === 'danger' ? 'danger' : n.level === 'warning' ? 'warn' : 'info') + '">' + n.category + '</span></div>' +
+            '<div class="fw-semibold mt-1" style="font-size:13px;">' + n.title + '</div>' +
+            '<div class="text-muted" style="font-size:12px;">' + (n.body || '') + '</div></a>';
+        }).join('');
+      }
+      const badge = document.getElementById('notif-count');
+      if (badge) { badge.textContent = data.count; badge.style.display = data.count ? '' : 'none'; }
+    } catch (_) { /* bildirim hatası sayfayı etkilemesin */ }
+  }
+  document.getElementById('notif-btn')?.addEventListener('click', loadNotifications, { once: false });
+  setInterval(loadNotifications, 60000);
+
+  // ---------- Klavye kısayolları ----------
+  document.addEventListener('keydown', function (e) {
+    if (e.target.matches('input, textarea, select')) return;
+    if (e.altKey && !e.ctrlKey) {
+      const routes = {
+        'p': '{% url "orders:pos" %}',
+        'm': '{% url "floor:table_map" %}',
+        'k': '{% url "kitchen:display" %}',
+        'd': '{% url "reports:dashboard" %}',
+        's': '{% url "inventory:ingredient_list" %}',
+      };
+      const target = routes[e.key.toLowerCase()];
+      if (target) { e.preventDefault(); window.location.href = target; }
+    }
+    if (e.key === '?' && e.shiftKey) {
+      showToast('Kısayollar: Alt+P POS · Alt+M Masalar · Alt+K Mutfak · Alt+D Panel · Alt+S Stok', 'dark');
+    }
+  });
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

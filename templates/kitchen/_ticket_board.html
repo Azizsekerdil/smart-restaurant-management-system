@@ -1,0 +1,61 @@
+{% load i18n %}
+{% for ticket in tickets %}
+  <div class="kds-ticket urgency-{{ ticket.urgency }}"
+       data-warning="{{ ticket.station.warning_minutes }}"
+       data-critical="{{ ticket.station.critical_minutes }}">
+    <div class="kds-ticket-head">
+      <div>
+        <div style="font-size:16px;">{{ ticket.table_label }}</div>
+        <small class="fw-normal opacity-75">{{ ticket.number }} · {{ ticket.station.name }}</small>
+      </div>
+      <div class="text-end">
+        <div class="kds-timer" data-queued="{{ ticket.queued_at|date:'c' }}">{{ ticket.elapsed_minutes }} dk</div>
+        {% if ticket.priority >= 3 %}<span class="badge-soft danger">{{ ticket.get_priority_display }}</span>{% endif %}
+        {% if ticket.course > 1 %}<small class="d-block opacity-75">{{ ticket.course }}. servis</small>{% endif %}
+      </div>
+    </div>
+
+    <ul class="kds-items">
+      {% for line in ticket.lines.all %}
+        {% if line.order_item.status != 'cancelled' %}
+          <li>
+            <span class="qty">{{ line.order_item.quantity|floatformat:"-2" }}×</span>{{ line.order_item.product_name }}
+            {% if line.order_item.modifier_summary %}<span class="mods">+ {{ line.order_item.modifier_summary }}</span>{% endif %}
+            {% if line.order_item.note %}<span class="note">! {{ line.order_item.note }}</span>{% endif %}
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    {% if ticket.note %}
+      <div class="px-3 pb-2"><small class="text-danger fw-semibold">Not: {{ ticket.note }}</small></div>
+    {% endif %}
+
+    <div class="kds-actions">
+      {% if ticket.status == 'queued' %}
+        <button class="btn btn-primary btn-touch flex-grow-1" onclick="transition({{ ticket.pk }}, 'start')">
+          <i class="bi bi-play-fill"></i> {% trans "Başla" %}
+        </button>
+      {% elif ticket.status == 'preparing' %}
+        <button class="btn btn-success btn-touch flex-grow-1" onclick="transition({{ ticket.pk }}, 'ready')">
+          <i class="bi bi-check-lg"></i> {% trans "Hazır" %}
+        </button>
+      {% elif ticket.status == 'ready' %}
+        <button class="btn btn-outline-success btn-touch flex-grow-1" onclick="transition({{ ticket.pk }}, 'complete')">
+          <i class="bi bi-box-arrow-right"></i> {% trans "Teslim edildi" %}
+        </button>
+      {% endif %}
+      <button class="btn btn-outline-danger" onclick="transition({{ ticket.pk }}, 'rush')" title="{% trans 'Acile al' %}">
+        <i class="bi bi-lightning-charge"></i>
+      </button>
+      <a class="btn btn-outline-secondary" href="{% url 'kitchen:kot_preview' ticket.pk %}" target="_blank" title="{% trans 'KOT yazdır' %}">
+        <i class="bi bi-printer"></i>
+      </a>
+    </div>
+  </div>
+{% empty %}
+  <div class="empty-state" style="grid-column:1/-1;">
+    <i class="bi bi-check2-circle"></i>
+    {% trans "Bekleyen sipariş yok. Mutfak temiz!" %}
+  </div>
+{% endfor %}

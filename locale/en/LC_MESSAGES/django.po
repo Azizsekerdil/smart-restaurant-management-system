@@ -1,0 +1,7602 @@
+# Akıllı Restaurant Yönetim Sistemi — en çeviri kataloğu
+#
+# Kaynak dil Türkçe'dir. Boş msgstr, o metnin henüz çevrilmediği
+# anlamına gelir ve arayüzde Türkçe hâliyle görünür.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: smart-restaurant-management-system 1.3.0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: apps/training/views.py
+msgid "%(correct)s/%(total)s doğru. Yanlış yanıtların açıklamasını okuyup tekrar deneyin."
+msgstr "%(correct)s/%(total)s correct. Read the explanations for the wrong answers and try again."
+
+#: apps/reports/services.py
+msgid "%(count)s malzeme kritik seviyede"
+msgstr "%(count)s ingredients are at critical level"
+
+#: apps/reports/services.py
+msgid "%(count)s olumsuz yorum çözüm bekliyor"
+msgstr "%(count)s negative reviews are awaiting a response"
+
+#: apps/reports/services.py
+msgid "%(count)s parti 3 gün içinde son kullanma tarihine ulaşıyor"
+msgstr "%(count)s batches expire within 3 days"
+
+#: templates/reports/statistics.html
+msgid "%(count)s sipariş"
+msgstr "%(count)s orders"
+
+#: apps/reports/services.py
+msgid "%(count)s sipariş gecikmiş durumda"
+msgstr "%(count)s orders are running late"
+
+#: templates/reports/statistics.html
+msgid "%(day)s %(hour)s:00 — ortalama %(average)s sipariş (%(total)s toplam, %(days)s gün gözlendi)"
+msgstr "%(day)s %(hour)s:00 — %(average)s orders on average (%(total)s in total, observed on %(days)s days)"
+
+#: templates/reports/statistics.html
+msgid "%(days)s gün"
+msgstr "%(days)s days"
+
+#: templates/reports/statistics.html
+msgid "%(value)s / gün"
+msgstr "%(value)s / day"
+
+#: templates/backups/index.html
+msgid "(isteğe bağlı)"
+msgstr "(optional)"
+
+#: apps/crm/models.py
+msgid "-1 (çok olumsuz) ile +1 (çok olumlu) arası."
+msgstr "Between -1 (very negative) and +1 (very positive)."
+
+#: apps/backups/models.py
+msgid ".env dosyası (API anahtarları) yedeğe eklendiyse işaretlidir."
+msgstr "Checked if the .env file (API keys) was included in the backup."
+
+#: apps/catalog/models.py
+msgid "0 = sınırsız"
+msgstr "0 = unlimited"
+
+#: apps/orders/models.py
+msgid "0 = sınırsız. Yüzde indirimlerde üst sınır."
+msgstr "0 = unlimited. Upper limit for percentage discounts."
+
+#: apps/inventory/models.py
+msgid "1 bu birim = kaç temel birim? (ör. kg -> 1000 g)"
+msgstr "One of this unit equals how many base units? (e.g. kg -> 1000 g)"
+
+#: templates/accounts/lockout.html
+msgid "1 saat"
+msgstr "1 hour"
+
+#: apps/crm/models.py
+msgid "1-5"
+msgstr "1-5"
+
+#: apps/inventory/models.py
+msgid "1-5 arası"
+msgstr "Between 1 and 5"
+
+#: apps/orders/models.py
+msgid "1: başlangıç, 2: ana yemek, 3: tatlı"
+msgstr "1: starter, 2: main course, 3: dessert"
+
+#: apps/accounts/forms.py
+msgid "4-8 haneli. Hızlı kullanıcı değişimi ve yetkili onayı için."
+msgstr "4-8 digits. Used for fast user switching and manager approval."
+
+#: templates/inventory/ingredient_list.html
+msgid "7 gün içinde"
+msgstr "within 7 days"
+
+#: templates/reports/profitability.html
+msgid "<strong>%(count)s ürünün reçetesi tanımlı değil.</strong> Bu ürünlerin maliyeti sıfır kabul edildiği için kâr rakamları olduğundan yüksek görünür."
+msgstr "<strong>%(count)s products have no recipe defined.</strong> Their cost counts as zero, so their profit figures look higher than they are."
+
+#: apps/kitchen/models.py
+msgid "Acil"
+msgstr "Urgent"
+
+#: templates/hr/employee_detail.html
+msgid "Acil durum"
+msgstr "Emergency"
+
+#: apps/hr/models.py
+msgid "acil durum kişisi"
+msgstr "emergency contact"
+
+#: apps/hr/models.py
+msgid "acil durum telefonu"
+msgstr "emergency phone"
+
+#: templates/kitchen/_ticket_board.html
+msgid "Acile al"
+msgstr "Mark urgent"
+
+#: apps/catalog/models.py
+#: apps/crm/models.py
+#: apps/floor/models.py
+#: apps/hr/models.py
+msgid "ad"
+msgstr "first name"
+
+#: templates/crm/campaign_list.html
+#: templates/kitchen/station_list.html
+msgid "Ad"
+msgstr "Name"
+
+#: templates/orders/pos.html
+msgid "Ad veya telefon ile ara…"
+msgstr "Search by name or phone…"
+
+#: templates/floor/reservation_list.html
+msgid "Ad, kod veya telefon"
+msgstr "Name, code or phone"
+
+#: templates/accounts/user_list.html
+msgid "Ad, kullanıcı adı veya e-posta"
+msgstr "Name, username or email"
+
+#: templates/crm/customer_list.html
+msgid "Ad, telefon, müşteri kodu veya firma"
+msgstr "Name, phone, customer code or company"
+
+#: apps/inventory/models.py
+#: templates/orders/order_detail.html
+#: templates/reports/profitability.html
+#: templates/reports/sales.html
+msgid "Adet"
+msgstr "Piece"
+
+#: apps/orders/models.py
+msgid "adet"
+msgstr "quantity"
+
+#: templates/crm/customer_detail.html
+#: templates/orders/order_list.html
+#: templates/orders/pos.html
+#: templates/orders/receipt.html
+msgid "Adisyon"
+msgstr "Check"
+
+#: templates/orders/pos.html
+msgid "Adisyon aç"
+msgstr "Open check"
+
+#: templates/floor/table_map.html
+msgid "Adisyon aç / görüntüle"
+msgstr "Open / view check"
+
+#: templates/orders/_order_panel.html
+msgid "Adisyon boş. Soldan ürün seçin."
+msgstr "The check is empty. Pick a product on the left."
+
+#: templates/orders/_order_panel.html
+msgid "Adisyon detayı"
+msgstr "Check detail"
+
+#: apps/orders/models.py
+msgid "adisyon no"
+msgstr "check number"
+
+#: templates/orders/order_list.html
+msgid "Adisyon no, masa, müşteri"
+msgstr "Check number, table, customer"
+
+#: apps/crm/models.py
+#: apps/inventory/models.py
+msgid "adres"
+msgstr "address"
+
+#: templates/ai/providers.html
+#: templates/orders/delivery_board.html
+msgid "Adres"
+msgstr "Address"
+
+#: apps/devcenter/models.py
+#: templates/devcenter/proposal_detail.html
+msgid "AI açıklaması"
+msgstr "AI description"
+
+#: apps/crm/models.py
+msgid "AI gerekçesi"
+msgstr "AI rationale"
+
+#: apps/reports/models.py
+#: templates/reports/closing_detail.html
+msgid "AI günlük özeti"
+msgstr "AI daily summary"
+
+#: templates/crm/review_list.html
+msgid "AI ile analiz et"
+msgstr "Analyse with AI"
+
+#: templates/catalog/product_form.html
+msgid "AI ile açıklama öner"
+msgstr "Suggest a description with AI"
+
+#: apps/ai/models.py
+msgid "AI içgörüleri"
+msgstr "AI insights"
+
+#: apps/ai/models.py
+msgid "AI içgörüsü"
+msgstr "AI insight"
+
+#: apps/ai/models.py
+msgid "AI kullanım kaydı"
+msgstr "AI usage record"
+
+#: apps/ai/models.py
+msgid "AI kullanım kayıtları"
+msgstr "AI usage records"
+
+#: apps/catalog/models.py
+msgid "AI menü açıklaması"
+msgstr "AI menu description"
+
+#: apps/ai/models.py
+msgid "AI mesajları"
+msgstr "AI messages"
+
+#: apps/ai/models.py
+msgid "AI mesajı"
+msgstr "AI message"
+
+#: apps/devcenter/models.py
+msgid "AI model"
+msgstr "AI model"
+
+#: apps/devcenter/models.py
+msgid "AI sağlayıcı"
+msgstr "AI provider"
+
+#: apps/ai/models.py
+msgid "AI sohbeti"
+msgstr "AI conversation"
+
+#: apps/ai/models.py
+msgid "AI sohbetleri"
+msgstr "AI conversations"
+
+#: apps/crm/models.py
+msgid "AI tarafından çıkarılan konu etiketleri (servis, lezzet, fiyat...)."
+msgstr "Topic tags extracted by AI (service, taste, price...)."
+
+#: apps/ai/models.py
+msgid "AI tarafından üretildi"
+msgstr "generated by AI"
+
+#: apps/core/models.py
+msgid "AI çağrısı"
+msgstr "AI call"
+
+#: apps/reports/models.py
+msgid "AI çıkarımı"
+msgstr "AI inference"
+
+#: apps/crm/models.py
+#: apps/hr/models.py
+#: templates/crm/campaign_list.html
+#: templates/hr/shift_schedule.html
+msgid "AI önerisi"
+msgstr "AI suggestion"
+
+#: apps/crm/models.py
+msgid "AI özeti"
+msgstr "AI summary"
+
+#: apps/catalog/models.py
+#: apps/crm/models.py
+#: apps/floor/models.py
+#: apps/hr/models.py
+msgid "aktif"
+msgstr "active"
+
+#: apps/crm/models.py
+#: templates/accounts/user_list.html
+#: templates/catalog/category_list.html
+#: templates/catalog/product_list.html
+msgid "Aktif"
+msgstr "Active"
+
+#: templates/kitchen/station_list.html
+msgid "Aktif KOT"
+msgstr "Active tickets"
+
+#: templates/reports/statistics.html
+msgid "Aktif masa"
+msgstr "Occupied tables"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Aktif parti yok."
+msgstr "No active batches."
+
+#: templates/inventory/ingredient_detail.html
+msgid "Aktif partiler (FIFO/FEFO)"
+msgstr "Active batches (FIFO/FEFO)"
+
+#: templates/accounts/user_list.html
+msgid "Aktif/pasif"
+msgstr "Active / inactive"
+
+#: templates/reports/index.html
+msgid "Akıllı Analizler"
+msgstr "Smart analytics"
+
+#: templates/accounts/login.html
+msgid "Akıllı Restaurant Yönetim Sistemi"
+msgstr "Smart Restaurant Management System"
+
+#: apps/ai/models.py
+msgid "Alan bilgisi (alerjen vb.)"
+msgstr "Field information (allergens etc.)"
+
+#: templates/backups/detail.html
+msgid "Alan kullanıcı"
+msgstr "Taken by"
+
+#: apps/catalog/models.py
+#: templates/catalog/product_list.html
+msgid "Alerjen"
+msgstr "Allergen"
+
+#: templates/catalog/qr_menu.html
+msgid "Alerjen bilgisi:"
+msgstr "Allergen information:"
+
+#: apps/catalog/models.py
+msgid "alerjenler"
+msgstr "allergens"
+
+#: apps/catalog/models.py
+#: templates/catalog/product_detail.html
+msgid "Alerjenler"
+msgstr "Allergens"
+
+#: templates/crm/customer_list.html
+#: templates/floor/reservation_list.html
+msgid "Alerji"
+msgstr "Allergy"
+
+#: apps/crm/models.py
+msgid "alerji notları"
+msgstr "allergy notes"
+
+#: apps/floor/models.py
+msgid "alerji notu"
+msgstr "allergy note"
+
+#: templates/crm/customer_detail.html
+msgid "Alerji notu:"
+msgstr "Allergy note:"
+
+#: apps/catalog/models.py
+msgid "Alkollü içecek"
+msgstr "Alcoholic drink"
+
+#: apps/crm/models.py
+msgid "Altın"
+msgstr "Gold"
+
+#: apps/core/models.py
+msgid "alıcı"
+msgstr "recipient"
+
+#: apps/orders/models.py
+msgid "alınan"
+msgstr "received"
+
+#: templates/orders/pos.html
+msgid "Alınan nakit"
+msgstr "Cash received"
+
+#: apps/crm/models.py
+msgid "alınma kanalı"
+msgstr "source channel"
+
+#: templates/backups/detail.html
+msgid "Alınma zamanı"
+msgstr "Taken at"
+
+#: templates/training/lesson.html
+msgid "Amaç puan toplamak değil: yanlış yanıt verirseniz açıklamasını\n          okuyup tekrar deneyebilirsiniz."
+msgstr "The point is not to collect a score: if you answer incorrectly you can read\n          the explanation and try again."
+
+#: apps/orders/models.py
+msgid "ana adisyon"
+msgstr "primary check"
+
+#: templates/base.html
+msgid "Ana ekran"
+msgstr "Home screen"
+
+#: templates/core/403.html
+#: templates/core/404.html
+#: templates/core/500.html
+msgid "Ana ekrana dön"
+msgstr "Back to home"
+
+#: apps/core/models.py
+msgid "anahtar"
+msgstr "key"
+
+#: templates/ai/providers.html
+msgid "Anahtar"
+msgstr "Key"
+
+#: templates/ai/providers.html
+msgid "Anahtar değişkeni"
+msgstr "Key variable"
+
+#: templates/ai/providers.html
+msgid "Anahtar eksik"
+msgstr "Key missing"
+
+#: apps/crm/models.py
+msgid "Analiz edilmedi"
+msgstr "Not analysed"
+
+#: apps/crm/models.py
+msgid "analiz zamanı"
+msgstr "analysed at"
+
+#: templates/ai/insights.html
+msgid "Analiz çalıştır"
+msgstr "Run analysis"
+
+#: apps/ai/models.py
+msgid "Analizin dayandığı kayıt sayısı. Az veri = düşük güven."
+msgstr "Number of records the analysis is based on. Less data means lower confidence."
+
+#: templates/ai/assistant.html
+msgid "Analizler"
+msgstr "Analyses"
+
+#: apps/floor/models.py
+msgid "Anlaşmalı platform"
+msgstr "Partner platform"
+
+#: apps/crm/models.py
+msgid "anonimleştirildi"
+msgstr "anonymised"
+
+#: apps/crm/models.py
+msgid "anonimleştirme zamanı"
+msgstr "anonymised at"
+
+#: apps/ai/models.py
+msgid "Anormallik tespiti"
+msgstr "Anomaly detection"
+
+#: templates/ai/analysis_hub.html
+msgid "Anormallik Tespiti"
+msgstr "Anomaly detection"
+
+#: templates/backups/detail.html
+msgid "API anahtarları içerir"
+msgstr "Contains API keys"
+
+#: templates/backups/index.html
+msgid "API anahtarlarınızı içerir. Yedeği paylaşırsanız anahtarlar da paylaşılmış olur."
+msgstr "Contains your API keys. If you share the backup, you share the keys too."
+
+#: templates/accounts/user_list.html
+#: templates/catalog/product_list.html
+#: templates/core/audit_log.html
+#: templates/crm/customer_list.html
+msgid "Ara"
+msgstr "Search"
+
+#: apps/orders/models.py
+msgid "ara toplam"
+msgstr "subtotal"
+
+#: templates/inventory/purchase_detail.html
+#: templates/orders/_order_panel.html
+#: templates/orders/order_detail.html
+#: templates/orders/receipt.html
+msgid "Ara toplam"
+msgstr "Subtotal"
+
+#: templates/orders/_order_panel.html
+msgid "Artır"
+msgstr "Increase"
+
+#: templates/backups/index.html
+msgid "Arşiv API anahtarlarını içeriyor"
+msgstr "The archive contains API keys"
+
+#: templates/backups/detail.html
+msgid "Arşiv içeriği"
+msgstr "Archive contents"
+
+#: templates/backups/detail.html
+msgid "Arşivi başka bir diske veya harici belleğe kopyalamak, disk arızasına karşı tek gerçek korumadır."
+msgstr "Copying the archive to another disk or an external drive is the only real protection against disk failure."
+
+#: apps/ai/models.py
+msgid "arşivlendi"
+msgstr "archived"
+
+#: apps/inventory/models.py
+msgid "asgari sipariş"
+msgstr "minimum order"
+
+#: apps/orders/models.py
+msgid "asgari sipariş tutarı"
+msgstr "minimum order amount"
+
+#: apps/ai/models.py
+msgid "Asistan"
+msgstr "Assistant"
+
+#: templates/floor/table_map.html
+#: templates/hr/shift_schedule.html
+msgid "Ata"
+msgstr "Assign"
+
+#: apps/hr/models.py
+msgid "atanan"
+msgstr "assigned to"
+
+#: templates/hr/task_list.html
+msgid "Atanan"
+msgstr "Assigned to"
+
+#: apps/floor/models.py
+msgid "atanan garson"
+msgstr "assigned server"
+
+#: apps/hr/models.py
+msgid "Atlandı"
+msgstr "Skipped"
+
+#: templates/backups/detail.html
+msgid "Ayar dosyası (.env)"
+msgstr "Settings file (.env)"
+
+#: templates/backups/index.html
+msgid "Ayar dosyası (API anahtarları) yedeğe eklenmez."
+msgstr "The settings file (API keys) is not included in the backup."
+
+#: templates/backups/index.html
+msgid "Ayar dosyasını da ekle"
+msgstr "Include the settings file too"
+
+#: apps/core/context_processors.py
+msgid "Ayarlar"
+msgstr "Settings"
+
+#: templates/core/settings.html
+msgid "Ayarları kaydet"
+msgstr "Save settings"
+
+#: templates/ai/providers.html
+msgid "Aylık"
+msgstr "Monthly"
+
+#: templates/reports/statistics.html
+msgid "Aylık eğilim"
+msgstr "Monthly trend"
+
+#: apps/hr/models.py
+msgid "aylık ücret"
+msgstr "monthly wage"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Ayrı Git dalı oluştur (önerilir)"
+msgstr "Create a separate Git branch (recommended)"
+
+#: apps/floor/models.py
+msgid "Ayrıldı"
+msgstr "Left"
+
+#: templates/backups/index.html
+msgid "Ayrıntı"
+msgstr "Details"
+
+#: templates/orders/_order_panel.html
+msgid "Azalt"
+msgstr "Decrease"
+
+#: templates/inventory/ingredient_detail.html
+#: templates/inventory/ingredient_list.html
+msgid "Azalıyor"
+msgstr "Falling"
+
+#: apps/orders/models.py
+msgid "azami indirim"
+msgstr "maximum discount"
+
+#: templates/reports/index.html
+msgid "Aç"
+msgstr "Open"
+
+#: apps/orders/models.py
+msgid "açan"
+msgstr "opened by"
+
+#: templates/orders/cash_session.html
+msgid "Açan"
+msgstr "Opened by"
+
+#: apps/accounts/models.py
+#: apps/hr/models.py
+#: apps/orders/models.py
+#: templates/ai/providers.html
+msgid "Açık"
+msgstr "Light"
+
+#: templates/orders/pos.html
+msgid "Açık adisyon yok."
+msgstr "No open checks."
+
+#: templates/orders/pos.html
+msgid "Açık adisyonlar"
+msgstr "Open checks"
+
+#: templates/orders/pos.html
+msgid "Açık Adisyonlar"
+msgstr "Open checks"
+
+#: apps/floor/models.py
+msgid "açık alan"
+msgstr "outdoor"
+
+#: templates/hr/task_list.html
+msgid "Açık görev yok."
+msgstr "No open tasks."
+
+#: templates/orders/cash_session.html
+msgid "Açık kasa oturumu yok. Ödeme almadan önce kasayı açın."
+msgstr "No till session is open. Open the till before taking payment."
+
+#: templates/base.html
+msgid "Açık/koyu tema"
+msgstr "Light / dark theme"
+
+#: apps/catalog/models.py
+#: apps/core/models.py
+#: apps/crm/models.py
+#: apps/floor/models.py
+msgid "açıklama"
+msgstr "description"
+
+#: templates/core/audit_log.html
+#: templates/crm/campaign_list.html
+#: templates/crm/customer_detail.html
+#: templates/hr/task_list.html
+msgid "Açıklama"
+msgstr "Description"
+
+#: templates/core/audit_log.html
+msgid "Açıklama, kullanıcı, nesne…"
+msgstr "Description, user, object…"
+
+#: apps/orders/models.py
+msgid "açılış"
+msgstr "opened at"
+
+#: templates/orders/cash_session.html
+#: templates/orders/order_detail.html
+#: templates/orders/order_list.html
+msgid "Açılış"
+msgstr "Opening"
+
+#: apps/orders/models.py
+msgid "açılış kasası"
+msgstr "opening float"
+
+#: templates/orders/cash_session.html
+msgid "Açılış kasası"
+msgstr "Opening float"
+
+#: templates/orders/cash_session.html
+msgid "Açılış kasası (bozuk para)"
+msgstr "Opening float (change)"
+
+#: apps/inventory/models.py
+msgid "Açılış stoğu"
+msgstr "Opening stock"
+
+#: apps/inventory/models.py
+msgid "Ağırlık"
+msgstr "Weight"
+
+#: apps/orders/models.py
+#: templates/reports/closing_detail.html
+msgid "Bahşiş"
+msgstr "Tip"
+
+#: apps/orders/models.py
+#: apps/reports/models.py
+msgid "bahşiş"
+msgstr "tip"
+
+#: templates/inventory/ingredient_detail.html
+#: templates/inventory/movement_list.html
+msgid "Bakiye"
+msgstr "Balance"
+
+#: apps/reports/models.py
+msgid "Banka"
+msgstr "Bank"
+
+#: apps/kitchen/models.py
+#: templates/kitchen/station_list.html
+msgid "Bar"
+msgstr "Bar"
+
+#: apps/accounts/permissions.py
+msgid "Bar personeli"
+msgstr "Bartender"
+
+#: apps/catalog/models.py
+msgid "barkod"
+msgstr "barcode"
+
+#: apps/core/models.py
+msgid "bağlantı"
+msgstr "link"
+
+#: apps/catalog/models.py
+msgid "bağlı malzeme"
+msgstr "linked ingredient"
+
+#: apps/ai/models.py
+#: apps/backups/models.py
+#: apps/core/models.py
+#: apps/devcenter/models.py
+msgid "Başarılı"
+msgstr "Successful"
+
+#: apps/ai/models.py
+#: apps/backups/models.py
+#: apps/devcenter/models.py
+#: apps/orders/models.py
+msgid "Başarısız"
+msgstr "Failed"
+
+#: apps/core/models.py
+msgid "Başarısız giriş"
+msgstr "Failed sign-in"
+
+#: templates/kitchen/_ticket_board.html
+#: templates/training/index.html
+msgid "Başla"
+msgstr "Start"
+
+#: apps/kitchen/models.py
+msgid "başlama"
+msgstr "started at"
+
+#: templates/orders/pos.html
+msgid "Başlamak için bir masa seçin veya yeni adisyon açın."
+msgstr "Pick a table or open a new check to begin."
+
+#: templates/training/index.html
+msgid "Başlandı"
+msgstr "Started"
+
+#: apps/backups/models.py
+#: apps/crm/models.py
+#: apps/hr/models.py
+#: apps/orders/models.py
+msgid "başlangıç"
+msgstr "start"
+
+#: templates/crm/campaign_list.html
+#: templates/hr/leave_list.html
+#: templates/orders/order_list.html
+#: templates/reports/expense_list.html
+msgid "Başlangıç"
+msgstr "Start"
+
+#: apps/catalog/models.py
+msgid "başlangıç saati"
+msgstr "start time"
+
+#: apps/kitchen/models.py
+msgid "başlatan"
+msgstr "started by"
+
+#: apps/ai/models.py
+#: apps/core/models.py
+#: apps/devcenter/models.py
+#: apps/hr/models.py
+msgid "başlık"
+msgstr "title"
+
+#: templates/devcenter/index.html
+#: templates/hr/task_list.html
+msgid "Başlık"
+msgstr "Title"
+
+#: templates/kitchen/performance.html
+msgid "Bekleme"
+msgstr "Waiting"
+
+#: apps/floor/models.py
+#: templates/floor/reservation_list.html
+msgid "Bekleme listesi"
+msgstr "Waiting list"
+
+#: apps/floor/models.py
+msgid "Bekleme listesi kaydı"
+msgstr "Waiting list entry"
+
+#: templates/inventory/purchase_list.html
+#: templates/orders/cash_session.html
+msgid "Beklenen"
+msgstr "Expected"
+
+#: templates/floor/reservation_list.html
+msgid "Beklenen misafir"
+msgstr "Expected guests"
+
+#: apps/reports/models.py
+msgid "beklenen nakit"
+msgstr "expected cash"
+
+#: templates/orders/cash_session.html
+#: templates/reports/closing_detail.html
+msgid "Beklenen nakit"
+msgstr "Expected cash"
+
+#: apps/inventory/models.py
+msgid "beklenen teslim"
+msgstr "expected delivery"
+
+#: templates/inventory/purchase_detail.html
+msgid "Beklenen teslim"
+msgstr "Expected delivery"
+
+#: templates/core/500.html
+msgid "Beklenmeyen bir hata oluştu"
+msgstr "An unexpected error occurred"
+
+#: templates/floor/reservation_list.html
+msgid "Bekleyen misafir yok."
+msgstr "No guests waiting."
+
+#: templates/kitchen/_ticket_board.html
+msgid "Bekleyen sipariş yok. Mutfak temiz!"
+msgstr "No pending orders. The kitchen is clear!"
+
+#: apps/floor/models.py
+#: apps/kitchen/models.py
+#: apps/orders/models.py
+msgid "Bekliyor"
+msgstr "Waiting"
+
+#: apps/inventory/models.py
+#: apps/reports/models.py
+msgid "belge no"
+msgstr "document number"
+
+#: templates/inventory/purchase_list.html
+#: templates/reports/expense_list.html
+msgid "Belge no"
+msgstr "Document number"
+
+#: apps/core/models.py
+msgid "Belirli rollere yayın yapmak için rol kodları listesi."
+msgstr "List of role codes for broadcasting to specific roles."
+
+#: apps/accounts/forms.py
+msgid "Beni hatırla"
+msgstr "Remember me"
+
+#: apps/inventory/models.py
+msgid "bildiren"
+msgstr "reported by"
+
+#: templates/inventory/waste_list.html
+msgid "Bildiren"
+msgstr "Reported by"
+
+#: apps/core/models.py
+msgid "Bildirim"
+msgstr "Notification"
+
+#: templates/core/notifications.html
+msgid "Bildirim yok."
+msgstr "No notifications."
+
+#: apps/core/models.py
+#: templates/base.html
+msgid "Bildirimler"
+msgstr "Notifications"
+
+#: apps/core/models.py
+msgid "Bilgi"
+msgstr "Information"
+
+#: templates/orders/receipt.html
+msgid "Bilgi fişi — mali değeri yoktur"
+msgstr "Information slip — not a fiscal document"
+
+#: templates/inventory/purchase_detail.html
+#: templates/orders/order_detail.html
+msgid "Bilgiler"
+msgstr "Details"
+
+#: templates/backups/index.html
+msgid "Bilinmesi gerekenler"
+msgstr "What you should know"
+
+#: templates/backups/index.html
+msgid "Bir disk arızası veya hatalı işlem, kayıt altına alınmamış tüm satışları ve müşteri bilgilerini geri dönülmez şekilde yok edebilir. Aşağıdan hemen bir yedek alabilirsiniz."
+msgstr "A disk failure or a mistaken action can irreversibly destroy every sale and customer record that has not been backed up. You can take a backup right now below."
+
+#: apps/catalog/models.py
+#: apps/inventory/models.py
+msgid "birim"
+msgstr "unit"
+
+#: templates/catalog/recipe_form.html
+#: templates/inventory/ingredient_detail.html
+#: templates/inventory/purchase_detail.html
+#: templates/orders/order_detail.html
+msgid "Birim"
+msgstr "Unit"
+
+#: apps/inventory/models.py
+#: apps/orders/models.py
+msgid "birim fiyat"
+msgstr "unit price"
+
+#: templates/inventory/purchase_detail.html
+msgid "Birim fiyat"
+msgstr "Unit price"
+
+#: apps/inventory/models.py
+msgid "birim maliyet"
+msgstr "unit cost"
+
+#: templates/catalog/recipe_detail.html
+#: templates/inventory/ingredient_detail.html
+#: templates/inventory/movement_list.html
+#: templates/reports/profitability.html
+msgid "Birim maliyet"
+msgstr "Unit cost"
+
+#: apps/devcenter/models.py
+msgid "birleşik diff"
+msgstr "combined diff"
+
+#: apps/floor/models.py
+msgid "birleştirildiği masa"
+msgstr "merged into table"
+
+#: apps/backups/models.py
+#: apps/crm/models.py
+#: apps/hr/models.py
+#: apps/orders/models.py
+msgid "bitiş"
+msgstr "end"
+
+#: templates/hr/leave_list.html
+#: templates/orders/order_list.html
+#: templates/reports/expense_list.html
+#: templates/reports/profitability.html
+msgid "Bitiş"
+msgstr "End"
+
+#: apps/catalog/models.py
+msgid "bitiş saati"
+msgstr "end time"
+
+#: apps/floor/models.py
+msgid "bitiş zamanı"
+msgstr "end time"
+
+#: apps/crm/models.py
+msgid "Bitti"
+msgstr "Finished"
+
+#: templates/orders/receipt.html
+msgid "Bizi tercih ettiğiniz için teşekkürler!"
+msgstr "Thank you for choosing us!"
+
+#: templates/devcenter/terminal.html
+msgid "black"
+msgstr "black"
+
+#: apps/crm/models.py
+msgid "Bonus / kampanya"
+msgstr "Bonus / campaign"
+
+#: apps/inventory/models.py
+msgid "boyut"
+msgstr "size"
+
+#: templates/backups/detail.html
+#: templates/backups/index.html
+msgid "Boyut"
+msgstr "Size"
+
+#: apps/backups/models.py
+msgid "boyut (bayt)"
+msgstr "size (bytes)"
+
+#: apps/inventory/models.py
+msgid "bozulabilir"
+msgstr "perishable"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Bozulabilir"
+msgstr "Perishable"
+
+#: apps/inventory/models.py
+msgid "Bozulma"
+msgstr "Spoilage"
+
+#: apps/floor/models.py
+#: templates/floor/table_map.html
+msgid "Boş"
+msgstr "Free"
+
+#: apps/catalog/models.py
+msgid "Boş = her gün. Örnek: [0,1,2,3,4]"
+msgstr "Empty = every day. Example: [0,1,2,3,4]"
+
+#: apps/accounts/forms.py
+msgid "Boş bırakılırsa mevcut parola korunur."
+msgstr "Leave empty to keep the current password."
+
+#: apps/core/models.py
+msgid "Boş ise yetkili tüm kullanıcılara gösterilir."
+msgstr "If empty, shown to all authorised users."
+
+#: apps/crm/models.py
+msgid "Bronz"
+msgstr "Bronze"
+
+#: templates/catalog/product_detail.html
+#: templates/reports/profitability.html
+msgid "Brüt kâr"
+msgstr "Gross profit"
+
+#: apps/reports/models.py
+msgid "brüt satış"
+msgstr "gross sales"
+
+#: templates/reports/closing_detail.html
+msgid "Brüt satış"
+msgstr "Gross sales"
+
+#: templates/reports/dashboard.html
+msgid "Bu"
+msgstr "This"
+
+#: templates/training/lesson.html
+msgid "Bu adımı atlamayın."
+msgstr "Do not skip this step."
+
+#: apps/reports/statistics.py
+#: templates/ai/assistant.html
+#: templates/reports/dashboard.html
+msgid "Bu ay"
+msgstr "This month"
+
+#: templates/hr/employee_detail.html
+msgid "Bu ay satış"
+msgstr "Sales this month"
+
+#: templates/hr/employee_detail.html
+msgid "Bu ay çalışma"
+msgstr "Hours this month"
+
+#: templates/orders/receipt.html
+msgid "Bu belge yasal mali belge (ÖKC fişi / e-fatura) yerine geçmez."
+msgstr "This document does not replace a legal fiscal document (certified receipt / e-invoice)."
+
+#: templates/devcenter/index.html
+msgid "Bu bölüm üretim ortamında varsayılan olarak kapalıdır."
+msgstr "This section is disabled by default in production."
+
+#: templates/floor/table_map.html
+msgid "Bu bölümde masa tanımlı değil."
+msgstr "No tables are defined in this area."
+
+#: apps/floor/models.py
+msgid "Bu bölümdeki siparişlere eklenecek servis oranı."
+msgstr "Service charge rate applied to orders in this area."
+
+#: apps/training/views.py
+msgid "Bu ders, sizde bulunmayan bir yetkiyle ilgili olduğu için gösterilmiyor."
+msgstr "This lesson is hidden because it covers a permission you do not have."
+
+#: templates/training/lesson.html
+msgid "Bu dersi tamamladım"
+msgstr "I have completed this lesson"
+
+#: templates/training/lesson.html
+msgid "Bu derste"
+msgstr "In this lesson"
+
+#: templates/training/lesson.html
+msgid "Bu dersteki ilerlemeniz sıfırlansın mı?"
+msgstr "Reset your progress in this lesson?"
+
+#: templates/reports/dashboard.html
+msgid "Bu dönemde satış yok"
+msgstr "No sales in this period"
+
+#: templates/reports/profitability.html
+msgid "Bu dönemde satış yok."
+msgstr "No sales in this period."
+
+#: templates/kitchen/performance.html
+msgid "Bu dönemde tamamlanmış KOT yok."
+msgstr "No completed tickets in this period."
+
+#: templates/reports/statistics.html
+msgid "Bu dönemde tamamlanmış sipariş yok."
+msgstr "No completed orders in this period."
+
+#: templates/reports/dashboard.html
+msgid "Bu hafta"
+msgstr "This week"
+
+#: apps/accounts/forms.py
+msgid "Bu hesap devre dışı bırakılmış. Yöneticinizle görüşün."
+msgstr "This account has been deactivated. Please contact your administrator."
+
+#: templates/backups/detail.html
+msgid "Bu işlem geri alınamaz."
+msgstr "This action cannot be undone."
+
+#: templates/orders/pos.html
+msgid "Bu işlem yetkili onayı gerektiriyor."
+msgstr "This action requires manager approval."
+
+#: templates/inventory/ingredient_detail.html
+msgid "Bu malzemeyi kullanan ürünler"
+msgstr "Products that use this ingredient"
+
+#: templates/reports/voids.html
+msgid "Bu rapor iç denetim amaçlıdır. Yüksek sayılar tek başına usulsüzlük kanıtı değildir; yoğun vardiya, yetki dağılımı veya operasyonel sorunlardan da kaynaklanabilir."
+msgstr "This report is for internal review. High numbers are not proof of wrongdoing on their own; a busy shift, how permissions are distributed, or operational problems can produce them too."
+
+#: apps/catalog/models.py
+#: templates/catalog/recipe_form.html
+msgid "Bu reçete kaç porsiyon üretir?"
+msgstr "How many portions does this recipe yield?"
+
+#: templates/ai/providers.html
+msgid "Bu sayfadan \"Test et\" düğmesine basın."
+msgstr "Press the \"Test\" button on this page."
+
+#: apps/inventory/models.py
+msgid "Bu seviyenin altına düşünce uyarı üretilir (temel birimde)."
+msgstr "An alert is raised when stock falls below this level (in base units)."
+
+#: apps/kitchen/models.py
+msgid "Bu süreyi aşan siparişler kırmızı renkte ve sesli uyarıyla gösterilir."
+msgstr "Orders exceeding this time are shown in red with an audible alert."
+
+#: apps/kitchen/models.py
+msgid "Bu süreyi aşan siparişler sarı renkte gösterilir."
+msgstr "Orders exceeding this time are shown in yellow."
+
+#: apps/ai/models.py
+msgid "Bu tahminin neden kesin olmadığını açıklar."
+msgstr "Explains why this prediction is not certain."
+
+#: apps/reports/statistics.py
+msgid "Bu yıl"
+msgstr "This year"
+
+#: templates/ai/assistant.html
+#: templates/reports/dashboard.html
+msgid "Bugün"
+msgstr "Today"
+
+#: templates/reports/dashboard.html
+msgid "Bugün henüz ödeme alınmadı"
+msgstr "No payment has been taken today yet"
+
+#: templates/hr/employee_list.html
+msgid "Bugün için vardiya planlanmamış."
+msgstr "No shift is planned for today."
+
+#: templates/reports/dashboard.html
+msgid "Bugünkü ciro"
+msgstr "Revenue today"
+
+#: templates/floor/reservation_list.html
+msgid "Bugünkü rezervasyon"
+msgstr "Reservations today"
+
+#: templates/hr/employee_list.html
+msgid "Bugünkü vardiyalar"
+msgstr "Today's shifts"
+
+#: templates/floor/table_map.html
+msgid "Bugünün rezervasyonları"
+msgstr "Today's reservations"
+
+#: templates/ai/providers.html
+msgid "build.nvidia.com"
+msgstr "build.nvidia.com"
+
+#: templates/ai/usage.html
+msgid "Bulut model"
+msgstr "Cloud model"
+
+#: templates/orders/pos.html
+msgid "Bölme yöntemi"
+msgstr "Split method"
+
+#: apps/floor/models.py
+#: apps/orders/models.py
+msgid "bölüm"
+msgstr "area"
+
+#: templates/floor/table_list.html
+msgid "Bölüm"
+msgstr "Area"
+
+#: apps/crm/models.py
+msgid "bütçe"
+msgstr "budget"
+
+#: templates/ai/assistant.html
+msgid "Bütçe"
+msgstr "Budget"
+
+#: apps/ai/models.py
+msgid "Bütçe limiti"
+msgstr "Budget limit"
+
+#: templates/ai/providers.html
+msgid "Bütçe ve kullanım (30 gün)"
+msgstr "Budget and usage (30 days)"
+
+#: apps/orders/models.py
+msgid "Cari hesaba"
+msgstr "On account"
+
+#: apps/reports/statistics.py
+#: templates/reports/profitability.html
+#: templates/reports/sales.html
+msgid "Ciro"
+msgstr "Revenue"
+
+#: apps/reports/statistics.py
+msgid "Cmt"
+msgstr "Sat"
+
+#: templates/devcenter/snapshots.html
+msgid "Commit"
+msgstr "Commit"
+
+#: templates/devcenter/git.html
+msgid "Commit mesajı önerisi"
+msgstr "Suggested commit message"
+
+#: templates/devcenter/index.html
+msgid "Ctrl ile çoklu seçim yapabilirsiniz."
+msgstr "Hold Ctrl to select more than one."
+
+#: apps/reports/statistics.py
+msgid "Cum"
+msgstr "Fri"
+
+#: apps/catalog/models.py
+#: apps/reports/statistics.py
+msgid "Cuma"
+msgstr "Friday"
+
+#: apps/catalog/models.py
+#: apps/reports/statistics.py
+msgid "Cumartesi"
+msgstr "Saturday"
+
+#: templates/training/index.html
+msgid "Daha ayrıntılı bilgi için proje klasöründeki USER_GUIDE.md ve\n    ADMIN_GUIDE.md belgelerine bakabilirsiniz. Bu ekran, o belgelerin günlük\n    kullanımda en çok gereken bölümlerini adım adım anlatır."
+msgstr "For more detail see USER_GUIDE.md and ADMIN_GUIDE.md in the project folder.\n    This screen walks through the parts of those documents that come up most\n    often in daily use."
+
+#: templates/crm/customer_detail.html
+msgid "Dahili not:"
+msgstr "Internal note:"
+
+#: apps/crm/models.py
+msgid "dahili notlar"
+msgstr "internal notes"
+
+#: templates/accounts/login.html
+msgid "Demo veri için:"
+msgstr "For demo data:"
+
+#: templates/core/settings.html
+msgid "Demo veri yüklerseniz örnek ayarlar oluşturulur."
+msgstr "Loading demo data also creates example settings."
+
+#: apps/core/models.py
+msgid "Denetim kaydı"
+msgstr "Audit record"
+
+#: apps/core/models.py
+#: templates/core/settings.html
+msgid "Denetim kayıtları"
+msgstr "Audit records"
+
+#: apps/inventory/models.py
+#: templates/inventory/alerts.html
+#: templates/inventory/count_list.html
+#: templates/inventory/ingredient_detail.html
+msgid "Depo"
+msgstr "Warehouse"
+
+#: apps/inventory/models.py
+msgid "depo"
+msgstr "warehouse"
+
+#: apps/accounts/permissions.py
+msgid "Depo / satın alma"
+msgstr "Storekeeper / purchasing"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Depo dağılımı"
+msgstr "Warehouse breakdown"
+
+#: templates/devcenter/index.html
+msgid "Depo durumu"
+msgstr "Warehouse status"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Depo kaydı yok."
+msgstr "No warehouse records."
+
+#: apps/inventory/models.py
+msgid "Depo stokları"
+msgstr "Warehouse stock levels"
+
+#: apps/inventory/models.py
+msgid "Depo stoğu"
+msgstr "Warehouse stock"
+
+#: apps/inventory/models.py
+msgid "Depo transferi (giriş)"
+msgstr "Warehouse transfer (in)"
+
+#: apps/inventory/models.py
+msgid "Depo transferi (çıkış)"
+msgstr "Warehouse transfer (out)"
+
+#: apps/inventory/models.py
+msgid "Depolar"
+msgstr "Warehouses"
+
+#: apps/training/models.py
+msgid "ders"
+msgstr "lesson"
+
+#: apps/training/models.py
+msgid "Ders ilerlemeleri"
+msgstr "Lesson progress records"
+
+#: apps/training/models.py
+msgid "Ders ilerlemesi"
+msgstr "Lesson progress"
+
+#: apps/training/views.py
+msgid "Ders ilerlemesi sıfırlandı."
+msgstr "Lesson progress has been reset."
+
+#: apps/training/views.py
+msgid "Ders tamamlandı: %(title)s"
+msgstr "Lesson completed: %(title)s"
+
+#: templates/training/lesson.html
+msgid "Dersler"
+msgstr "Lessons"
+
+#: templates/training/index.html
+msgid "Dersler size açık olan bölümlere göre listelenir; yetkiniz olmayan\n        ekranlar için ders gösterilmez. Her ders kısa adımlardan oluşur ve sonunda\n        birkaç soruyla anladığınızı kontrol edersiniz."
+msgstr "Lessons are listed according to the sections available to you; no lesson is\n        shown for screens you cannot access. Each lesson is a few short steps and\n        ends with a couple of questions to check your understanding."
+
+#: templates/catalog/product_list.html
+msgid "Detay"
+msgstr "Detail"
+
+#: apps/ai/models.py
+msgid "detaylar"
+msgstr "details"
+
+#: templates/catalog/product_detail.html
+msgid "Detaylar"
+msgstr "Details"
+
+#: apps/hr/models.py
+#: apps/inventory/models.py
+msgid "Devam ediyor"
+msgstr "In progress"
+
+#: templates/accounts/password_change.html
+msgid "Devam etmeden önce parolanızı değiştirmelisiniz."
+msgstr "You must change your password before continuing."
+
+#: templates/ai/providers.html
+msgid "Developer"
+msgstr "Developer"
+
+#: templates/ai/analysis_hub.html
+msgid "Developer &gt; Start Server"
+msgstr "Developer &gt; Start Server"
+
+#: templates/ai/providers.html
+msgid "Devre dışı"
+msgstr "Disabled"
+
+#: templates/ai/providers.html
+msgid "Devre kesici eşiği"
+msgstr "Circuit breaker threshold"
+
+#: templates/ai/providers.html
+msgid "Devre kesicileri sıfırla"
+msgstr "Reset circuit breakers"
+
+#: apps/core/models.py
+#: apps/orders/models.py
+msgid "değer"
+msgstr "value"
+
+#: templates/inventory/alerts.html
+#: templates/inventory/ingredient_list.html
+msgid "Değer"
+msgstr "Value"
+
+#: apps/inventory/models.py
+msgid "değerlendirme"
+msgstr "rating"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Değişecek dosyalar"
+msgstr "Files that will change"
+
+#: apps/devcenter/models.py
+msgid "Değişiklik doğrudan ana dala uygulanmaz."
+msgstr "Changes are never applied directly to the main branch."
+
+#: templates/devcenter/proposal_detail.html
+msgid "Değişiklik önizlemesi"
+msgstr "Change preview"
+
+#: templates/devcenter/git.html
+msgid "Değişiklik özeti"
+msgstr "Change summary"
+
+#: apps/core/models.py
+msgid "değişiklikler"
+msgstr "changes"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Değişikliği geri al"
+msgstr "Roll the change back"
+
+#: templates/reports/dashboard.html
+msgid "Değişim"
+msgstr "Change"
+
+#: templates/reports/statistics.html
+msgid "değişim yok"
+msgstr "no change"
+
+#: apps/catalog/models.py
+msgid "değişim zamanı"
+msgstr "changed at"
+
+#: apps/catalog/models.py
+msgid "değiştiren"
+msgstr "changed by"
+
+#: apps/hr/models.py
+msgid "Değiştirildi"
+msgstr "Changed"
+
+#: apps/floor/models.py
+msgid "Dikdörtgen"
+msgstr "Rectangle"
+
+#: apps/core/models.py
+msgid "Dikkat"
+msgstr "Notice"
+
+#: apps/accounts/models.py
+msgid "dil"
+msgstr "language"
+
+#: templates/base.html
+msgid "Dil"
+msgstr "Language"
+
+#: templates/base.html
+msgid "Dil seç"
+msgstr "Choose language"
+
+#: templates/devcenter/terminal.html
+msgid "Disk biçimlendirme ve bölümleme"
+msgstr "Disk formatting and partitioning"
+
+#: templates/backups/index.html
+msgid "Diskte %(free)s GB boş"
+msgstr "%(free)s GB free on disk"
+
+#: apps/catalog/models.py
+#: apps/hr/models.py
+#: apps/inventory/models.py
+#: apps/orders/models.py
+msgid "Diğer"
+msgstr "Other"
+
+#: templates/devcenter/terminal.html
+msgid "django check"
+msgstr "django check"
+
+#: templates/backups/detail.html
+msgid "Django sürümü"
+msgstr "Django version"
+
+#: templates/base.html
+msgid "Django yönetimi"
+msgstr "Django admin"
+
+#: templates/training/index.html
+#: templates/training/lesson.html
+msgid "dk"
+msgstr "min"
+
+#: apps/floor/models.py
+#: templates/floor/table_map.html
+msgid "Dolu"
+msgstr "Occupied"
+
+#: apps/floor/models.py
+msgid "doluluk başlangıcı"
+msgstr "occupied since"
+
+#: templates/backups/index.html
+#: templates/devcenter/index.html
+#: templates/devcenter/snapshots.html
+msgid "Dosya"
+msgstr "File"
+
+#: apps/backups/models.py
+msgid "dosya adı"
+msgstr "file name"
+
+#: templates/devcenter/files.html
+msgid "Dosya ara…"
+msgstr "Search files…"
+
+#: templates/devcenter/files.html
+msgid "Dosya bulunamadı."
+msgstr "File not found."
+
+#: templates/backups/detail.html
+msgid "Dosya bütünlüğü"
+msgstr "File integrity"
+
+#: templates/backups/index.html
+msgid "Dosya diskte yok"
+msgstr "File is missing from disk"
+
+#: apps/core/utils.py
+msgid "Dosya içeriği uzantısıyla uyuşmuyor. Yükleme reddedildi."
+msgstr "File content does not match its extension. Upload rejected."
+
+#: templates/devcenter/proposal_detail.html
+msgid "Dosya sayısı"
+msgstr "File count"
+
+#: apps/core/utils.py
+msgid "Dosya çok büyük (%(size)s MB). En fazla %(max)s MB yükleyebilirsiniz."
+msgstr "File is too large (%(size)s MB). You can upload at most %(max)s MB."
+
+#: templates/devcenter/index.html
+msgid "Dosyalar"
+msgstr "Files"
+
+#: apps/backups/models.py
+msgid "Dosyanın bozulmadığını doğrulamak için."
+msgstr "Used to verify the file has not been corrupted."
+
+#: apps/training/models.py
+msgid "doğru yanıt"
+msgstr "correct answers"
+
+#: templates/backups/detail.html
+msgid "Doğrulandı"
+msgstr "Verified"
+
+#: apps/floor/models.py
+msgid "Doğum günü, yıldönümü vb."
+msgstr "Birthday, anniversary etc."
+
+#: apps/hr/models.py
+msgid "Doğum izni"
+msgstr "Parental leave"
+
+#: apps/crm/models.py
+msgid "doğum tarihi"
+msgstr "date of birth"
+
+#: apps/crm/models.py
+msgid "Duraklatıldı"
+msgstr "Paused"
+
+#: apps/backups/models.py
+#: apps/crm/models.py
+#: apps/devcenter/models.py
+#: apps/floor/models.py
+msgid "durum"
+msgstr "status"
+
+#: templates/accounts/user_list.html
+#: templates/ai/providers.html
+#: templates/backups/detail.html
+#: templates/backups/index.html
+msgid "Durum"
+msgstr "Status"
+
+#: apps/crm/models.py
+msgid "duygu"
+msgstr "sentiment"
+
+#: templates/crm/review_list.html
+msgid "Duygu"
+msgstr "Sentiment"
+
+#: apps/crm/models.py
+msgid "duygu skoru"
+msgstr "sentiment score"
+
+#: templates/reports/dashboard.html
+msgid "Dönem"
+msgstr "Period"
+
+#: apps/ai/models.py
+#: apps/hr/models.py
+msgid "dönem başı"
+msgstr "period start"
+
+#: templates/reports/index.html
+msgid "Dönem karşılaştırmalı bakış: eğilimler, gün ve saate göre yoğunluk, müşteri davranışı, fire ve servis hızı."
+msgstr "A period-over-period view: trends, day and hour intensity, customer behaviour, waste and service speed."
+
+#: templates/reports/dashboard.html
+msgid "Dönem karşılaştırması"
+msgstr "Period comparison"
+
+#: apps/ai/models.py
+#: apps/hr/models.py
+msgid "dönem sonu"
+msgstr "period end"
+
+#: templates/reports/dashboard.html
+msgid "düne göre"
+msgstr "vs yesterday"
+
+#: apps/crm/models.py
+msgid "Düzeltme"
+msgstr "Adjustment"
+
+#: templates/accounts/user_list.html
+#: templates/catalog/product_detail.html
+#: templates/catalog/product_list.html
+#: templates/catalog/recipe_detail.html
+msgid "Düzenle"
+msgstr "Edit"
+
+#: apps/core/models.py
+msgid "düzenlenebilir"
+msgstr "editable"
+
+#: apps/crm/models.py
+msgid "Düzenli"
+msgstr "Regular"
+
+#: apps/core/models.py
+msgid "düzey"
+msgstr "level"
+
+#: apps/ai/models.py
+#: apps/hr/models.py
+#: apps/kitchen/models.py
+#: templates/crm/customer_list.html
+msgid "Düşük"
+msgstr "Low"
+
+#: apps/core/models.py
+msgid "Dışa aktarma"
+msgstr "Export"
+
+#: apps/crm/models.py
+#: apps/floor/models.py
+#: apps/inventory/models.py
+msgid "e-posta"
+msgstr "email"
+
+#: templates/accounts/user_list.html
+#: templates/crm/customer_detail.html
+msgid "E-posta"
+msgstr "Email"
+
+#: apps/crm/models.py
+msgid "E-posta ile pazarlama"
+msgstr "Email marketing"
+
+#: templates/accounts/user_permissions.html
+msgid "ek izin"
+msgstr "extra permission"
+
+#: apps/accounts/forms.py
+#: templates/accounts/user_permissions.html
+msgid "Ek izinler"
+msgstr "Extra permissions"
+
+#: apps/accounts/models.py
+msgid "ek izinler"
+msgstr "extra permissions"
+
+#: templates/floor/reservation_list.html
+#: templates/inventory/purchase_detail.html
+msgid "Ekle"
+msgstr "Add"
+
+#: templates/training/lesson.html
+msgid "Ekranı aç"
+msgstr "Open the screen"
+
+#: templates/catalog/recipe_detail.html
+msgid "Eksik malzeme uyarısı"
+msgstr "Missing ingredient warning"
+
+#: apps/backups/models.py
+#: templates/backups/index.html
+#: templates/orders/pos.html
+msgid "Elle"
+msgstr "Manual"
+
+#: apps/orders/models.py
+msgid "Elle indirim"
+msgstr "Manual discount"
+
+#: templates/reports/sales.html
+msgid "En az satan ürünler"
+msgstr "Worst-selling products"
+
+#: apps/catalog/models.py
+msgid "en az seçim"
+msgstr "minimum selections"
+
+#: templates/reports/statistics.html
+msgid "En değerli müşteriler"
+msgstr "Most valuable customers"
+
+#: templates/backups/index.html
+msgid "En fazla %(keep)s tutulur"
+msgstr "At most %(keep)s are kept"
+
+#: templates/crm/review_list.html
+msgid "En sık geçen konular (AI analizi)"
+msgstr "Most frequent topics (AI analysis)"
+
+#: templates/reports/statistics.html
+msgid "En yoğun gün"
+msgstr "Busiest day"
+
+#: templates/reports/statistics.html
+msgid "En çok fire veren"
+msgstr "Highest waste"
+
+#: templates/reports/sales.html
+msgid "En çok satan ürünler"
+msgstr "Best-selling products"
+
+#: templates/reports/statistics.html
+msgid "En çok satanlar"
+msgstr "Best sellers"
+
+#: templates/reports/dashboard.html
+msgid "En çok satanlar (7 gün)"
+msgstr "Best sellers (7 days)"
+
+#: apps/catalog/models.py
+msgid "en çok seçim"
+msgstr "maximum selections"
+
+#: apps/devcenter/models.py
+msgid "engelleme nedeni"
+msgstr "block reason"
+
+#: apps/devcenter/models.py
+msgid "Engellendi"
+msgstr "Blocked"
+
+#: templates/devcenter/terminal.html
+msgid "Engellenen işlemler"
+msgstr "Blocked operations"
+
+#: templates/core/403.html
+msgid "Erişim yetkiniz yok"
+msgstr "You do not have access"
+
+#: apps/catalog/models.py
+msgid "eski fiyat"
+msgstr "previous price"
+
+#: apps/core/models.py
+#: apps/devcenter/models.py
+msgid "etiket"
+msgstr "label"
+
+#: templates/devcenter/snapshots.html
+msgid "Etiket"
+msgstr "Label"
+
+#: templates/core/settings.html
+msgid "Evet"
+msgstr "Yes"
+
+#: apps/core/models.py
+msgid "Evet/Hayır"
+msgstr "Yes/No"
+
+#: templates/reports/statistics.html
+msgid "Excel"
+msgstr "Excel"
+
+#: apps/core/context_processors.py
+msgid "Eğitim"
+msgstr "Training"
+
+#: templates/orders/pos.html
+msgid "Eşit böl"
+msgstr "Split evenly"
+
+#: templates/orders/pos.html
+msgid "Eşleşen ürün bulunamadı"
+msgstr "No matching product found"
+
+#: templates/inventory/count_detail.html
+#: templates/orders/cash_session.html
+#: templates/reports/closing_detail.html
+msgid "Fark"
+msgstr "Variance"
+
+#: templates/inventory/count_detail.html
+#: templates/inventory/count_list.html
+msgid "Fark değeri"
+msgstr "Variance value"
+
+#: apps/inventory/models.py
+msgid "fatura no"
+msgstr "invoice number"
+
+#: templates/inventory/purchase_detail.html
+msgid "Fatura no"
+msgstr "Invoice number"
+
+#: apps/inventory/models.py
+msgid "Fazla üretim"
+msgstr "Overproduction"
+
+#: templates/devcenter/git.html
+msgid "feat: ..."
+msgstr "feat: ..."
+
+#: apps/inventory/models.py
+msgid "FEFO - Önce son kullanma tarihi yakın olan"
+msgstr "FEFO - first expired, first out"
+
+#: apps/inventory/models.py
+msgid "FIFO - İlk giren ilk çıkar"
+msgstr "FIFO - first in, first out"
+
+#: templates/accounts/user_list.html
+#: templates/ai/insights.html
+#: templates/catalog/product_list.html
+#: templates/core/audit_log.html
+msgid "Filtrele"
+msgstr "Filter"
+
+#: apps/reports/models.py
+msgid "filtreler"
+msgstr "filters"
+
+#: templates/orders/pos.html
+msgid "Filtreleri temizle"
+msgstr "Clear filters"
+
+#: templates/orders/order_list.html
+msgid "Filtreli sipariş"
+msgstr "Filtered orders"
+
+#: apps/core/models.py
+msgid "Finans"
+msgstr "Finance"
+
+#: templates/catalog/product_detail.html
+#: templates/catalog/recipe_detail.html
+msgid "Fire"
+msgstr "Waste"
+
+#: templates/catalog/recipe_form.html
+msgid "Fire %"
+msgstr "Waste %"
+
+#: apps/inventory/models.py
+msgid "Fire / israf"
+msgstr "Waste"
+
+#: templates/inventory/waste_list.html
+msgid "Fire / İsraf Kaydı"
+msgstr "Waste record"
+
+#: apps/inventory/models.py
+#: templates/inventory/waste_list.html
+msgid "Fire kaydı"
+msgstr "Waste record"
+
+#: templates/inventory/waste_list.html
+msgid "Fire kaydı yok."
+msgstr "No waste records."
+
+#: apps/inventory/models.py
+msgid "Fire kayıtları"
+msgstr "Waste records"
+
+#: templates/ai/analysis_hub.html
+msgid "Fire nedenleri, maliyeti ve kök neden değerlendirmesi."
+msgstr "Waste reasons, cost and root-cause assessment."
+
+#: templates/reports/statistics.html
+msgid "Fire oranı"
+msgstr "Waste rate"
+
+#: apps/catalog/models.py
+msgid "fire oranı (%)"
+msgstr "waste rate (%)"
+
+#: templates/reports/statistics.html
+msgid "Fire tutarı"
+msgstr "Waste amount"
+
+#: templates/inventory/waste_list.html
+msgid "Fireyi kaydet"
+msgstr "Save waste record"
+
+#: apps/crm/models.py
+msgid "firma"
+msgstr "company"
+
+#: templates/crm/customer_detail.html
+msgid "Firma"
+msgstr "Company"
+
+#: templates/catalog/product_list.html
+msgid "Fiyat"
+msgstr "Price"
+
+#: templates/ai/providers.html
+msgid "Fiyat (1M token)"
+msgstr "Price (1M tokens)"
+
+#: templates/catalog/product_form.html
+msgid "Fiyat değişikliği gerekçesi"
+msgstr "Reason for the price change"
+
+#: apps/catalog/models.py
+#: apps/orders/models.py
+msgid "fiyat farkı"
+msgstr "price difference"
+
+#: apps/catalog/models.py
+#: templates/catalog/product_detail.html
+msgid "Fiyat geçmişi"
+msgstr "Price history"
+
+#: apps/ai/models.py
+msgid "Fiyat simülasyonu"
+msgstr "Price simulation"
+
+#: templates/catalog/qr_menu.html
+msgid "Fiyatlara KDV dahildir."
+msgstr "Prices include VAT."
+
+#: templates/catalog/product_form.html
+msgid "Fiyatı değiştiriyorsanız gerekçe yazın (denetim kaydına işlenir)"
+msgstr "If you change the price, give a reason (it is written to the audit log)"
+
+#: templates/orders/_order_panel.html
+#: templates/orders/order_detail.html
+msgid "Fiş"
+msgstr "Receipt"
+
+#: apps/reports/models.py
+msgid "fiş görseli"
+msgstr "receipt image"
+
+#: apps/reports/models.py
+msgid "Fiş görselinden yapay zekâ ile okunan alanlar."
+msgstr "Fields read from the receipt image by artificial intelligence."
+
+#: apps/accounts/permissions.py
+#: templates/floor/table_list.html
+#: templates/orders/order_detail.html
+#: templates/orders/order_list.html
+msgid "Garson"
+msgstr "Server"
+
+#: apps/orders/models.py
+msgid "garson"
+msgstr "server"
+
+#: templates/floor/table_map.html
+msgid "Garson ata"
+msgstr "Assign server"
+
+#: templates/kitchen/performance.html
+msgid "Geciken sipariş yok."
+msgstr "No late orders."
+
+#: templates/ai/usage.html
+msgid "Gecikme"
+msgstr "Latency"
+
+#: apps/ai/models.py
+msgid "gecikme (ms)"
+msgstr "latency (ms)"
+
+#: apps/orders/models.py
+msgid "Gel-al"
+msgstr "Pickup"
+
+#: templates/reports/expense_list.html
+msgid "Gelir"
+msgstr "Income"
+
+#: templates/reports/index.html
+msgid "Gelir ve Giderler"
+msgstr "Income and expenses"
+
+#: apps/core/context_processors.py
+msgid "Geliştirme"
+msgstr "Development"
+
+#: templates/core/settings.html
+msgid "Geliştirme Merkezi"
+msgstr "Development centre"
+
+#: apps/floor/models.py
+#: apps/hr/models.py
+#: templates/floor/reservation_list.html
+msgid "Gelmedi"
+msgstr "No-show"
+
+#: apps/crm/models.py
+msgid "gelmediği rezervasyon"
+msgstr "no-show reservations"
+
+#: apps/ai/models.py
+msgid "Genel asistan"
+msgstr "General assistant"
+
+#: apps/catalog/models.py
+msgid "genel gider payı"
+msgstr "overhead share"
+
+#: apps/accounts/permissions.py
+msgid "Genel müdür"
+msgstr "General manager"
+
+#: apps/orders/models.py
+msgid "genel toplam"
+msgstr "grand total"
+
+#: templates/inventory/purchase_detail.html
+#: templates/orders/order_detail.html
+msgid "Genel toplam"
+msgstr "Grand total"
+
+#: apps/accounts/models.py
+#: apps/catalog/models.py
+#: apps/hr/models.py
+#: apps/orders/models.py
+msgid "gerekçe"
+msgstr "rationale"
+
+#: templates/hr/leave_list.html
+#: templates/orders/cash_session.html
+msgid "Gerekçe"
+msgstr "Reason"
+
+#: apps/devcenter/models.py
+msgid "Geri alma noktaları"
+msgstr "Rollback points"
+
+#: apps/devcenter/models.py
+msgid "geri alma noktası"
+msgstr "rollback point"
+
+#: apps/devcenter/models.py
+msgid "Geri alma noktası"
+msgstr "Rollback point"
+
+#: templates/devcenter/snapshots.html
+msgid "Geri alma noktası yok."
+msgstr "No rollback points."
+
+#: apps/devcenter/models.py
+msgid "Geri alındı"
+msgstr "Rolled back"
+
+#: templates/core/429.html
+msgid "Geri dön"
+msgstr "Go back"
+
+#: templates/backups/detail.html
+#: templates/devcenter/snapshots.html
+msgid "Geri yükle"
+msgstr "Restore"
+
+#: apps/backups/models.py
+msgid "Geri yükleme"
+msgstr "Restore"
+
+#: templates/backups/index.html
+msgid "Geri yükleme geçmişi"
+msgstr "Restore history"
+
+#: templates/backups/index.html
+msgid "Geri yükleme mevcut verilerin üzerine yazar. Bu yüzden geri yüklemeden önce sistem otomatik olarak bir güvenlik yedeği alır."
+msgstr "Restoring overwrites current data. That is why the system automatically takes a safety backup beforehand."
+
+#: apps/backups/models.py
+msgid "Geri yükleme sonrası kullanıcı kaydı yedekteki hâline döner; işlemi kimin yaptığı burada metin olarak korunur."
+msgstr "After a restore the user record reverts to its state in the backup; who performed the operation is preserved here as text."
+
+#: apps/devcenter/models.py
+msgid "geri yükleme zamanı"
+msgstr "restored at"
+
+#: apps/backups/models.py
+msgid "Geri yükleme öncesi güvenlik"
+msgstr "Pre-restore safety"
+
+#: apps/backups/models.py
+msgid "Geri yüklemeden hemen önce alınan yedek."
+msgstr "Backup taken immediately before the restore."
+
+#: apps/backups/models.py
+msgid "Geri yüklemeler"
+msgstr "Restores"
+
+#: apps/devcenter/models.py
+msgid "geri yüklendi"
+msgstr "restored"
+
+#: templates/devcenter/snapshots.html
+msgid "Geri yüklendi"
+msgstr "Restored"
+
+#: templates/hr/employee_detail.html
+msgid "geç"
+msgstr "late"
+
+#: apps/hr/models.py
+msgid "geç kalma"
+msgstr "lateness"
+
+#: apps/reports/statistics.py
+msgid "Geçen ay"
+msgstr "Last month"
+
+#: apps/accounts/models.py
+msgid "Geçerli bir telefon numarası girin."
+msgstr "Enter a valid phone number."
+
+#: apps/inventory/models.py
+msgid "geçerlilik başlangıcı"
+msgstr "valid from"
+
+#: apps/core/utils.py
+msgid "Geçersiz dosya adı."
+msgstr "Invalid file name."
+
+#: templates/orders/cash_session.html
+msgid "Geçmiş kasa oturumları"
+msgstr "Past till sessions"
+
+#: templates/devcenter/terminal.html
+msgid "Geçmiş yok."
+msgstr "No history."
+
+#: templates/devcenter/proposal_detail.html
+msgid "Geçti"
+msgstr "Passed"
+
+#: apps/reports/models.py
+#: templates/reports/expense_list.html
+msgid "Gider"
+msgstr "Expense"
+
+#: templates/reports/expense_list.html
+msgid "Gider ekle"
+msgstr "Add expense"
+
+#: templates/reports/index.html
+msgid "Gider kalemleri, net kâr ve kategori dağılımı."
+msgstr "Expense items, net profit and category breakdown."
+
+#: apps/reports/models.py
+msgid "Gider kategorileri"
+msgstr "Expense categories"
+
+#: apps/reports/models.py
+msgid "Gider kategorisi"
+msgstr "Expense category"
+
+#: templates/reports/expense_list.html
+msgid "Gider kaydı yok."
+msgstr "No expense records."
+
+#: apps/reports/models.py
+msgid "Giderler"
+msgstr "Expenses"
+
+#: apps/ai/models.py
+msgid "girdi token"
+msgstr "input tokens"
+
+#: apps/core/models.py
+#: templates/accounts/login.html
+#: templates/hr/employee_detail.html
+#: templates/inventory/ingredient_detail.html
+msgid "Giriş"
+msgstr "Sign in"
+
+#: apps/hr/models.py
+msgid "giriş"
+msgstr "clock-in"
+
+#: apps/inventory/models.py
+msgid "giriş miktarı"
+msgstr "received quantity"
+
+#: templates/accounts/login.html
+msgid "Giriş yap"
+msgstr "Sign in"
+
+#: apps/inventory/models.py
+msgid "giriş zamanı"
+msgstr "clock-in time"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Girişi kaydet"
+msgstr "Save entry"
+
+#: templates/core/notifications.html
+#: templates/devcenter/index.html
+msgid "Git"
+msgstr "Git"
+
+#: apps/devcenter/models.py
+msgid "git commit"
+msgstr "git commit"
+
+#: apps/devcenter/models.py
+msgid "git dalı"
+msgstr "git branch"
+
+#: templates/devcenter/index.html
+#: templates/devcenter/proposal_detail.html
+#: templates/devcenter/snapshots.html
+msgid "Git dalı"
+msgstr "Git branch"
+
+#: templates/devcenter/terminal.html
+msgid "git diff"
+msgstr "git diff"
+
+#: templates/devcenter/terminal.html
+msgid "git status"
+msgstr "git status"
+
+#: apps/backups/models.py
+msgid "gizli ayarlar dahil"
+msgstr "includes secrets"
+
+#: apps/crm/models.py
+msgid "Google"
+msgstr "Google"
+
+#: apps/catalog/models.py
+#: apps/core/models.py
+msgid "grup"
+msgstr "group"
+
+#: apps/orders/models.py
+msgid "gönderim zamanı"
+msgstr "sent at"
+
+#: apps/ai/models.py
+msgid "görev"
+msgstr "task"
+
+#: apps/hr/models.py
+#: templates/hr/task_list.html
+msgid "Görev"
+msgstr "Task"
+
+#: apps/hr/models.py
+msgid "görev notu"
+msgstr "task note"
+
+#: templates/hr/task_list.html
+msgid "Görev oluştur"
+msgstr "Create task"
+
+#: templates/ai/assistant.html
+msgid "Görev türü"
+msgstr "Task type"
+
+#: templates/ai/providers.html
+msgid "Görev → model eşlemesi:"
+msgstr "Task → model mapping:"
+
+#: apps/hr/models.py
+msgid "Görevler"
+msgstr "Tasks"
+
+#: apps/catalog/models.py
+msgid "görsel"
+msgstr "image"
+
+#: apps/ai/models.py
+msgid "Görsel analiz"
+msgstr "Vision analysis"
+
+#: templates/training/index.html
+msgid "Gösterilecek ders yok."
+msgstr "There are no lessons to show."
+
+#: apps/crm/models.py
+msgid "Gümüş"
+msgstr "Silver"
+
+#: templates/hr/leave_list.html
+#: templates/reports/statistics.html
+msgid "Gün"
+msgstr "Day"
+
+#: apps/reports/models.py
+msgid "Gün sonu kapanışları"
+msgstr "Daily closings"
+
+#: apps/reports/models.py
+msgid "Gün sonu kapanışı"
+msgstr "Daily closing"
+
+#: templates/reports/index.html
+msgid "Gün Sonu Raporları"
+msgstr "Daily closing reports"
+
+#: templates/reports/closing_list.html
+msgid "Gün sonu raporu yok."
+msgstr "No daily reports."
+
+#: templates/reports/statistics.html
+msgid "Gün ve saate göre yoğunluk"
+msgstr "Intensity by day and hour"
+
+#: templates/catalog/recipe_form.html
+msgid "Güncel hesap"
+msgstr "Current balance"
+
+#: apps/core/models.py
+msgid "Güncelleme"
+msgstr "Update"
+
+#: apps/core/models.py
+#: apps/inventory/models.py
+#: apps/training/models.py
+msgid "güncellenme"
+msgstr "updated at"
+
+#: apps/catalog/models.py
+msgid "günler"
+msgstr "days"
+
+#: templates/ai/providers.html
+msgid "Günlük"
+msgstr "Daily"
+
+#: templates/reports/sales.html
+msgid "Günlük ciro eğrisi"
+msgstr "Daily revenue curve"
+
+#: templates/reports/statistics.html
+msgid "Günlük ciro — önceki dönemle"
+msgstr "Daily revenue — against the previous period"
+
+#: templates/reports/statistics.html
+msgid "Günlük ort."
+msgstr "Daily avg."
+
+#: apps/reports/statistics.py
+msgid "Günlük ortalama"
+msgstr "Daily average"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Günlük tüketim"
+msgstr "Daily consumption"
+
+#: apps/ai/models.py
+msgid "Günlük yönetici özeti"
+msgstr "Daily management summary"
+
+#: templates/ai/analysis_hub.html
+msgid "Günlük Yönetici Özeti"
+msgstr "Daily management summary"
+
+#: templates/ai/analysis_hub.html
+msgid "Günün özeti, iyi giden ve dikkat gerektiren konular."
+msgstr "A summary of the day: what went well and what needs attention."
+
+#: apps/ai/models.py
+msgid "güven düzeyi"
+msgstr "confidence level"
+
+#: templates/core/settings.html
+msgid "Güvenli terminal"
+msgstr "Secure terminal"
+
+#: templates/devcenter/terminal.html
+msgid "Güvenli Terminal"
+msgstr "Secure terminal"
+
+#: apps/core/models.py
+#: templates/backups/index.html
+msgid "Güvenlik"
+msgstr "Security"
+
+#: templates/core/settings.html
+msgid "Güvenlik durumu"
+msgstr "Security status"
+
+#: templates/devcenter/index.html
+msgid "Güvenlik modeli"
+msgstr "Security model"
+
+#: apps/backups/models.py
+msgid "güvenlik yedeği"
+msgstr "safety backup"
+
+#: templates/ai/providers.html
+msgid "Güvenlik:"
+msgstr "Security:"
+
+#: templates/catalog/product_detail.html
+msgid "Gıda maliyet oranı"
+msgstr "Food cost ratio"
+
+#: templates/reports/profitability.html
+msgid "Gıda maliyeti"
+msgstr "Food cost"
+
+#: apps/inventory/models.py
+msgid "Hacim"
+msgstr "Volume"
+
+#: templates/hr/employee_detail.html
+msgid "Haftalık hedef"
+msgstr "Weekly target"
+
+#: apps/hr/models.py
+msgid "haftalık hedef saat"
+msgstr "weekly target hours"
+
+#: templates/reports/statistics.html
+msgid "Haftanın günleri"
+msgstr "Days of the week"
+
+#: templates/ai/analysis_hub.html
+msgid "Haftanın gününe göre 7 günlük ciro ve sipariş aralığı tahmini."
+msgstr "A 7-day revenue and order range forecast by day of the week."
+
+#: apps/ai/models.py
+msgid "Hangi ekran/işlev çağırdı (ör. 'menu_description')."
+msgstr "Which screen or feature made the call (e.g. 'menu_description')."
+
+#: apps/crm/models.py
+msgid "Harcama"
+msgstr "Spending"
+
+#: apps/crm/models.py
+msgid "Harcamalar negatiftir."
+msgstr "Spending is recorded as negative."
+
+#: templates/inventory/movement_list.html
+msgid "Hareket bulunamadı."
+msgstr "No movements found."
+
+#: apps/inventory/models.py
+msgid "hareket türü"
+msgstr "movement type"
+
+#: templates/inventory/movement_list.html
+msgid "Hareket türü"
+msgstr "Movement type"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Hareket yok."
+msgstr "No movements."
+
+#: templates/ai/providers.html
+msgid "Hassas veri → yalnızca yerel"
+msgstr "Sensitive data → local only"
+
+#: apps/hr/models.py
+msgid "Hastalık izni"
+msgstr "Sick leave"
+
+#: apps/ai/models.py
+#: apps/backups/models.py
+msgid "hata"
+msgstr "error"
+
+#: apps/devcenter/models.py
+msgid "hata çıktısı"
+msgstr "error output"
+
+#: templates/backups/detail.html
+msgid "Hata:"
+msgstr "Error:"
+
+#: apps/floor/models.py
+msgid "hatırlatma gönderildi"
+msgstr "reminder sent"
+
+#: apps/orders/models.py
+msgid "Havale / EFT"
+msgstr "Bank transfer"
+
+#: templates/core/settings.html
+msgid "Hayır"
+msgstr "No"
+
+#: apps/kitchen/models.py
+#: apps/orders/models.py
+#: templates/ai/providers.html
+#: templates/devcenter/snapshots.html
+msgid "Hazır"
+msgstr "Ready"
+
+#: templates/ai/assistant.html
+msgid "hazır"
+msgstr "ready"
+
+#: templates/devcenter/terminal.html
+msgid "Hazır komutlar"
+msgstr "Ready-made commands"
+
+#: apps/kitchen/models.py
+#: apps/orders/models.py
+msgid "hazır olma"
+msgstr "ready at"
+
+#: apps/kitchen/models.py
+#: apps/orders/models.py
+msgid "Hazırlanıyor"
+msgstr "Preparing"
+
+#: apps/inventory/models.py
+msgid "Hazırlık hatası"
+msgstr "Preparation error"
+
+#: apps/catalog/models.py
+msgid "hazırlık istasyonu"
+msgstr "preparation station"
+
+#: apps/catalog/models.py
+msgid "hazırlık notları"
+msgstr "preparation notes"
+
+#: templates/catalog/recipe_detail.html
+#: templates/catalog/recipe_form.html
+msgid "Hazırlık notları"
+msgstr "Preparation notes"
+
+#: templates/catalog/product_detail.html
+#: templates/orders/order_detail.html
+msgid "Hazırlık süresi"
+msgstr "Preparation time"
+
+#: apps/catalog/models.py
+msgid "hazırlık süresi (dk)"
+msgstr "preparation time (min)"
+
+#: apps/catalog/models.py
+msgid "Hazırlık sırasındaki kayıp (soyma, temizleme vb.)."
+msgstr "Loss during preparation (peeling, trimming etc.)."
+
+#: apps/orders/models.py
+msgid "hazırlığa başlama"
+msgstr "preparation started at"
+
+#: templates/crm/campaign_list.html
+#: templates/kitchen/performance.html
+msgid "Hedef"
+msgstr "Target"
+
+#: apps/devcenter/models.py
+msgid "hedef dosyalar"
+msgstr "target files"
+
+#: templates/devcenter/index.html
+msgid "Hedef dosyalar (en fazla 6)"
+msgstr "Target files (at most 6)"
+
+#: apps/core/models.py
+#: apps/hr/models.py
+msgid "hedef roller"
+msgstr "target roles"
+
+#: apps/crm/models.py
+msgid "hedef segmentler"
+msgstr "target segments"
+
+#: templates/catalog/product_detail.html
+msgid "Hedef: %25-35"
+msgstr "Target: 25-35%"
+
+#: templates/kitchen/performance.html
+msgid "Hedefin üstünde"
+msgstr "Above target"
+
+#: templates/kitchen/performance.html
+msgid "Hedefte"
+msgstr "On target"
+
+#: apps/crm/models.py
+#: apps/orders/models.py
+msgid "Hediye çeki"
+msgstr "Gift voucher"
+
+#: apps/crm/models.py
+msgid "Hediye çekleri"
+msgstr "Gift vouchers"
+
+#: templates/backups/index.html
+msgid "Henüz hiç yedek alınmamış."
+msgstr "No backup has ever been taken."
+
+#: templates/accounts/login.html
+msgid "Henüz kullanıcı oluşturulmamış. Terminalden yönetici hesabı açın:"
+msgstr "No user has been created yet. Create an administrator from the terminal:"
+
+#: templates/inventory/purchase_detail.html
+msgid "Henüz satır eklenmedi."
+msgstr "No lines added yet."
+
+#: templates/reports/dashboard.html
+msgid "Henüz satış kaydı yok"
+msgstr "No sales recorded yet"
+
+#: templates/backups/index.html
+msgid "Henüz yedek alınmamış."
+msgstr "No backup has been taken yet."
+
+#: templates/devcenter/index.html
+msgid "Henüz öneri yok."
+msgstr "No proposals yet."
+
+#: templates/backups/index.html
+msgid "Her %(hours)s saatte bir"
+msgstr "Every %(hours)s hours"
+
+#: templates/devcenter/snapshots.html
+msgid "Her kod uygulamasından önce otomatik olarak geri alma noktası oluşturulur. Bir değişiklik sorun çıkarırsa buradan önceki dosya haline dönebilirsiniz."
+msgstr "A rollback point is created automatically before each code apply. If a change causes trouble, you can return the files to their previous state from here."
+
+#: templates/devcenter/index.html
+msgid "Her uygulamadan önce otomatik geri alma noktası oluşturulur ve ayrı Git dalı açılır."
+msgstr "A rollback point is created and a separate Git branch is opened before each apply."
+
+#: templates/orders/_order_panel.html
+msgid "Hesabı böl"
+msgstr "Split the check"
+
+#: templates/orders/pos.html
+msgid "Hesabı Böl"
+msgstr "Split the check"
+
+#: apps/orders/models.py
+msgid "Hesabı kişilere göre bölmek için."
+msgstr "Used to split the check per guest."
+
+#: templates/accounts/login.html
+msgid "Hesabınız 5 başarısız denemeden sonra 1 saat kilitlenir."
+msgstr "Your account locks for one hour after five failed attempts."
+
+#: templates/accounts/profile.html
+msgid "Hesap"
+msgstr "Check"
+
+#: templates/orders/_order_panel.html
+msgid "Hesap bölmek için seç"
+msgstr "Select to split the check"
+
+#: apps/orders/models.py
+msgid "Hesap bölündüğünde kaynak adisyonu gösterir."
+msgstr "Shows the source check when a check is split."
+
+#: templates/accounts/lockout.html
+msgid "Hesap geçici olarak kilitlendi"
+msgstr "The account is temporarily locked"
+
+#: templates/orders/pos.html
+msgid "Hesapla"
+msgstr "Calculate"
+
+#: templates/reports/statistics.html
+msgid "Hücreler o gün ve saatteki <strong>ortalama sipariş sayısıdır</strong> (%(count)s siparişten hesaplandı)"
+msgstr "Cells show the <strong>average number of orders</strong> for that day and hour (calculated from %(count)s orders)"
+
+#: templates/reports/index.html
+msgid "Hızlı dışa aktarma (son 30 gün)"
+msgstr "Quick export (last 30 days)"
+
+#: apps/reports/models.py
+msgid "iade"
+msgstr "refund"
+
+#: apps/orders/models.py
+msgid "iade edilen"
+msgstr "refunded"
+
+#: apps/orders/models.py
+msgid "iade yöntemi"
+msgstr "refund method"
+
+#: apps/catalog/models.py
+msgid "ikon"
+msgstr "icon"
+
+#: apps/reports/models.py
+msgid "indirim"
+msgstr "discount"
+
+#: apps/orders/models.py
+msgid "indirim (%)"
+msgstr "discount (%)"
+
+#: apps/orders/models.py
+msgid "indirim tutarı"
+msgstr "discount amount"
+
+#: apps/crm/models.py
+msgid "IP"
+msgstr "IP"
+
+#: apps/core/models.py
+msgid "IP adresi"
+msgstr "IP address"
+
+#: apps/orders/models.py
+msgid "iptal eden"
+msgstr "cancelled by"
+
+#: apps/floor/models.py
+#: apps/orders/models.py
+msgid "iptal nedeni"
+msgstr "cancellation reason"
+
+#: apps/hr/models.py
+#: apps/reports/models.py
+msgid "iptal sayısı"
+msgstr "cancellation count"
+
+#: apps/reports/models.py
+msgid "iptal tutarı"
+msgstr "cancellation amount"
+
+#: apps/orders/models.py
+msgid "iptal zamanı"
+msgstr "cancelled at"
+
+#: apps/kitchen/models.py
+#: apps/orders/models.py
+msgid "istasyon"
+msgstr "station"
+
+#: apps/ai/models.py
+msgid "istem önizleme"
+msgstr "prompt preview"
+
+#: apps/catalog/models.py
+msgid "isteğe bağlı"
+msgstr "optional"
+
+#: apps/kitchen/models.py
+#: templates/kitchen/station_list.html
+msgid "Izgara"
+msgstr "Grill"
+
+#: apps/accounts/models.py
+msgid "izin kodu"
+msgstr "permission code"
+
+#: apps/crm/models.py
+#: apps/hr/models.py
+msgid "izin türü"
+msgstr "leave type"
+
+#: apps/ai/models.py
+#: apps/backups/models.py
+#: apps/core/models.py
+msgid "içerik"
+msgstr "content"
+
+#: apps/hr/models.py
+msgid "işe giriş"
+msgstr "hire date"
+
+#: apps/core/models.py
+msgid "işlem"
+msgstr "action"
+
+#: apps/crm/models.py
+#: apps/inventory/models.py
+msgid "işlem sonrası bakiye"
+msgstr "balance after"
+
+#: apps/backups/models.py
+msgid "işlemi yapan"
+msgstr "performed by"
+
+#: templates/reports/closing_list.html
+msgid "işletme içi özet"
+msgstr "internal summary"
+
+#: apps/ai/models.py
+msgid "işleyen"
+msgstr "processed by"
+
+#: apps/hr/models.py
+msgid "işten ayrılış"
+msgstr "termination date"
+
+#: apps/catalog/models.py
+msgid "işçilik maliyeti"
+msgstr "labour cost"
+
+#: apps/core/models.py
+#: apps/orders/models.py
+#: templates/orders/order_detail.html
+#: templates/reports/closing_list.html
+msgid "İade"
+msgstr "Refund"
+
+#: templates/reports/dashboard.html
+msgid "İade sayısı"
+msgstr "Refund count"
+
+#: templates/reports/dashboard.html
+msgid "İade tutarı"
+msgstr "Refund amount"
+
+#: templates/reports/voids.html
+msgid "İade yok."
+msgstr "No refunds."
+
+#: apps/orders/models.py
+#: templates/reports/closing_detail.html
+#: templates/reports/voids.html
+msgid "İadeler"
+msgstr "Refunds"
+
+#: templates/training/index.html
+msgid "İlerlemeniz"
+msgstr "Your progress"
+
+#: templates/training/lesson.html
+msgid "İlerlemeyi sıfırla"
+msgstr "Reset progress"
+
+#: templates/crm/customer_list.html
+msgid "İletişim"
+msgstr "Contact"
+
+#: templates/includes/_pagination.html
+msgid "İlk"
+msgstr "First"
+
+#: apps/accounts/models.py
+msgid "İlk girişte parola değiştirmeye zorlar."
+msgstr "Forces a password change at first sign-in."
+
+#: templates/accounts/login.html
+msgid "İlk kurulum"
+msgstr "First-time setup"
+
+#: templates/catalog/product_list.html
+msgid "İlk ürünü ekle"
+msgstr "Add the first product"
+
+#: apps/devcenter/models.py
+msgid "İnceleniyor"
+msgstr "Under review"
+
+#: templates/backups/detail.html
+#: templates/backups/index.html
+msgid "İndir"
+msgstr "Download"
+
+#: apps/core/models.py
+#: apps/reports/statistics.py
+#: templates/orders/_order_panel.html
+#: templates/orders/order_detail.html
+msgid "İndirim"
+msgstr "Discount"
+
+#: templates/orders/pos.html
+msgid "İndirim Uygula"
+msgstr "Apply discount"
+
+#: templates/reports/voids.html
+msgid "İndirim yok."
+msgstr "No discounts."
+
+#: templates/reports/closing_detail.html
+#: templates/reports/voids.html
+msgid "İndirimler"
+msgstr "Discounts"
+
+#: apps/core/models.py
+#: apps/hr/models.py
+#: apps/inventory/models.py
+#: apps/kitchen/models.py
+msgid "İptal"
+msgstr "Cancellation"
+
+#: apps/inventory/models.py
+msgid "İptal / iade geri yükleme"
+msgstr "Cancellation / refund restock"
+
+#: apps/floor/models.py
+#: apps/orders/models.py
+msgid "İptal edildi"
+msgstr "Cancelled"
+
+#: templates/reports/closing_detail.html
+#: templates/reports/dashboard.html
+msgid "İptal edilen adisyon"
+msgstr "Cancelled checks"
+
+#: templates/reports/voids.html
+msgid "İptal edilen satırlar"
+msgstr "Cancelled lines"
+
+#: templates/orders/_order_panel.html
+msgid "İptal et"
+msgstr "Cancel"
+
+#: templates/reports/dashboard.html
+msgid "İptal tutarı"
+msgstr "Cancellation amount"
+
+#: templates/reports/dashboard.html
+msgid "İptal ve iade (bugün)"
+msgstr "Voids and refunds (today)"
+
+#: templates/reports/voids.html
+msgid "İptal yok."
+msgstr "No cancellations."
+
+#: templates/ai/analysis_hub.html
+msgid "İptal, indirim ve iade örüntülerinde istatistiksel sapmalar."
+msgstr "Statistical outliers in void, discount and refund patterns."
+
+#: templates/reports/index.html
+msgid "İptal, İndirim ve İade"
+msgstr "Voids, discounts and refunds"
+
+#: templates/training/lesson.html
+msgid "İpucu"
+msgstr "Tip"
+
+#: apps/ai/models.py
+msgid "İsraf analizi"
+msgstr "Waste analysis"
+
+#: templates/ai/analysis_hub.html
+msgid "İsraf Analizi"
+msgstr "Waste analysis"
+
+#: apps/kitchen/models.py
+#: templates/catalog/product_detail.html
+#: templates/catalog/product_list.html
+#: templates/kitchen/performance.html
+msgid "İstasyon"
+msgstr "Station"
+
+#: templates/kitchen/performance.html
+msgid "İstasyon bazlı hazırlık süresi (son 7 gün)"
+msgstr "Preparation time by station (last 7 days)"
+
+#: templates/kitchen/station_list.html
+msgid "İstasyon tanımlı değil."
+msgstr "No stations defined."
+
+#: apps/kitchen/models.py
+msgid "İstasyonlar"
+msgstr "Stations"
+
+#: apps/core/context_processors.py
+msgid "İstatistik"
+msgstr "Statistics"
+
+#: templates/reports/index.html
+msgid "İstatistik Merkezi"
+msgstr "Statistics centre"
+
+#: templates/ai/usage.html
+msgid "İstem ve yanıt önizlemelerinde API anahtarları ve müşteri kişisel verileri otomatik olarak maskelenir."
+msgstr "API keys and customer personal data are masked automatically in prompt and response previews."
+
+#: templates/crm/customer_detail.html
+#: templates/hr/employee_detail.html
+msgid "İzin kaydı yok."
+msgstr "No leave records."
+
+#: apps/hr/models.py
+msgid "İzin talebi"
+msgstr "Leave request"
+
+#: templates/hr/leave_list.html
+msgid "İzin talebi yok."
+msgstr "No leave requests."
+
+#: apps/hr/models.py
+msgid "İzin talepleri"
+msgstr "Leave requests"
+
+#: templates/hr/leave_list.html
+msgid "İzin türü"
+msgstr "Leave type"
+
+#: templates/devcenter/index.html
+msgid "İzin verilen komutlar"
+msgstr "Allowed commands"
+
+#: apps/core/utils.py
+msgid "İzin verilmeyen dosya türü. İzin verilenler: %(list)s"
+msgstr "File type not allowed. Allowed types: %(list)s"
+
+#: templates/accounts/user_list.html
+#: templates/hr/employee_detail.html
+msgid "İzinler"
+msgstr "Permissions"
+
+#: templates/accounts/user_form.html
+msgid "İzinleri düzenle"
+msgstr "Edit permissions"
+
+#: templates/accounts/user_permissions.html
+msgid "İzinleri kaydet"
+msgstr "Save permissions"
+
+#: apps/catalog/models.py
+msgid "İçecek"
+msgstr "Beverage"
+
+#: templates/base.html
+msgid "İçeriğe geç"
+msgstr "Skip to content"
+
+#: templates/hr/employee_detail.html
+#: templates/hr/employee_list.html
+msgid "İşe giriş"
+msgstr "Hire date"
+
+#: templates/accounts/user_list.html
+#: templates/backups/index.html
+#: templates/catalog/category_list.html
+#: templates/catalog/product_list.html
+msgid "İşlem"
+msgstr "Action"
+
+#: templates/backups/detail.html
+msgid "İşlemden hemen önce otomatik bir güvenlik yedeği alınır, böylece gerekirse bu andaki duruma dönebilirsiniz."
+msgstr "A safety backup is taken automatically right before the operation, so you can return to this moment if you need to."
+
+#: templates/devcenter/proposal_detail.html
+msgid "İşlemler"
+msgstr "Actions"
+
+#: templates/core/settings.html
+msgid "İşletme"
+msgstr "Business"
+
+#: apps/accounts/permissions.py
+msgid "İşletme sahibi"
+msgstr "Owner"
+
+#: templates/catalog/recipe_detail.html
+msgid "İşçilik + genel gider"
+msgstr "Labour + overhead"
+
+#: apps/core/models.py
+msgid "JSON"
+msgstr "JSON"
+
+#: templates/inventory/alerts.html
+#: templates/inventory/ingredient_detail.html
+#: templates/orders/_order_panel.html
+#: templates/orders/order_detail.html
+msgid "Kalan"
+msgstr "Remaining"
+
+#: apps/crm/models.py
+msgid "kalan bakiye"
+msgstr "remaining balance"
+
+#: templates/orders/pos.html
+msgid "Kalan bakiye"
+msgstr "Remaining balance"
+
+#: apps/inventory/models.py
+msgid "kalan miktar"
+msgstr "remaining quantity"
+
+#: templates/hr/shift_schedule.html
+msgid "Kaldırmak için tıklayın"
+msgstr "Click to remove"
+
+#: templates/catalog/product_detail.html
+msgid "Kalori"
+msgstr "Calories"
+
+#: apps/catalog/models.py
+msgid "kalori (kcal)"
+msgstr "calories (kcal)"
+
+#: apps/crm/models.py
+#: apps/orders/models.py
+#: templates/crm/campaign_list.html
+msgid "Kampanya"
+msgstr "Campaign"
+
+#: templates/crm/campaign_list.html
+msgid "Kampanya yok."
+msgstr "No campaigns."
+
+#: apps/ai/models.py
+msgid "Kampanya önerisi"
+msgstr "Campaign suggestion"
+
+#: templates/ai/analysis_hub.html
+msgid "Kampanya Önerisi"
+msgstr "Campaign suggestion"
+
+#: apps/crm/models.py
+#: templates/crm/campaign_list.html
+msgid "Kampanyalar"
+msgstr "Campaigns"
+
+#: apps/orders/models.py
+#: templates/ai/providers.html
+#: templates/backups/index.html
+#: templates/catalog/product_list.html
+msgid "Kapalı"
+msgstr "Closed"
+
+#: apps/orders/models.py
+msgid "kapanış"
+msgstr "closed at"
+
+#: templates/orders/cash_session.html
+#: templates/orders/order_detail.html
+msgid "Kapanış"
+msgstr "Closing"
+
+#: apps/floor/models.py
+msgid "kapasite"
+msgstr "capacity"
+
+#: templates/floor/table_list.html
+msgid "Kapasite"
+msgstr "Capacity"
+
+#: templates/base.html
+#: templates/kitchen/kot_print.html
+#: templates/orders/pos.html
+#: templates/orders/receipt.html
+msgid "Kapat"
+msgstr "Close"
+
+#: templates/accounts/user_permissions.html
+msgid "kapatabilirsiniz"
+msgstr "you can close it"
+
+#: apps/orders/models.py
+#: apps/reports/models.py
+msgid "kapatan"
+msgstr "closed by"
+
+#: apps/accounts/forms.py
+#: templates/accounts/user_permissions.html
+msgid "Kapatılan izinler"
+msgstr "Revoked permissions"
+
+#: apps/catalog/models.py
+msgid "kapatılma nedeni"
+msgstr "closing reason"
+
+#: templates/backups/index.html
+msgid "Kapladığı alan"
+msgstr "Space used"
+
+#: apps/floor/models.py
+msgid "Kapıdan"
+msgstr "At the door"
+
+#: apps/hr/models.py
+msgid "karar notu"
+msgstr "decision note"
+
+#: apps/hr/models.py
+msgid "karar veren"
+msgstr "decided by"
+
+#: apps/hr/models.py
+msgid "karar zamanı"
+msgstr "decided at"
+
+#: apps/catalog/models.py
+msgid "karbonhidrat (g)"
+msgstr "carbohydrate (g)"
+
+#: apps/floor/models.py
+msgid "Kare"
+msgstr "Square"
+
+#: apps/reports/models.py
+msgid "Kart"
+msgstr "Card"
+
+#: templates/reports/statistics.html
+msgid "Karşılaştırma dönemi: %(start)s – %(finish)s"
+msgstr "Comparison period: %(start)s – %(finish)s"
+
+#: templates/reports/closing_detail.html
+msgid "Kasa"
+msgstr "Till"
+
+#: templates/orders/cash_session.html
+msgid "Kasa aç"
+msgstr "Open till"
+
+#: templates/orders/pos.html
+msgid "Kasa açık: %(number)s"
+msgstr "Till open: %(number)s"
+
+#: templates/reports/closing_list.html
+msgid "Kasa farkı"
+msgstr "Cash variance"
+
+#: apps/orders/models.py
+msgid "Kasa hareketi"
+msgstr "Cash movement"
+
+#: templates/orders/cash_session.html
+msgid "Kasa hareketi ekle"
+msgstr "Add cash movement"
+
+#: apps/orders/models.py
+msgid "Kasa hareketleri"
+msgstr "Cash movements"
+
+#: apps/orders/models.py
+msgid "Kasa hatası"
+msgstr "Till error"
+
+#: apps/core/models.py
+msgid "Kasa işlemi"
+msgstr "Till operation"
+
+#: templates/orders/pos.html
+msgid "Kasa kapalı"
+msgstr "Till closed"
+
+#: templates/orders/cash_session.html
+msgid "Kasa kapanışı"
+msgstr "Till closing"
+
+#: templates/reports/index.html
+msgid "Kasa kapanışı ve günlük özet (Z raporu benzeri)."
+msgstr "Till closing and daily summary (similar to a Z report)."
+
+#: apps/orders/models.py
+msgid "Kasa oturumları"
+msgstr "Till sessions"
+
+#: apps/orders/models.py
+#: apps/reports/models.py
+msgid "kasa oturumu"
+msgstr "till session"
+
+#: apps/orders/models.py
+msgid "Kasa oturumu"
+msgstr "Till session"
+
+#: templates/orders/cash_session.html
+msgid "Kasa oturumu yok."
+msgstr "No till sessions."
+
+#: apps/orders/models.py
+msgid "Kasadan kasaya aktarım"
+msgstr "Till-to-till transfer"
+
+#: apps/orders/models.py
+msgid "Kasadan çıkış"
+msgstr "Cash out"
+
+#: apps/orders/models.py
+msgid "Kasaya giriş"
+msgstr "Cash in"
+
+#: templates/orders/cash_session.html
+msgid "Kasayı aç"
+msgstr "Open the till"
+
+#: templates/orders/cash_session.html
+msgid "Kasayı kapat ve Z raporu al"
+msgstr "Close the till and take the Z report"
+
+#: apps/accounts/permissions.py
+#: templates/orders/order_detail.html
+msgid "Kasiyer"
+msgstr "Cashier"
+
+#: apps/orders/models.py
+msgid "kasiyer"
+msgstr "cashier"
+
+#: apps/catalog/models.py
+#: apps/core/models.py
+#: apps/inventory/models.py
+#: apps/reports/models.py
+msgid "kategori"
+msgstr "category"
+
+#: apps/catalog/models.py
+#: templates/catalog/category_list.html
+#: templates/catalog/product_list.html
+#: templates/inventory/ingredient_list.html
+msgid "Kategori"
+msgstr "Category"
+
+#: apps/reports/models.py
+msgid "kategori dağılımı"
+msgstr "category breakdown"
+
+#: templates/reports/closing_detail.html
+#: templates/reports/sales.html
+#: templates/reports/statistics.html
+msgid "Kategori dağılımı"
+msgstr "Category breakdown"
+
+#: templates/reports/dashboard.html
+msgid "Kategori dağılımı (7 gün)"
+msgstr "Category breakdown (7 days)"
+
+#: templates/catalog/category_list.html
+msgid "Kategori yok."
+msgstr "No categories."
+
+#: apps/catalog/models.py
+msgid "kategoriler"
+msgstr "categories"
+
+#: apps/catalog/models.py
+#: templates/catalog/product_list.html
+msgid "Kategoriler"
+msgstr "Categories"
+
+#: templates/reports/expense_list.html
+msgid "Kategoriye göre"
+msgstr "By category"
+
+#: apps/reports/models.py
+msgid "kaydeden"
+msgstr "saved by"
+
+#: templates/accounts/profile.html
+#: templates/accounts/user_form.html
+#: templates/catalog/category_form.html
+#: templates/catalog/product_form.html
+msgid "Kaydet"
+msgstr "Save"
+
+#: templates/catalog/recipe_form.html
+msgid "Kaydettikten sonra güncellenir."
+msgstr "Updates after saving."
+
+#: apps/crm/models.py
+#: apps/floor/models.py
+msgid "kaynak"
+msgstr "source"
+
+#: templates/backups/index.html
+msgid "Kaynak"
+msgstr "Source"
+
+#: apps/inventory/models.py
+msgid "kaynak kimliği"
+msgstr "source id"
+
+#: apps/inventory/models.py
+msgid "kaynak türü"
+msgstr "source type"
+
+#: apps/backups/models.py
+msgid "kaynak yedek"
+msgstr "source backup"
+
+#: apps/crm/models.py
+msgid "Kayıp"
+msgstr "Loss"
+
+#: apps/inventory/models.py
+msgid "Kayıp / hırsızlık şüphesi"
+msgstr "Suspected loss or theft"
+
+#: apps/crm/models.py
+#: templates/crm/customer_list.html
+msgid "Kayıp riski"
+msgstr "Churn risk"
+
+#: templates/crm/campaign_list.html
+msgid "Kayıp riski yüksek müşteriler"
+msgstr "Customers at high churn risk"
+
+#: templates/core/audit_log.html
+msgid "Kayıt bulunamadı."
+msgstr "No records found."
+
+#: templates/devcenter/terminal.html
+msgid "Kayıt defteri değişiklikleri"
+msgstr "Registry changes"
+
+#: templates/hr/employee_detail.html
+#: templates/inventory/waste_list.html
+#: templates/reports/closing_detail.html
+#: templates/reports/expense_list.html
+msgid "Kayıt yok."
+msgstr "No records."
+
+#: apps/reports/models.py
+msgid "Kayıtlı rapor"
+msgstr "Saved report"
+
+#: apps/reports/models.py
+msgid "Kayıtlı raporlar"
+msgstr "Saved reports"
+
+#: apps/crm/models.py
+msgid "Kazanım"
+msgstr "Earned"
+
+#: templates/orders/pos.html
+msgid "Kaç kişiye bölünsün?"
+msgstr "How many ways should it be split?"
+
+#: apps/reports/models.py
+msgid "KDV"
+msgstr "VAT"
+
+#: apps/inventory/models.py
+msgid "KDV (%)"
+msgstr "VAT (%)"
+
+#: templates/orders/_order_panel.html
+#: templates/orders/order_detail.html
+#: templates/orders/receipt.html
+#: templates/reports/closing_detail.html
+msgid "KDV (dahil)"
+msgstr "VAT (included)"
+
+#: apps/reports/statistics.py
+msgid "KDV hariç ciro"
+msgstr "Revenue excluding VAT"
+
+#: apps/catalog/models.py
+#: apps/orders/models.py
+msgid "KDV oranı (%)"
+msgstr "VAT rate (%)"
+
+#: apps/orders/models.py
+msgid "KDV toplamı"
+msgstr "VAT total"
+
+#: templates/catalog/product_detail.html
+msgid "KDV tutarı"
+msgstr "VAT amount"
+
+#: templates/training/index.html
+msgid "Kendi hızınızda öğrenin"
+msgstr "Learn at your own pace"
+
+#: apps/reports/models.py
+msgid "Kira, maaş gibi düzenli giderler."
+msgstr "Recurring costs such as rent and salaries."
+
+#: templates/floor/reservation_list.html
+#: templates/floor/table_map.html
+#: templates/orders/order_detail.html
+#: templates/orders/receipt.html
+msgid "Kişi"
+msgstr "Guest"
+
+#: apps/reports/statistics.py
+msgid "Kişi başı"
+msgstr "Per guest"
+
+#: templates/reports/dashboard.html
+msgid "Kişi başı %(amount)s %(currency)s"
+msgstr "%(amount)s %(currency)s per guest"
+
+#: templates/reports/closing_detail.html
+msgid "Kişi başı ortalama"
+msgstr "Average per guest"
+
+#: apps/floor/models.py
+#: apps/orders/models.py
+msgid "kişi sayısı"
+msgstr "guest count"
+
+#: templates/orders/pos.html
+msgid "Kişi sayısı"
+msgstr "Guest count"
+
+#: apps/crm/models.py
+msgid "Kişisel veri işleme"
+msgstr "Personal data processing"
+
+#: templates/ai/providers.html
+msgid "Kişisel veri maskeleme"
+msgstr "Personal data masking"
+
+#: apps/catalog/models.py
+#: apps/crm/models.py
+#: apps/floor/models.py
+#: apps/inventory/models.py
+msgid "kod"
+msgstr "code"
+
+#: templates/floor/reservation_list.html
+msgid "Kod"
+msgstr "Code"
+
+#: apps/core/models.py
+msgid "Kod değişikliği uygulama"
+msgstr "Applying a code change"
+
+#: apps/ai/models.py
+msgid "Kod yardımcısı"
+msgstr "Code assistant"
+
+#: apps/devcenter/models.py
+#: templates/devcenter/index.html
+msgid "Kod önerileri"
+msgstr "Code proposals"
+
+#: apps/devcenter/models.py
+msgid "Kod önerisi"
+msgstr "Code proposal"
+
+#: templates/devcenter/index.html
+msgid "Kod üretimi güçlü bir model gerektirir. Yerel küçük modeller geçerli JSON üretmekte zorlanabilir; o durumda bulut sağlayıcı deneyin."
+msgstr "Code generation needs a capable model. Small local models can struggle to produce valid JSON; try a cloud provider in that case."
+
+#: apps/orders/models.py
+msgid "koltuk no"
+msgstr "seat number"
+
+#: templates/orders/pos.html
+msgid "Koltuk numarasına göre"
+msgstr "By seat number"
+
+#: apps/devcenter/models.py
+msgid "komut"
+msgstr "command"
+
+#: templates/devcenter/terminal.html
+msgid "Komut geçmişi"
+msgstr "Command history"
+
+#: templates/devcenter/index.html
+msgid "Komut geçmişi yok."
+msgstr "No command history."
+
+#: templates/devcenter/terminal.html
+msgid "Kontrol et"
+msgstr "Check"
+
+#: apps/crm/models.py
+msgid "konular"
+msgstr "topics"
+
+#: templates/crm/review_list.html
+msgid "Konular"
+msgstr "Topics"
+
+#: apps/inventory/models.py
+msgid "konum"
+msgstr "location"
+
+#: templates/floor/table_list.html
+msgid "Konum (X,Y)"
+msgstr "Position (X,Y)"
+
+#: templates/floor/table_form.html
+msgid "Konum değerleri yüzde cinsindendir (0-100). Masa planındaki yerleşimi belirler."
+msgstr "Position values are percentages (0-100). They set the placement on the floor plan."
+
+#: apps/kitchen/models.py
+msgid "KOT"
+msgstr "Kitchen ticket"
+
+#: apps/kitchen/models.py
+msgid "KOT no"
+msgstr "Ticket number"
+
+#: apps/kitchen/models.py
+msgid "KOT satırları"
+msgstr "Ticket lines"
+
+#: apps/kitchen/models.py
+msgid "KOT satırı"
+msgstr "Ticket line"
+
+#: templates/kitchen/_ticket_board.html
+msgid "KOT yazdır"
+msgstr "Print ticket"
+
+#: apps/kitchen/models.py
+msgid "KOT çıktısının gönderileceği yazıcı (isteğe bağlı)."
+msgstr "Printer the kitchen ticket is sent to (optional)."
+
+#: apps/accounts/models.py
+msgid "Koyu"
+msgstr "Dark"
+
+#: apps/orders/models.py
+msgid "Kredi / banka kartı"
+msgstr "Credit / debit card"
+
+#: apps/core/models.py
+#: templates/inventory/alerts.html
+#: templates/inventory/ingredient_list.html
+#: templates/kitchen/station_list.html
+msgid "Kritik"
+msgstr "Critical"
+
+#: templates/kitchen/station_list.html
+msgid "Kritik (dk)"
+msgstr "Critical (min)"
+
+#: apps/inventory/models.py
+msgid "kritik seviye"
+msgstr "critical level"
+
+#: templates/inventory/ingredient_detail.html
+#: templates/inventory/ingredient_list.html
+msgid "Kritik seviye"
+msgstr "Critical level"
+
+#: templates/reports/statistics.html
+msgid "Kritik seviyede"
+msgstr "At critical level"
+
+#: templates/inventory/alerts.html
+msgid "Kritik seviyede malzeme yok."
+msgstr "No ingredients at critical level."
+
+#: apps/kitchen/models.py
+msgid "kritik süre (dk)"
+msgstr "critical time (min)"
+
+#: apps/accounts/forms.py
+#: apps/accounts/models.py
+#: apps/ai/models.py
+#: templates/accounts/user_list.html
+msgid "Kullanıcı"
+msgstr "User"
+
+#: apps/ai/models.py
+#: apps/core/models.py
+#: apps/devcenter/models.py
+#: apps/hr/models.py
+msgid "kullanıcı"
+msgstr "user"
+
+#: templates/devcenter/terminal.html
+msgid "Kullanıcı / grup yönetimi"
+msgstr "User / group management"
+
+#: templates/accounts/profile.html
+msgid "Kullanıcı adı"
+msgstr "Username"
+
+#: apps/core/models.py
+msgid "kullanıcı adı (anlık)"
+msgstr "username (snapshot)"
+
+#: apps/accounts/forms.py
+msgid "Kullanıcı adı veya e-posta"
+msgstr "Username or email"
+
+#: apps/accounts/forms.py
+msgid "Kullanıcı adı veya parola hatalı. Büyük/küçük harfe dikkat edin."
+msgstr "Incorrect username or password. Mind upper and lower case."
+
+#: templates/reports/index.html
+msgid "Kullanıcı bazında iptal/indirim yoğunluğu ve iade nedenleri."
+msgstr "Void and discount intensity per user, and refund reasons."
+
+#: templates/accounts/user_list.html
+msgid "Kullanıcı bulunamadı."
+msgstr "No users found."
+
+#: templates/hr/employee_form.html
+msgid "kullanıcı hesabı"
+msgstr "user account"
+
+#: templates/base.html
+msgid "Kullanıcı menüsü"
+msgstr "User menu"
+
+#: apps/devcenter/models.py
+msgid "Kullanıcı reddetti"
+msgstr "Declined by user"
+
+#: apps/core/models.py
+msgid "Kullanıcı silinse bile iz kaybolmaz."
+msgstr "The trace remains even if the user is deleted."
+
+#: apps/devcenter/models.py
+msgid "kullanıcı talimatı"
+msgstr "user instruction"
+
+#: apps/accounts/models.py
+msgid "Kullanıcılar"
+msgstr "Users"
+
+#: templates/core/settings.html
+msgid "Kullanıcılar ve yetkiler"
+msgstr "Users and permissions"
+
+#: apps/floor/models.py
+msgid "Kullanım dışı"
+msgstr "Out of use"
+
+#: apps/training/views.py
+#: templates/base.html
+#: templates/training/index.html
+msgid "Kullanım kılavuzu"
+msgstr "User guide"
+
+#: templates/base.html
+msgid "Kullanım kılavuzu ve eğitim"
+msgstr "User guide and training"
+
+#: apps/orders/models.py
+msgid "kullanım sayısı"
+msgstr "usage count"
+
+#: apps/crm/models.py
+#: apps/orders/models.py
+msgid "kupon"
+msgstr "coupon"
+
+#: apps/orders/models.py
+#: templates/crm/campaign_list.html
+#: templates/orders/pos.html
+msgid "Kupon"
+msgstr "Coupon"
+
+#: templates/orders/pos.html
+msgid "Kupon kodu"
+msgstr "Coupon code"
+
+#: apps/orders/models.py
+msgid "Kuponlar"
+msgstr "Coupons"
+
+#: apps/crm/models.py
+msgid "Kurumsal"
+msgstr "Corporate"
+
+#: apps/accounts/permissions.py
+#: apps/orders/models.py
+#: templates/orders/delivery_board.html
+msgid "Kurye"
+msgstr "Courier"
+
+#: apps/orders/models.py
+msgid "kurye"
+msgstr "courier"
+
+#: templates/crm/customer_detail.html
+msgid "KVKK izinleri"
+msgstr "Data protection consents"
+
+#: templates/crm/customer_detail.html
+msgid "KVKK — verileri anonimleştir"
+msgstr "Data protection — anonymise the data"
+
+#: templates/crm/customer_form.html
+msgid "KVKK: Müşteri kişisel verilerini yalnızca açık rıza ile kaydedin. Pazarlama izinleri müşteri detay sayfasından ayrıca yönetilir."
+msgstr "Data protection: record customer personal data only with explicit consent. Marketing consents are managed separately on the customer detail page."
+
+#: templates/reports/profitability.html
+msgid "Kâr"
+msgstr "Profit"
+
+#: templates/catalog/product_detail.html
+#: templates/catalog/recipe_form.html
+msgid "Kâr marjı"
+msgstr "Profit margin"
+
+#: templates/catalog/product_detail.html
+msgid "Kârlılık"
+msgstr "Profitability"
+
+#: templates/reports/index.html
+msgid "Kârlılık Raporu"
+msgstr "Profitability report"
+
+#: templates/hr/employee_detail.html
+msgid "Kıdem"
+msgstr "Seniority"
+
+#: apps/inventory/models.py
+msgid "Kırılma / dökülme"
+msgstr "Breakage / spillage"
+
+#: apps/catalog/models.py
+msgid "kısa ad"
+msgstr "short name"
+
+#: templates/training/lesson.html
+msgid "Kısa kontrol"
+msgstr "Quick check"
+
+#: apps/inventory/models.py
+msgid "Kısmi teslim"
+msgstr "Partially received"
+
+#: apps/orders/models.py
+msgid "liste fiyatı"
+msgstr "list price"
+
+#: templates/inventory/count_detail.html
+msgid "Listeye dön"
+msgstr "Back to the list"
+
+#: templates/ai/providers.html
+msgid "LM Studio (yerel, ücretsiz, internet gerektirmez):"
+msgstr "LM Studio (local, free, no internet required):"
+
+#: templates/ai/usage.html
+#: templates/catalog/product_detail.html
+#: templates/catalog/product_list.html
+#: templates/inventory/waste_list.html
+msgid "Maliyet"
+msgstr "Cost"
+
+#: apps/ai/models.py
+msgid "Maliyet / sayısal analiz"
+msgstr "Cost / numerical analysis"
+
+#: templates/catalog/product_list.html
+msgid "Maliyet hesabı yapılamaz"
+msgstr "Cost cannot be calculated"
+
+#: apps/inventory/models.py
+msgid "maliyet tutarı"
+msgstr "cost amount"
+
+#: templates/reports/profitability.html
+msgid "Maliyeti 0 sayıldı"
+msgstr "Cost counted as 0"
+
+#: apps/catalog/models.py
+#: apps/inventory/models.py
+msgid "malzeme"
+msgstr "ingredient"
+
+#: apps/inventory/models.py
+#: templates/catalog/product_detail.html
+#: templates/catalog/recipe_detail.html
+#: templates/catalog/recipe_form.html
+msgid "Malzeme"
+msgstr "Ingredient"
+
+#: templates/inventory/ingredient_list.html
+msgid "Malzeme adı veya kodu"
+msgstr "Ingredient name or code"
+
+#: templates/inventory/ingredient_list.html
+msgid "Malzeme bulunamadı."
+msgstr "No ingredients found."
+
+#: apps/inventory/models.py
+msgid "Malzeme kategorileri"
+msgstr "Ingredient categories"
+
+#: apps/inventory/models.py
+msgid "Malzeme kategorisi"
+msgstr "Ingredient category"
+
+#: templates/catalog/product_detail.html
+#: templates/catalog/recipe_form.html
+msgid "Malzeme maliyeti"
+msgstr "Ingredient cost"
+
+#: templates/reports/expense_list.html
+msgid "Malzeme maliyetleri satın alma kayıtlarındadır"
+msgstr "Ingredient costs are in the purchase records"
+
+#: apps/catalog/models.py
+msgid "malzeme miktarı"
+msgstr "ingredient quantity"
+
+#: templates/catalog/recipe_detail.html
+msgid "Malzeme toplamı"
+msgstr "Ingredient total"
+
+#: templates/inventory/ingredient_list.html
+msgid "Malzeme çeşidi"
+msgstr "Ingredient variety"
+
+#: apps/inventory/models.py
+msgid "Malzemeler"
+msgstr "Ingredients"
+
+#: templates/catalog/product_list.html
+#: templates/reports/profitability.html
+msgid "Marj"
+msgstr "Margin"
+
+#: apps/floor/models.py
+#: templates/floor/reservation_list.html
+#: templates/floor/table_list.html
+#: templates/floor/table_map.html
+msgid "Masa"
+msgstr "Table"
+
+#: apps/orders/models.py
+msgid "masa"
+msgstr "table"
+
+#: apps/floor/models.py
+msgid "masa adı"
+msgstr "table name"
+
+#: apps/floor/models.py
+msgid "Masa birleştirildiğinde ana masayı gösterir."
+msgstr "Shows the primary table when tables are merged."
+
+#: templates/reports/statistics.html
+msgid "Masa devir hızı"
+msgstr "Table turnover"
+
+#: templates/reports/dashboard.html
+msgid "Masa doluluğu"
+msgstr "Table occupancy"
+
+#: templates/floor/table_map.html
+msgid "Masa durumu"
+msgstr "Table status"
+
+#: templates/floor/table_map.html
+msgid "Masa ekle"
+msgstr "Add table"
+
+#: templates/floor/table_list.html
+msgid "Masa planı"
+msgstr "Floor plan"
+
+#: templates/floor/reservation_form.html
+msgid "Masa seçmeden kaydedebilirsiniz; misafir geldiğinde masa planından atama yapabilirsiniz. Seçilen masaların toplam kapasitesi kişi sayısından az olamaz."
+msgstr "You can save without picking a table and assign one from the floor plan when the guests arrive. The combined capacity of the selected tables cannot be less than the guest count."
+
+#: templates/floor/table_list.html
+msgid "Masa tanımlı değil."
+msgstr "No tables defined."
+
+#: apps/orders/models.py
+msgid "Masada servis"
+msgstr "Dine in"
+
+#: apps/core/context_processors.py
+#: apps/floor/models.py
+msgid "Masalar"
+msgstr "Tables"
+
+#: apps/floor/models.py
+msgid "masalar"
+msgstr "tables"
+
+#: apps/ai/models.py
+msgid "Maskelenmiş, kısaltılmış istem."
+msgstr "Masked and shortened prompt."
+
+#: apps/core/context_processors.py
+#: templates/catalog/qr_menu.html
+msgid "Menü"
+msgstr "Menu"
+
+#: apps/catalog/models.py
+msgid "Menü / kombinasyon"
+msgstr "Menu / combination"
+
+#: templates/catalog/qr_menu.html
+msgid "Menü henüz hazırlanmadı."
+msgstr "The menu has not been set up yet."
+
+#: apps/ai/models.py
+msgid "Menü mühendisliği"
+msgstr "Menu engineering"
+
+#: templates/ai/analysis_hub.html
+msgid "Menü Mühendisliği"
+msgstr "Menu engineering"
+
+#: templates/reports/index.html
+msgid "Menü mühendisliği, talep tahmini, israf ve anormallik analizi."
+msgstr "Menu engineering, demand forecasting, waste and anomaly analysis."
+
+#: apps/catalog/models.py
+msgid "Menü zaman planları"
+msgstr "Menu schedules"
+
+#: apps/catalog/models.py
+msgid "Menü zaman planı"
+msgstr "Menu schedule"
+
+#: templates/base.html
+msgid "Menüyü aç/kapat"
+msgstr "Toggle menu"
+
+#: templates/hr/employee_list.html
+msgid "Mesai dışı"
+msgstr "Off shift"
+
+#: templates/hr/employee_list.html
+msgid "Mesaide"
+msgstr "On shift"
+
+#: apps/core/models.py
+msgid "Metin"
+msgstr "Text"
+
+#: templates/inventory/alerts.html
+#: templates/inventory/ingredient_list.html
+msgid "Mevcut"
+msgstr "Current"
+
+#: templates/reports/statistics.html
+msgid "Mevcut stok değeri"
+msgstr "Current stock value"
+
+#: apps/catalog/models.py
+#: apps/inventory/models.py
+msgid "miktar"
+msgstr "quantity"
+
+#: templates/catalog/product_detail.html
+#: templates/catalog/recipe_detail.html
+#: templates/catalog/recipe_form.html
+#: templates/inventory/ingredient_detail.html
+msgid "Miktar"
+msgstr "Quantity"
+
+#: apps/reports/statistics.py
+#: templates/floor/reservation_list.html
+#: templates/floor/table_map.html
+#: templates/reports/closing_list.html
+msgid "Misafir"
+msgstr "Guest"
+
+#: apps/floor/models.py
+msgid "misafir adı"
+msgstr "guest name"
+
+#: templates/floor/reservation_list.html
+msgid "Misafir adı"
+msgstr "Guest name"
+
+#: apps/floor/models.py
+msgid "Misafir oturdu"
+msgstr "Guest seated"
+
+#: apps/reports/models.py
+msgid "misafir sayısı"
+msgstr "guest count"
+
+#: templates/reports/closing_detail.html
+msgid "Misafir sayısı"
+msgstr "Guest count"
+
+#: apps/ai/models.py
+msgid "model"
+msgstr "model"
+
+#: templates/ai/assistant.html
+#: templates/devcenter/proposal_detail.html
+msgid "Model"
+msgstr "Model"
+
+#: templates/hr/employee_detail.html
+msgid "Mola"
+msgstr "Break"
+
+#: apps/hr/models.py
+msgid "mola (dk)"
+msgstr "break (min)"
+
+#: apps/ai/models.py
+msgid "Muhakeme ve raporlama"
+msgstr "Reasoning and reporting"
+
+#: apps/accounts/permissions.py
+msgid "Muhasebe"
+msgstr "Accounting"
+
+#: apps/core/context_processors.py
+#: apps/core/models.py
+#: apps/kitchen/models.py
+#: templates/kitchen/station_list.html
+msgid "Mutfak"
+msgstr "Kitchen"
+
+#: apps/kitchen/models.py
+msgid "Mutfak fişi (KOT)"
+msgstr "Kitchen ticket"
+
+#: templates/orders/order_detail.html
+msgid "Mutfak fişleri"
+msgstr "Kitchen tickets"
+
+#: apps/kitchen/models.py
+msgid "Mutfak fişleri (KOT)"
+msgstr "Kitchen tickets"
+
+#: apps/orders/models.py
+msgid "mutfak notu"
+msgstr "kitchen note"
+
+#: apps/accounts/permissions.py
+msgid "Mutfak personeli"
+msgstr "Kitchen staff"
+
+#: templates/orders/_order_panel.html
+msgid "Mutfağa gönder"
+msgstr "Send to kitchen"
+
+#: apps/orders/models.py
+msgid "Mutfağa gönderildi"
+msgstr "Sent to kitchen"
+
+#: apps/orders/models.py
+msgid "mutfağa gönderim"
+msgstr "sent to kitchen at"
+
+#: apps/crm/models.py
+#: apps/floor/models.py
+#: apps/orders/models.py
+msgid "müşteri"
+msgstr "customer"
+
+#: apps/crm/models.py
+#: templates/crm/customer_list.html
+#: templates/crm/review_list.html
+#: templates/orders/delivery_board.html
+msgid "Müşteri"
+msgstr "Customer"
+
+#: templates/orders/pos.html
+msgid "Müşteri (isteğe bağlı)"
+msgstr "Customer (optional)"
+
+#: apps/orders/models.py
+msgid "müşteri başına limit"
+msgstr "limit per customer"
+
+#: templates/crm/customer_list.html
+msgid "Müşteri bulunamadı."
+msgstr "No customers found."
+
+#: apps/inventory/models.py
+msgid "Müşteri iadesi"
+msgstr "Customer return"
+
+#: apps/ai/models.py
+msgid "Müşteri kaybı riski"
+msgstr "Customer churn risk"
+
+#: apps/crm/models.py
+msgid "müşteri kodu"
+msgstr "customer code"
+
+#: apps/reports/services.py
+msgid "Müşteri memnuniyetini korumak için yanıtlayın."
+msgstr "Respond to them to protect customer satisfaction."
+
+#: apps/crm/models.py
+msgid "Müşteri yorumları"
+msgstr "Customer reviews"
+
+#: apps/crm/models.py
+msgid "Müşteri yorumu"
+msgstr "Customer review"
+
+#: apps/orders/models.py
+msgid "Müşteri şikâyeti"
+msgstr "Customer complaint"
+
+#: apps/core/context_processors.py
+#: apps/crm/models.py
+msgid "Müşteriler"
+msgstr "Customers"
+
+#: apps/orders/models.py
+#: apps/reports/models.py
+msgid "Nakit"
+msgstr "Cash"
+
+#: apps/orders/models.py
+msgid "Nakit ödemede müşteriden alınan tutar."
+msgstr "Amount received from the guest for a cash payment."
+
+#: templates/ai/providers.html
+msgid "Nasıl yapılandırılır?"
+msgstr "How is it configured?"
+
+#: templates/devcenter/index.html
+msgid "Ne yapılmasını istiyorsunuz?"
+msgstr "What would you like done?"
+
+#: apps/inventory/models.py
+#: apps/orders/models.py
+msgid "neden"
+msgstr "reason"
+
+#: templates/inventory/waste_list.html
+#: templates/reports/voids.html
+msgid "Neden"
+msgstr "Reason"
+
+#: templates/inventory/waste_list.html
+msgid "Nedene göre dağılım"
+msgstr "Breakdown by reason"
+
+#: templates/core/audit_log.html
+msgid "Nesne"
+msgstr "Object"
+
+#: apps/accounts/models.py
+#: apps/core/models.py
+msgid "nesne kimliği"
+msgstr "object id"
+
+#: apps/accounts/models.py
+#: apps/core/models.py
+msgid "nesne türü"
+msgstr "object type"
+
+#: templates/reports/expense_list.html
+msgid "Net"
+msgstr "Net"
+
+#: templates/catalog/product_detail.html
+msgid "Net fiyat"
+msgstr "Net price"
+
+#: apps/reports/models.py
+msgid "net satış"
+msgstr "net sales"
+
+#: templates/reports/closing_detail.html
+#: templates/reports/closing_list.html
+msgid "Net satış"
+msgstr "Net sales"
+
+#: templates/crm/customer_detail.html
+msgid "No-show"
+msgstr "No-show"
+
+#: templates/floor/reservation_list.html
+msgid "No-show (30 gün)"
+msgstr "No-show (30 days)"
+
+#: apps/hr/models.py
+#: apps/kitchen/models.py
+#: templates/hr/task_list.html
+#: templates/inventory/ingredient_detail.html
+msgid "Normal"
+msgstr "Normal"
+
+#: apps/backups/models.py
+#: apps/catalog/models.py
+#: apps/floor/models.py
+#: apps/hr/models.py
+msgid "not"
+msgstr "note"
+
+#: templates/backups/detail.html
+#: templates/catalog/recipe_form.html
+#: templates/inventory/count_detail.html
+#: templates/inventory/ingredient_detail.html
+msgid "Not"
+msgstr "Note"
+
+#: apps/hr/models.py
+#: apps/inventory/models.py
+#: apps/orders/models.py
+#: apps/reports/models.py
+msgid "notlar"
+msgstr "notes"
+
+#: templates/crm/customer_detail.html
+#: templates/orders/cash_session.html
+msgid "Notlar"
+msgstr "Notes"
+
+#: templates/ai/providers.html
+msgid "NVIDIA NIM (bulut):"
+msgstr "NVIDIA NIM (cloud):"
+
+#: apps/crm/models.py
+msgid "Nötr"
+msgstr "Neutral"
+
+#: apps/core/models.py
+msgid "okundu"
+msgstr "read"
+
+#: templates/core/notifications.html
+msgid "Okundu"
+msgstr "Read"
+
+#: apps/ai/models.py
+msgid "okundu / işlendi"
+msgstr "read / handled"
+
+#: apps/core/models.py
+msgid "okunma zamanı"
+msgstr "read at"
+
+#: apps/crm/models.py
+#: templates/crm/review_list.html
+msgid "Olumlu"
+msgstr "Positive"
+
+#: apps/crm/models.py
+#: templates/crm/review_list.html
+msgid "Olumsuz"
+msgstr "Negative"
+
+#: apps/inventory/models.py
+msgid "oluşma zamanı"
+msgstr "occurred at"
+
+#: templates/crm/campaign_list.html
+msgid "Oluştur"
+msgstr "Create"
+
+#: templates/inventory/purchase_form.html
+msgid "Oluştur ve satır ekle"
+msgstr "Create and add lines"
+
+#: apps/core/models.py
+#: apps/devcenter/models.py
+msgid "oluşturan"
+msgstr "created by"
+
+#: apps/core/models.py
+msgid "Oluşturma"
+msgstr "Creation"
+
+#: apps/core/models.py
+msgid "oluşturulma"
+msgstr "created at"
+
+#: templates/devcenter/proposal_detail.html
+#: templates/devcenter/snapshots.html
+#: templates/inventory/purchase_detail.html
+msgid "Oluşturulma"
+msgstr "Created"
+
+#: templates/floor/reservation_list.html
+msgid "Onay bekleyen"
+msgstr "Awaiting approval"
+
+#: apps/devcenter/models.py
+#: apps/floor/models.py
+#: apps/hr/models.py
+msgid "Onay bekliyor"
+msgstr "Awaiting approval"
+
+#: apps/devcenter/models.py
+msgid "onay gerektirdi"
+msgstr "required approval"
+
+#: apps/devcenter/models.py
+#: apps/inventory/models.py
+msgid "onay zamanı"
+msgstr "approved at"
+
+#: templates/inventory/purchase_detail.html
+msgid "Onayla"
+msgstr "Approve"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Onayla ve uygula"
+msgstr "Approve and apply"
+
+#: templates/backups/detail.html
+msgid "Onaylamak için <code>%(phrase)s</code> yazın:"
+msgstr "Type <code>%(phrase)s</code> to confirm:"
+
+#: apps/devcenter/models.py
+#: apps/floor/models.py
+#: apps/hr/models.py
+#: apps/inventory/models.py
+msgid "Onaylandı"
+msgstr "Approved"
+
+#: apps/accounts/models.py
+#: apps/devcenter/models.py
+#: apps/inventory/models.py
+#: apps/orders/models.py
+msgid "onaylayan"
+msgstr "approved by"
+
+#: templates/inventory/purchase_detail.html
+#: templates/reports/voids.html
+msgid "Onaylayan"
+msgstr "Approved by"
+
+#: apps/core/models.py
+msgid "Ondalık"
+msgstr "Decimal"
+
+#: apps/floor/models.py
+msgid "Online"
+msgstr "Online"
+
+#: apps/orders/models.py
+msgid "Online ödeme"
+msgstr "Online payment"
+
+#: templates/catalog/product_detail.html
+#: templates/catalog/recipe_detail.html
+msgid "opsiyonel"
+msgstr "optional"
+
+#: templates/catalog/recipe_form.html
+msgid "Opsiyonel"
+msgstr "Optional"
+
+#: apps/orders/models.py
+msgid "oran (%)"
+msgstr "rate (%)"
+
+#: templates/hr/performance.html
+msgid "Ort. adisyon"
+msgstr "Avg. check"
+
+#: templates/inventory/ingredient_list.html
+msgid "Ort. maliyet"
+msgstr "Avg. cost"
+
+#: templates/reports/statistics.html
+msgid "Ort. sepet"
+msgstr "Avg. basket"
+
+#: apps/ai/models.py
+#: templates/crm/customer_list.html
+msgid "Orta"
+msgstr "Medium"
+
+#: apps/hr/models.py
+msgid "ortalama adisyon"
+msgstr "average check"
+
+#: templates/reports/closing_detail.html
+msgid "Ortalama adisyon"
+msgstr "Average check"
+
+#: templates/crm/customer_detail.html
+msgid "Ortalama harcama"
+msgstr "Average spend"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Ortalama maliyet"
+msgstr "Average cost"
+
+#: templates/crm/review_list.html
+msgid "Ortalama puan"
+msgstr "Average rating"
+
+#: apps/reports/statistics.py
+#: templates/reports/dashboard.html
+msgid "Ortalama sepet"
+msgstr "Average basket"
+
+#: templates/reports/statistics.html
+msgid "Ortalama servis süresi"
+msgstr "Average service time"
+
+#: templates/kitchen/performance.html
+msgid "Ortalama süre"
+msgstr "Average duration"
+
+#: templates/reports/statistics.html
+msgid "Ortalama ziyaret"
+msgstr "Average visits"
+
+#: templates/core/settings.html
+msgid "Ortam"
+msgstr "Environment"
+
+#: apps/backups/models.py
+#: templates/backups/index.html
+#: templates/devcenter/index.html
+msgid "Otomatik"
+msgstr "Automatic"
+
+#: templates/ai/assistant.html
+msgid "Otomatik (yerel öncelikli)"
+msgstr "Automatic (local first)"
+
+#: templates/inventory/alerts.html
+msgid "Otomatik sipariş taslağı oluştur"
+msgstr "Generate a draft purchase order"
+
+#: templates/inventory/purchase_list.html
+msgid "Otomatik taslak oluştur"
+msgstr "Generate a draft automatically"
+
+#: templates/backups/index.html
+msgid "Otomatik yedekleme"
+msgstr "Automatic backup"
+
+#: apps/floor/models.py
+#: templates/floor/reservation_list.html
+msgid "Oturdu"
+msgstr "Seated"
+
+#: apps/floor/models.py
+msgid "oturma zamanı"
+msgstr "seated at"
+
+#: apps/orders/models.py
+msgid "oturum"
+msgstr "session"
+
+#: templates/orders/cash_session.html
+msgid "Oturum"
+msgstr "Session"
+
+#: apps/orders/models.py
+msgid "oturum no"
+msgstr "session number"
+
+#: apps/orders/models.py
+msgid "Paket"
+msgstr "Takeaway"
+
+#: apps/core/context_processors.py
+msgid "Panel"
+msgstr "Dashboard"
+
+#: templates/core/settings.html
+msgid "Para birimi"
+msgstr "Currency"
+
+#: apps/orders/models.py
+msgid "para üstü"
+msgstr "change due"
+
+#: templates/orders/receipt.html
+msgid "Para üstü"
+msgstr "Change due"
+
+#: apps/accounts/forms.py
+msgid "Parola"
+msgstr "Password"
+
+#: apps/accounts/forms.py
+msgid "Parola (tekrar)"
+msgstr "Password (again)"
+
+#: apps/accounts/models.py
+msgid "parola değişim zamanı"
+msgstr "password changed at"
+
+#: templates/accounts/password_change.html
+msgid "Parola Değiştir"
+msgstr "Change password"
+
+#: templates/accounts/profile.html
+#: templates/base.html
+msgid "Parola değiştir"
+msgstr "Change password"
+
+#: apps/accounts/models.py
+msgid "parola değiştirmeli"
+msgstr "must change password"
+
+#: apps/accounts/validators.py
+msgid "Parola yeterince güçlü değil. Küçük harf, büyük harf, rakam ve özel karakter türlerinden en az %(n)d tanesini içermelidir."
+msgstr "Password is not strong enough. It must contain at least %(n)d of these character types: lower case, upper case, digit, special character."
+
+#: apps/accounts/validators.py
+msgid "Parolada aynı karakter 4 kereden fazla arka arkaya tekrarlanamaz."
+msgstr "The same character cannot repeat more than four times in a row."
+
+#: apps/accounts/forms.py
+msgid "Parolalar eşleşmiyor."
+msgstr "Passwords do not match."
+
+#: apps/accounts/validators.py
+msgid "Parolanız küçük harf, büyük harf, rakam ve özel karakter türlerinden en az %(n)d tanesini içermelidir."
+msgstr "Your password must contain at least %(n)d of these character types: lower case, upper case, digit, special character."
+
+#: templates/accounts/lockout.html
+msgid "Parolanızı hatırlamıyorsanız yöneticinizden sıfırlamasını isteyin. Bu deneme güvenlik kayıtlarına işlendi."
+msgstr "If you do not remember your password, ask your administrator to reset it. This attempt has been written to the security log."
+
+#: templates/accounts/password_change.html
+msgid "Parolayı güncelle"
+msgstr "Update password"
+
+#: apps/inventory/models.py
+msgid "parti"
+msgstr "batch"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Parti"
+msgstr "Batch"
+
+#: apps/inventory/models.py
+msgid "parti kodu"
+msgstr "batch code"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Parti kodu"
+msgstr "Batch code"
+
+#: templates/accounts/user_list.html
+#: templates/catalog/category_list.html
+#: templates/catalog/product_list.html
+#: templates/kitchen/station_list.html
+msgid "Pasif"
+msgstr "Inactive"
+
+#: apps/kitchen/models.py
+#: templates/kitchen/station_list.html
+msgid "Pastane"
+msgstr "Pastry"
+
+#: templates/reports/statistics.html
+msgid "Pay"
+msgstr "Share"
+
+#: apps/reports/models.py
+msgid "paylaşılan"
+msgstr "shared"
+
+#: apps/reports/statistics.py
+msgid "Paz"
+msgstr "Sun"
+
+#: apps/catalog/models.py
+#: apps/reports/statistics.py
+msgid "Pazar"
+msgstr "Sunday"
+
+#: apps/catalog/models.py
+#: apps/reports/statistics.py
+msgid "Pazartesi"
+msgstr "Monday"
+
+#: templates/reports/closing_detail.html
+msgid "PDF indir"
+msgstr "Download PDF"
+
+#: apps/reports/statistics.py
+msgid "Per"
+msgstr "Thu"
+
+#: templates/kitchen/station_list.html
+msgid "Performans"
+msgstr "Performance"
+
+#: apps/hr/models.py
+msgid "Performans özeti"
+msgstr "Performance summary"
+
+#: apps/hr/models.py
+msgid "Performans özetleri"
+msgstr "Performance summaries"
+
+#: apps/core/context_processors.py
+#: apps/hr/models.py
+#: templates/hr/employee_list.html
+#: templates/hr/leave_list.html
+msgid "Personel"
+msgstr "Employee"
+
+#: apps/hr/models.py
+msgid "personel"
+msgstr "employee"
+
+#: apps/orders/models.py
+msgid "Personel indirimi"
+msgstr "Staff discount"
+
+#: templates/ai/analysis_hub.html
+msgid "Personel İhtiyacı"
+msgstr "Staffing needs"
+
+#: templates/hr/employee_list.html
+#: templates/hr/shift_schedule.html
+msgid "Personel kaydı yok."
+msgstr "No employee records."
+
+#: apps/accounts/models.py
+msgid "personel kodu"
+msgstr "employee code"
+
+#: templates/accounts/profile.html
+msgid "Personel kodu"
+msgstr "Employee code"
+
+#: templates/hr/employee_list.html
+msgid "Personel performans raporu"
+msgstr "Staff performance report"
+
+#: templates/reports/statistics.html
+msgid "Personel performansı"
+msgstr "Staff performance"
+
+#: templates/reports/sales.html
+msgid "Personel satışları"
+msgstr "Staff sales"
+
+#: apps/ai/models.py
+msgid "Personel önerisi"
+msgstr "Staffing suggestion"
+
+#: apps/catalog/models.py
+#: apps/reports/statistics.py
+msgid "Perşembe"
+msgstr "Thursday"
+
+#: apps/accounts/forms.py
+msgid "PIN"
+msgstr "PIN"
+
+#: apps/accounts/models.py
+msgid "PIN (hash)"
+msgstr "PIN (hash)"
+
+#: templates/accounts/set_pin.html
+msgid "PIN (tekrar)"
+msgstr "PIN (again)"
+
+#: apps/accounts/forms.py
+msgid "PIN 4-8 haneli rakamlardan oluşmalıdır."
+msgstr "The PIN must be 4 to 8 digits."
+
+#: templates/base.html
+msgid "PIN kodu"
+msgstr "PIN code"
+
+#: templates/accounts/profile.html
+msgid "PIN kodu belirle"
+msgstr "Set a PIN"
+
+#: templates/accounts/set_pin.html
+msgid "PIN kodu; POS terminalinde hızlı kullanıcı değişimi ve iptal/indirim gibi işlemlerde yetkili onayı için kullanılır. 4-8 haneli olmalıdır ve şifrelenerek saklanır."
+msgstr "The PIN is used for fast user switching at the POS terminal and for manager approval of actions such as voids and discounts. It must be 4-8 digits and is stored encrypted."
+
+#: apps/accounts/forms.py
+msgid "PIN yalnızca rakamlardan oluşmalıdır."
+msgstr "The PIN must contain digits only."
+
+#: templates/accounts/set_pin.html
+msgid "PIN'i kaydet"
+msgstr "Save PIN"
+
+#: templates/devcenter/terminal.html
+msgid "pip list"
+msgstr "pip list"
+
+#: apps/hr/models.py
+msgid "Planlandı"
+msgstr "Scheduled"
+
+#: apps/crm/models.py
+msgid "Platin"
+msgstr "Platinum"
+
+#: templates/ai/providers.html
+msgid "Politika"
+msgstr "Policy"
+
+#: apps/ai/models.py
+msgid "Politika engeli"
+msgstr "Policy block"
+
+#: apps/catalog/models.py
+msgid "Porsiyon"
+msgstr "Portion"
+
+#: apps/orders/models.py
+msgid "porsiyon"
+msgstr "portion"
+
+#: templates/catalog/product_detail.html
+#: templates/catalog/recipe_form.html
+msgid "Porsiyon maliyeti"
+msgstr "Portion cost"
+
+#: apps/catalog/models.py
+#: templates/catalog/product_detail.html
+msgid "Porsiyonlar"
+msgstr "Portions"
+
+#: apps/core/context_processors.py
+msgid "POS"
+msgstr "POS"
+
+#: apps/catalog/models.py
+msgid "POS ekranındaki kategori rengi (#RRGGBB)."
+msgstr "Category colour on the POS screen (#RRGGBB)."
+
+#: templates/accounts/profile.html
+msgid "POS PIN"
+msgstr "POS PIN"
+
+#: apps/accounts/forms.py
+msgid "POS PIN kodu"
+msgstr "POS PIN code"
+
+#: templates/accounts/set_pin.html
+msgid "POS PIN Kodu"
+msgstr "POS PIN code"
+
+#: apps/catalog/models.py
+msgid "POS rengi"
+msgstr "POS colour"
+
+#: apps/orders/models.py
+msgid "POS terminal işlem numarası, son 4 hane vb."
+msgstr "POS terminal transaction number, last four digits etc."
+
+#: templates/orders/order_detail.html
+msgid "POS'ta aç"
+msgstr "Open in POS"
+
+#: templates/accounts/profile.html
+msgid "Profil bilgileri"
+msgstr "Profile details"
+
+#: apps/accounts/models.py
+msgid "profil görseli"
+msgstr "profile picture"
+
+#: templates/base.html
+msgid "Profilim"
+msgstr "My profile"
+
+#: apps/crm/models.py
+msgid "Profilleme ve öneri"
+msgstr "Profiling and recommendation"
+
+#: templates/devcenter/files.html
+msgid "Proje dosyaları"
+msgstr "Project files"
+
+#: templates/devcenter/terminal.html
+msgid "Proje klasörü dışına erişim"
+msgstr "Access outside the project folder"
+
+#: templates/devcenter/index.html
+msgid "Proje kökü"
+msgstr "Project root"
+
+#: apps/catalog/models.py
+msgid "protein (g)"
+msgstr "protein (g)"
+
+#: apps/crm/models.py
+msgid "puan"
+msgstr "points"
+
+#: templates/crm/customer_list.html
+#: templates/crm/review_list.html
+#: templates/inventory/supplier_list.html
+msgid "Puan"
+msgstr "Points"
+
+#: templates/crm/customer_detail.html
+msgid "Puan (negatif de girilebilir)"
+msgstr "Points (may be negative)"
+
+#: templates/crm/customer_detail.html
+msgid "Puan düzelt"
+msgstr "Adjust points"
+
+#: templates/crm/customer_detail.html
+msgid "Puan Düzeltme"
+msgstr "Point adjustment"
+
+#: templates/crm/customer_detail.html
+msgid "Puan hareketi yok."
+msgstr "No point movements."
+
+#: templates/hr/employee_list.html
+msgid "Puantaj"
+msgstr "Timesheet"
+
+#: apps/hr/models.py
+msgid "Puantaj kaydı"
+msgstr "Timesheet entry"
+
+#: apps/hr/models.py
+#: templates/hr/employee_detail.html
+msgid "Puantaj kayıtları"
+msgstr "Timesheet entries"
+
+#: templates/devcenter/terminal.html
+msgid "pytest"
+msgstr "pytest"
+
+#: templates/devcenter/terminal.html
+msgid "python manage.py check"
+msgstr "python manage.py check"
+
+#: apps/reports/statistics.py
+msgid "Pzt"
+msgstr "Mon"
+
+#: apps/floor/models.py
+msgid "QR anahtarı"
+msgstr "QR key"
+
+#: apps/crm/models.py
+msgid "QR anket"
+msgstr "QR survey"
+
+#: templates/floor/table_list.html
+msgid "QR kod"
+msgstr "QR code"
+
+#: templates/floor/table_map.html
+msgid "QR menü kodunu göster"
+msgstr "Show the QR menu code"
+
+#: apps/inventory/models.py
+msgid "raf ömrü (gün)"
+msgstr "shelf life (days)"
+
+#: templates/reports/closing_list.html
+msgid "Rapor oluştur"
+msgstr "Generate report"
+
+#: apps/reports/models.py
+msgid "rapor türü"
+msgstr "report type"
+
+#: apps/core/context_processors.py
+#: templates/reports/dashboard.html
+msgid "Raporlar"
+msgstr "Reports"
+
+#: apps/devcenter/models.py
+#: apps/hr/models.py
+msgid "Reddedildi"
+msgstr "Rejected"
+
+#: apps/accounts/models.py
+msgid "reddedilen izinler"
+msgstr "denied permissions"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Reddet"
+msgstr "Reject"
+
+#: apps/orders/models.py
+msgid "referans"
+msgstr "reference"
+
+#: apps/catalog/models.py
+#: apps/hr/models.py
+#: apps/kitchen/models.py
+msgid "renk"
+msgstr "colour"
+
+#: templates/kitchen/station_list.html
+msgid "Renk"
+msgstr "Colour"
+
+#: templates/ai/assistant.html
+msgid "Restoran Asistanı"
+msgstr "Restaurant assistant"
+
+#: apps/crm/models.py
+msgid "Restoran içi"
+msgstr "In restaurant"
+
+#: apps/accounts/permissions.py
+msgid "Restoran müdürü"
+msgstr "Restaurant manager"
+
+#: apps/devcenter/models.py
+msgid "ret gerekçesi"
+msgstr "rejection reason"
+
+#: apps/core/models.py
+#: apps/floor/models.py
+msgid "Rezervasyon"
+msgstr "Reservation"
+
+#: apps/floor/models.py
+msgid "rezervasyon kodu"
+msgstr "reservation code"
+
+#: templates/floor/reservation_list.html
+msgid "Rezervasyon yok."
+msgstr "No reservations."
+
+#: apps/floor/models.py
+msgid "rezervasyon zamanı"
+msgstr "reservation time"
+
+#: apps/core/context_processors.py
+#: apps/floor/models.py
+msgid "Rezervasyonlar"
+msgstr "Reservations"
+
+#: apps/floor/models.py
+#: templates/floor/table_map.html
+msgid "Rezerve"
+msgstr "Reserved"
+
+#: apps/catalog/models.py
+msgid "reçete"
+msgstr "recipe"
+
+#: apps/catalog/models.py
+#: templates/catalog/product_detail.html
+#: templates/catalog/product_list.html
+msgid "Reçete"
+msgstr "Recipe"
+
+#: templates/catalog/recipe_form.html
+msgid "Reçete ayarları"
+msgstr "Recipe settings"
+
+#: apps/catalog/models.py
+msgid "reçete katsayısı"
+msgstr "recipe factor"
+
+#: templates/reports/index.html
+msgid "Reçete maliyetine göre ürün bazlı kâr ve marj analizi."
+msgstr "Per-product profit and margin analysis based on recipe cost."
+
+#: apps/catalog/models.py
+msgid "Reçete malzemeleri"
+msgstr "Recipe ingredients"
+
+#: apps/catalog/models.py
+msgid "Reçete malzemesi"
+msgstr "Recipe ingredient"
+
+#: templates/catalog/product_detail.html
+#: templates/catalog/recipe_detail.html
+msgid "Reçete oluştur"
+msgstr "Create recipe"
+
+#: templates/catalog/product_detail.html
+msgid "Reçete ve maliyet"
+msgstr "Recipe and cost"
+
+#: apps/catalog/models.py
+msgid "Reçeteler"
+msgstr "Recipes"
+
+#: templates/catalog/product_list.html
+msgid "Reçetesiz"
+msgstr "No recipe"
+
+#: templates/reports/profitability.html
+msgid "reçetesiz"
+msgstr "no recipe"
+
+#: templates/reports/profitability.html
+msgid "Reçetesiz ürün"
+msgstr "Products without a recipe"
+
+#: templates/catalog/recipe_form.html
+msgid "Reçeteyi kaydet"
+msgstr "Save recipe"
+
+#: templates/crm/customer_list.html
+msgid "Risk"
+msgstr "Risk"
+
+#: templates/crm/campaign_list.html
+msgid "Risk altında müşteri yok."
+msgstr "No customers at risk."
+
+#: apps/accounts/models.py
+#: apps/ai/models.py
+msgid "rol"
+msgstr "role"
+
+#: templates/accounts/profile.html
+#: templates/accounts/user_list.html
+#: templates/hr/employee_list.html
+#: templates/hr/performance.html
+msgid "Rol"
+msgstr "Role"
+
+#: apps/accounts/models.py
+msgid "Rolde bulunsa bile bu kullanıcıya kapatılan izin kodları."
+msgstr "Permission codes revoked from this user even if their role grants them."
+
+#: apps/accounts/models.py
+msgid "Rolün ötesinde verilen izin kodları."
+msgstr "Permission codes granted beyond the user's role."
+
+#: templates/devcenter/terminal.html
+msgid "ruff"
+msgstr "ruff"
+
+#: apps/crm/models.py
+msgid "Rıza kaydı"
+msgstr "Consent record"
+
+#: apps/crm/models.py
+msgid "Rıza kayıtları"
+msgstr "Consent records"
+
+#: templates/floor/table_map.html
+msgid "Saat"
+msgstr "Hour"
+
+#: apps/hr/models.py
+msgid "Saatlik"
+msgstr "Hourly"
+
+#: templates/hr/performance.html
+msgid "Saatlik satış"
+msgstr "Hourly sales"
+
+#: templates/reports/dashboard.html
+msgid "Saatlik yoğunluk (14 gün ortalaması)"
+msgstr "Hourly intensity (14-day average)"
+
+#: templates/ai/analysis_hub.html
+msgid "Saatlik yoğunluğa göre vardiya personeli önerisi."
+msgstr "Suggested shift staffing based on hourly intensity."
+
+#: apps/hr/models.py
+msgid "saatlik ücret"
+msgstr "hourly wage"
+
+#: apps/reports/models.py
+msgid "sabit gider"
+msgstr "fixed cost"
+
+#: templates/crm/customer_detail.html
+msgid "Sadakat"
+msgstr "Loyalty"
+
+#: apps/crm/models.py
+msgid "Sadakat hareketi"
+msgstr "Loyalty movement"
+
+#: apps/crm/models.py
+msgid "Sadakat hareketleri"
+msgstr "Loyalty movements"
+
+#: apps/crm/models.py
+msgid "sadakat puanı"
+msgstr "loyalty points"
+
+#: apps/orders/models.py
+#: templates/crm/customer_detail.html
+msgid "Sadakat puanı"
+msgstr "Loyalty points"
+
+#: apps/reports/models.py
+msgid "sahip"
+msgstr "owner"
+
+#: templates/backups/index.html
+msgid "Saklanan yedek"
+msgstr "Backups kept"
+
+#: apps/reports/statistics.py
+msgid "Sal"
+msgstr "Tue"
+
+#: apps/floor/models.py
+msgid "Salon / Bölüm"
+msgstr "Area / section"
+
+#: apps/floor/models.py
+msgid "Salonlar / Bölümler"
+msgstr "Areas / sections"
+
+#: apps/catalog/models.py
+#: apps/reports/statistics.py
+msgid "Salı"
+msgstr "Tuesday"
+
+#: apps/core/context_processors.py
+msgid "Satın Alma"
+msgstr "Purchasing"
+
+#: templates/reports/statistics.html
+msgid "Satın alma"
+msgstr "Purchasing"
+
+#: apps/inventory/models.py
+msgid "satın alma birimi"
+msgstr "purchase unit"
+
+#: apps/inventory/models.py
+msgid "Satın alma girişi"
+msgstr "Purchase receipt"
+
+#: apps/inventory/models.py
+msgid "Satın alma satırları"
+msgstr "Purchase order lines"
+
+#: apps/inventory/models.py
+msgid "Satın alma satırı"
+msgstr "Purchase order line"
+
+#: apps/inventory/models.py
+msgid "Satın alma siparişi"
+msgstr "Purchase order"
+
+#: templates/inventory/purchase_list.html
+msgid "Satın alma siparişi yok."
+msgstr "No purchase orders."
+
+#: apps/inventory/models.py
+msgid "Satın alma siparişleri"
+msgstr "Purchase orders"
+
+#: apps/orders/models.py
+msgid "satır"
+msgstr "line"
+
+#: templates/inventory/purchase_detail.html
+msgid "Satır ekle"
+msgstr "Add line"
+
+#: apps/orders/models.py
+msgid "satır indirimleri"
+msgstr "line discounts"
+
+#: templates/orders/order_detail.html
+msgid "Satır indirimleri"
+msgstr "Line discounts"
+
+#: templates/catalog/recipe_detail.html
+msgid "Satır maliyeti"
+msgstr "Line cost"
+
+#: apps/orders/models.py
+msgid "Satır seçenekleri"
+msgstr "Line options"
+
+#: apps/orders/models.py
+msgid "Satır seçeneği"
+msgstr "Line option"
+
+#: templates/hr/performance.html
+msgid "Satış"
+msgstr "Sales"
+
+#: apps/inventory/models.py
+msgid "Satış (reçete düşümü)"
+msgstr "Sale (recipe deduction)"
+
+#: templates/catalog/recipe_form.html
+msgid "Satış fiyatı"
+msgstr "Sale price"
+
+#: apps/catalog/models.py
+msgid "satış fiyatı (KDV dahil)"
+msgstr "sale price (VAT included)"
+
+#: templates/catalog/product_detail.html
+msgid "Satış fiyatı (KDV dahil)"
+msgstr "Sale price (VAT included)"
+
+#: templates/reports/index.html
+msgid "Satış Raporu"
+msgstr "Sales report"
+
+#: apps/hr/models.py
+msgid "satış toplamı"
+msgstr "sales total"
+
+#: templates/reports/statistics.html
+msgid "Satış yok."
+msgstr "No sales."
+
+#: templates/reports/index.html
+msgid "Satış — CSV"
+msgstr "Sales — CSV"
+
+#: templates/reports/index.html
+msgid "Satış — Excel"
+msgstr "Sales — Excel"
+
+#: templates/reports/index.html
+msgid "Satış — PDF"
+msgstr "Sales — PDF"
+
+#: templates/catalog/product_list.html
+msgid "Satışa aç/kapat"
+msgstr "Enable / disable for sale"
+
+#: apps/catalog/models.py
+msgid "satışa açık"
+msgstr "available for sale"
+
+#: templates/catalog/product_list.html
+msgid "Satışa kapalı"
+msgstr "Not for sale"
+
+#: templates/catalog/product_detail.html
+#: templates/catalog/product_list.html
+msgid "Satışta"
+msgstr "On sale"
+
+#: templates/reports/statistics.html
+msgid "Satıştan tüketim"
+msgstr "Consumption from sales"
+
+#: templates/core/404.html
+msgid "Sayfa bulunamadı"
+msgstr "Page not found"
+
+#: templates/includes/_pagination.html
+msgid "Sayfalama"
+msgstr "Pagination"
+
+#: templates/inventory/count_detail.html
+#: templates/orders/cash_session.html
+msgid "Sayılan"
+msgstr "Counted"
+
+#: apps/inventory/models.py
+msgid "sayılan miktar"
+msgstr "counted quantity"
+
+#: templates/inventory/count_detail.html
+msgid "Sayılan miktarları girin ve kaydedin. \"Sayımı uygula\" dediğinizde farklar stok hareketine dönüşür."
+msgstr "Enter the counted quantities and save. When you choose \"Apply count\", the variances become stock movements."
+
+#: apps/orders/models.py
+#: apps/reports/models.py
+msgid "sayılan nakit"
+msgstr "counted cash"
+
+#: templates/orders/cash_session.html
+#: templates/reports/closing_detail.html
+msgid "Sayılan nakit"
+msgstr "Counted cash"
+
+#: apps/inventory/models.py
+msgid "sayım"
+msgstr "stock count"
+
+#: apps/inventory/models.py
+msgid "Sayım düzeltmesi"
+msgstr "Count adjustment"
+
+#: templates/inventory/count_list.html
+msgid "Sayım kaydı yok."
+msgstr "No stock counts."
+
+#: apps/inventory/models.py
+msgid "sayım no"
+msgstr "count number"
+
+#: templates/inventory/count_list.html
+msgid "Sayım no"
+msgstr "Count number"
+
+#: apps/inventory/models.py
+msgid "Sayım satırları"
+msgstr "Count lines"
+
+#: apps/inventory/models.py
+msgid "Sayım satırı"
+msgstr "Count line"
+
+#: apps/inventory/models.py
+msgid "sayım zamanı"
+msgstr "counted at"
+
+#: templates/inventory/count_detail.html
+msgid "Sayımı kaydet"
+msgstr "Save count"
+
+#: templates/inventory/count_detail.html
+msgid "Sayımı uygula"
+msgstr "Apply count"
+
+#: apps/ai/models.py
+msgid "sağlayıcı"
+msgstr "provider"
+
+#: templates/ai/assistant.html
+#: templates/devcenter/index.html
+msgid "Sağlayıcı"
+msgstr "Provider"
+
+#: templates/ai/usage.html
+msgid "Sağlayıcı / model"
+msgstr "Provider / model"
+
+#: templates/ai/analysis_hub.html
+msgid "Sağlayıcı ayarları"
+msgstr "Provider settings"
+
+#: apps/crm/models.py
+msgid "segment"
+msgstr "segment"
+
+#: templates/crm/customer_list.html
+msgid "Segment"
+msgstr "Segment"
+
+#: templates/ai/analysis_hub.html
+msgid "Segment ve satış verilerine göre kampanya fikirleri."
+msgstr "Campaign ideas based on segment and sales data."
+
+#: templates/reports/statistics.html
+msgid "Servis"
+msgstr "Service"
+
+#: apps/orders/models.py
+#: apps/reports/models.py
+msgid "servis bedeli"
+msgstr "service charge"
+
+#: templates/core/settings.html
+#: templates/reports/closing_detail.html
+msgid "Servis bedeli"
+msgstr "Service charge"
+
+#: apps/floor/models.py
+msgid "servis bedeli (%)"
+msgstr "service charge (%)"
+
+#: apps/orders/models.py
+msgid "Servis edildi"
+msgstr "Served"
+
+#: apps/hr/models.py
+msgid "servis edilen sipariş"
+msgstr "served orders"
+
+#: apps/orders/models.py
+msgid "servis oranı (%)"
+msgstr "service rate (%)"
+
+#: templates/reports/statistics.html
+msgid "Servis süresi, adisyonun açılışı ile ödemesi arasındaki süredir. 8 saatten uzun süren adisyonlar (kapatılması unutulmuş olanlar) ortalamaya katılmaz."
+msgstr "Service time is the span between opening a check and paying it. Checks longer than eight hours (ones that were forgotten open) are excluded from the average."
+
+#: apps/kitchen/models.py
+#: apps/orders/models.py
+msgid "servis sırası"
+msgstr "course order"
+
+#: apps/crm/models.py
+msgid "Servis sırasında uyarı olarak gösterilir."
+msgstr "Shown as a warning during service."
+
+#: apps/orders/models.py
+msgid "servis zamanı"
+msgstr "served at"
+
+#: templates/kitchen/display.html
+msgid "Sesli uyarı"
+msgstr "Audible alert"
+
+#: apps/crm/models.py
+msgid "seviye"
+msgstr "tier"
+
+#: templates/crm/customer_list.html
+#: templates/inventory/ingredient_list.html
+msgid "Seviye"
+msgstr "Tier"
+
+#: apps/hr/models.py
+msgid "Sezonluk"
+msgstr "Seasonal"
+
+#: apps/catalog/models.py
+msgid "Seçenek"
+msgstr "Option"
+
+#: apps/orders/models.py
+msgid "seçenek"
+msgstr "option"
+
+#: apps/orders/models.py
+msgid "seçenek adı"
+msgstr "option name"
+
+#: apps/catalog/models.py
+msgid "Seçenek grubu"
+msgstr "Option group"
+
+#: apps/catalog/models.py
+msgid "Seçenek grupları"
+msgstr "Option groups"
+
+#: apps/catalog/models.py
+msgid "Seçenekler"
+msgstr "Options"
+
+#: apps/catalog/models.py
+msgid "Seçildiğinde stoktan düşülecek malzeme."
+msgstr "Ingredient deducted from stock when this option is selected."
+
+#: templates/orders/pos.html
+msgid "Seçili ürünleri ayır"
+msgstr "Move selected items out"
+
+#: apps/backups/models.py
+msgid "SHA-256"
+msgstr "SHA-256"
+
+#: apps/floor/models.py
+msgid "sigara içilebilir"
+msgstr "smoking allowed"
+
+#: templates/catalog/recipe_form.html
+msgid "Sil"
+msgstr "Delete"
+
+#: apps/core/models.py
+msgid "silinme"
+msgstr "deleted at"
+
+#: apps/core/models.py
+msgid "Silme"
+msgstr "Deletion"
+
+#: templates/crm/customer_detail.html
+msgid "Silme talebi gerekçesi"
+msgstr "Reason for the erasure request"
+
+#: apps/core/models.py
+#: apps/orders/models.py
+#: apps/reports/statistics.py
+#: templates/hr/performance.html
+msgid "Sipariş"
+msgstr "Order"
+
+#: apps/crm/models.py
+#: apps/inventory/models.py
+#: apps/kitchen/models.py
+#: apps/orders/models.py
+msgid "sipariş"
+msgstr "order"
+
+#: templates/orders/order_list.html
+msgid "Sipariş bulunamadı."
+msgstr "No orders found."
+
+#: templates/crm/customer_detail.html
+msgid "Sipariş geçmişi"
+msgstr "Order history"
+
+#: templates/crm/customer_detail.html
+msgid "Sipariş geçmişi yok."
+msgstr "No order history."
+
+#: apps/orders/models.py
+#: templates/orders/order_detail.html
+msgid "Sipariş indirimi"
+msgstr "Order discount"
+
+#: apps/orders/models.py
+msgid "sipariş indirimi"
+msgstr "order discount"
+
+#: apps/orders/models.py
+msgid "Sipariş indirimleri"
+msgstr "Order discounts"
+
+#: apps/inventory/models.py
+msgid "sipariş miktarı"
+msgstr "ordered quantity"
+
+#: apps/orders/models.py
+msgid "sipariş notu"
+msgstr "order note"
+
+#: templates/orders/pos.html
+msgid "Sipariş notu…"
+msgstr "Order note…"
+
+#: templates/reports/statistics.html
+msgid "Sipariş ort."
+msgstr "Avg. orders"
+
+#: apps/orders/models.py
+msgid "Sipariş satırları"
+msgstr "Order lines"
+
+#: apps/kitchen/models.py
+msgid "sipariş satırı"
+msgstr "order line"
+
+#: apps/orders/models.py
+msgid "Sipariş satırı"
+msgstr "Order line"
+
+#: apps/reports/models.py
+msgid "sipariş sayısı"
+msgstr "order count"
+
+#: templates/reports/closing_detail.html
+#: templates/reports/dashboard.html
+msgid "Sipariş sayısı"
+msgstr "Order count"
+
+#: templates/reports/sales.html
+msgid "Sipariş türleri"
+msgstr "Order types"
+
+#: apps/orders/models.py
+msgid "sipariş türü"
+msgstr "order type"
+
+#: templates/orders/pos.html
+#: templates/reports/statistics.html
+msgid "Sipariş türü"
+msgstr "Order type"
+
+#: apps/inventory/models.py
+msgid "Sipariş verildi"
+msgstr "Ordered"
+
+#: apps/core/context_processors.py
+#: apps/orders/models.py
+msgid "Siparişler"
+msgstr "Orders"
+
+#: templates/reports/statistics.html
+msgid "Siparişte müşteri tanımlama"
+msgstr "Customer identification on orders"
+
+#: apps/accounts/models.py
+#: apps/ai/models.py
+#: apps/core/models.py
+#: templates/inventory/count_detail.html
+msgid "Sistem"
+msgstr "System"
+
+#: apps/core/models.py
+msgid "Sistem ayarları"
+msgstr "System settings"
+
+#: apps/core/models.py
+msgid "Sistem ayarı"
+msgstr "System setting"
+
+#: templates/core/settings.html
+msgid "Sistem bilgisi"
+msgstr "System information"
+
+#: apps/inventory/models.py
+msgid "sistem miktarı"
+msgstr "system quantity"
+
+#: templates/ai/assistant.html
+msgid "Sistem verileriniz otomatik olarak yanıta eklenir."
+msgstr "Your system data is added to the answer automatically."
+
+#: templates/inventory/ingredient_list.html
+msgid "SKT yaklaşan"
+msgstr "Expiring soon"
+
+#: apps/crm/models.py
+msgid "SMS ile pazarlama"
+msgstr "SMS marketing"
+
+#: apps/ai/models.py
+msgid "sohbet"
+msgstr "conversation"
+
+#: templates/ai/assistant.html
+msgid "Sohbetler"
+msgstr "Conversations"
+
+#: templates/devcenter/files.html
+msgid "Soldan bir dosya seçin."
+msgstr "Choose a file on the left."
+
+#: templates/reports/statistics.html
+msgid "Soluk hücreler %(minimum)s günden az gözleme dayanır; düzenli bir örüntü değil, tek seferlik bir yoğunluk olabilir. Personel planını yalnızca koyu hücrelere göre yapın."
+msgstr "Faded cells rest on fewer than %(minimum)s observed days; that may be a one-off rush rather than a regular pattern. Base staffing plans only on the solid cells."
+
+#: templates/includes/_pagination.html
+msgid "Son"
+msgstr "Last"
+
+#: templates/reports/dashboard.html
+msgid "Son 14 günün cirosu"
+msgstr "Revenue of the last 14 days"
+
+#: apps/reports/statistics.py
+msgid "Son 30 gün"
+msgstr "Last 30 days"
+
+#: apps/reports/statistics.py
+msgid "Son 7 gün"
+msgstr "Last 7 days"
+
+#: apps/reports/statistics.py
+msgid "Son 90 gün"
+msgstr "Last 90 days"
+
+#: templates/devcenter/index.html
+msgid "Son commit"
+msgstr "Last commit"
+
+#: apps/accounts/models.py
+msgid "son etkinlik"
+msgstr "last activity"
+
+#: templates/accounts/profile.html
+#: templates/accounts/user_list.html
+msgid "Son giriş"
+msgstr "Last sign-in"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Son hareketler"
+msgstr "Recent movements"
+
+#: templates/ai/analysis_hub.html
+msgid "Son içgörüler"
+msgstr "Recent insights"
+
+#: templates/devcenter/index.html
+msgid "Son komutlar"
+msgstr "Recent commands"
+
+#: apps/crm/models.py
+#: apps/inventory/models.py
+msgid "son kullanma"
+msgstr "expiry date"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Son kullanma"
+msgstr "Expiry"
+
+#: apps/inventory/models.py
+msgid "Son kullanma tarihi geçti"
+msgstr "Expired"
+
+#: templates/inventory/alerts.html
+msgid "Son kullanma tarihi yaklaşanlar"
+msgstr "Expiring soon"
+
+#: templates/training/lesson.html
+msgid "Son sınav sonucunuz"
+msgstr "Your latest quiz result"
+
+#: apps/hr/models.py
+msgid "son tarih"
+msgstr "due date"
+
+#: templates/hr/task_list.html
+msgid "Son tarih"
+msgstr "Due date"
+
+#: templates/backups/index.html
+msgid "Son yedek"
+msgstr "Last backup"
+
+#: templates/backups/index.html
+msgid "Son yedek %(hours)s saat önce alınmış."
+msgstr "The last backup was taken %(hours)s hours ago."
+
+#: apps/crm/models.py
+msgid "son ziyaret"
+msgstr "last visit"
+
+#: templates/crm/customer_detail.html
+#: templates/crm/customer_list.html
+msgid "Son ziyaret"
+msgstr "Last visit"
+
+#: templates/includes/_pagination.html
+msgid "Sonraki"
+msgstr "Next"
+
+#: apps/ai/models.py
+msgid "sonuç"
+msgstr "outcome"
+
+#: templates/ai/usage.html
+msgid "Sonuç"
+msgstr "Result"
+
+#: apps/training/models.py
+msgid "soru sayısı"
+msgstr "question count"
+
+#: templates/ai/assistant.html
+msgid "Sorunuzu yazın… (ör. bu hafta hangi ürün en çok kâr getirdi?)"
+msgstr "Type your question… (e.g. which product brought the most profit this week?)"
+
+#: apps/crm/models.py
+msgid "Sosyal medya"
+msgstr "Social media"
+
+#: apps/crm/models.py
+msgid "soyad"
+msgstr "last name"
+
+#: apps/inventory/models.py
+msgid "soğuk depo"
+msgstr "cold storage"
+
+#: apps/kitchen/models.py
+#: templates/kitchen/station_list.html
+msgid "Soğuk mutfak"
+msgstr "Cold kitchen"
+
+#: apps/hr/models.py
+msgid "Stajyer"
+msgstr "Intern"
+
+#: apps/devcenter/models.py
+msgid "standart çıktı"
+msgstr "standard output"
+
+#: templates/ai/providers.html
+msgid "Start Server"
+msgstr "Start Server"
+
+#: apps/core/context_processors.py
+#: apps/core/models.py
+msgid "Stok"
+msgstr "Stock"
+
+#: apps/catalog/models.py
+msgid "stok bitince otomatik kapat"
+msgstr "disable automatically when out of stock"
+
+#: apps/inventory/models.py
+msgid "Stok bu birimde tutulur (ör. gram, ml, adet)."
+msgstr "Stock is held in this unit (e.g. gram, ml, piece)."
+
+#: templates/inventory/ingredient_detail.html
+#: templates/inventory/ingredient_list.html
+msgid "Stok değeri"
+msgstr "Stock value"
+
+#: templates/inventory/ingredient_list.html
+msgid "Stok durumu"
+msgstr "Stock status"
+
+#: apps/catalog/models.py
+msgid "Stok düşerken reçete miktarları bu katsayıyla çarpılır."
+msgstr "Recipe quantities are multiplied by this factor when stock is deducted."
+
+#: apps/orders/models.py
+msgid "stok düşüldü"
+msgstr "stock deducted"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Stok girişi"
+msgstr "Stock receipt"
+
+#: apps/inventory/models.py
+msgid "Stok hareketi"
+msgstr "Stock movement"
+
+#: apps/inventory/models.py
+msgid "Stok hareketleri"
+msgstr "Stock movements"
+
+#: apps/catalog/models.py
+#: apps/inventory/models.py
+msgid "stok kodu"
+msgstr "stock code"
+
+#: apps/inventory/models.py
+msgid "Stok partileri"
+msgstr "Stock batches"
+
+#: apps/inventory/models.py
+msgid "Stok partisi"
+msgstr "Stock batch"
+
+#: apps/inventory/models.py
+msgid "Stok sayımları"
+msgstr "Stock counts"
+
+#: apps/inventory/models.py
+msgid "Stok sayımı"
+msgstr "Stock count"
+
+#: apps/catalog/models.py
+msgid "Stok tükendiğinde otomatik olarak kapatılabilir."
+msgstr "Can be disabled automatically when stock runs out."
+
+#: apps/ai/models.py
+msgid "Stok tükenme tahmini"
+msgstr "Stock-out forecast"
+
+#: templates/ai/analysis_hub.html
+msgid "Stok Tükenme Tahmini"
+msgstr "Stock-out forecast"
+
+#: templates/reports/statistics.html
+msgid "Stok ve fire"
+msgstr "Stock and waste"
+
+#: templates/reports/index.html
+msgid "Stok — Excel"
+msgstr "Stock — Excel"
+
+#: apps/orders/models.py
+msgid "stoğa geri ekle"
+msgstr "return to stock"
+
+#: templates/core/500.html
+msgid "Sunucu hatası"
+msgstr "Server error"
+
+#: templates/backups/detail.html
+#: templates/hr/employee_detail.html
+#: templates/orders/order_detail.html
+#: templates/orders/order_list.html
+msgid "Süre"
+msgstr "Duration"
+
+#: apps/floor/models.py
+msgid "süre (dk)"
+msgstr "duration (min)"
+
+#: apps/devcenter/models.py
+msgid "süre (ms)"
+msgstr "duration (ms)"
+
+#: apps/crm/models.py
+msgid "Süre dolumu"
+msgstr "Timeout"
+
+#: templates/core/settings.html
+msgid "Sürüm"
+msgstr "Version"
+
+#: apps/backups/models.py
+#: templates/backups/detail.html
+msgid "Sürüyor"
+msgstr "In progress"
+
+#: apps/ai/models.py
+msgid "sınırlamalar"
+msgstr "limitations"
+
+#: templates/ai/insights.html
+msgid "Sınırlamalar:"
+msgstr "Limitations:"
+
+#: apps/catalog/models.py
+#: apps/floor/models.py
+#: apps/inventory/models.py
+#: apps/kitchen/models.py
+msgid "sıra"
+msgstr "order"
+
+#: templates/catalog/category_list.html
+#: templates/kitchen/station_list.html
+msgid "Sıra"
+msgstr "Order"
+
+#: apps/kitchen/models.py
+msgid "Sırada"
+msgstr "Queued"
+
+#: apps/kitchen/models.py
+msgid "sıraya girme"
+msgstr "queued at"
+
+#: templates/orders/order_detail.html
+msgid "Sıraya girme"
+msgstr "Queued at"
+
+#: apps/floor/models.py
+msgid "tahminî bekleme (dk)"
+msgstr "estimated wait (min)"
+
+#: templates/inventory/alerts.html
+#: templates/inventory/ingredient_list.html
+msgid "Tahminî gün"
+msgstr "Estimated days"
+
+#: apps/ai/models.py
+msgid "tahminî maliyet (USD)"
+msgstr "estimated cost (USD)"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Tahminî tükenme"
+msgstr "Estimated stock-out"
+
+#: templates/orders/order_list.html
+msgid "Tahsil edilen"
+msgstr "Collected"
+
+#: apps/accounts/models.py
+#: apps/devcenter/models.py
+msgid "talep eden"
+msgstr "requested by"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Talep eden"
+msgstr "Requested by"
+
+#: apps/inventory/models.py
+msgid "Talep edildi"
+msgstr "Requested"
+
+#: templates/hr/leave_list.html
+msgid "Talep oluştur"
+msgstr "Create request"
+
+#: apps/ai/models.py
+msgid "Talep tahmini"
+msgstr "Demand forecast"
+
+#: templates/ai/analysis_hub.html
+msgid "Talep Tahmini"
+msgstr "Demand forecast"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Talimat"
+msgstr "Instruction"
+
+#: apps/core/models.py
+msgid "Tam sayı"
+msgstr "Integer"
+
+#: apps/hr/models.py
+msgid "Tam zamanlı"
+msgstr "Full time"
+
+#: templates/kitchen/performance.html
+msgid "Tamamlanan KOT"
+msgstr "Completed tickets"
+
+#: apps/floor/models.py
+#: apps/hr/models.py
+#: apps/orders/models.py
+#: templates/training/index.html
+msgid "Tamamlandı"
+msgstr "Completed"
+
+#: apps/hr/models.py
+#: apps/kitchen/models.py
+#: apps/training/models.py
+msgid "tamamlanma"
+msgstr "completed at"
+
+#: apps/hr/models.py
+#: apps/kitchen/models.py
+msgid "tamamlayan"
+msgstr "completed by"
+
+#: templates/accounts/profile.html
+msgid "Tanımlı"
+msgstr "Identified"
+
+#: templates/reports/statistics.html
+msgid "Tanımlı müşteri"
+msgstr "Identified customers"
+
+#: apps/core/models.py
+msgid "tarayıcı"
+msgstr "browser"
+
+#: apps/hr/models.py
+#: apps/reports/models.py
+msgid "tarih"
+msgstr "date"
+
+#: templates/backups/index.html
+#: templates/crm/customer_detail.html
+#: templates/crm/review_list.html
+#: templates/devcenter/index.html
+msgid "Tarih"
+msgstr "Date"
+
+#: templates/floor/reservation_list.html
+msgid "Tarih / saat"
+msgstr "Date / time"
+
+#: apps/crm/models.py
+#: apps/inventory/models.py
+#: apps/orders/models.py
+msgid "Taslak"
+msgstr "Draft"
+
+#: apps/catalog/models.py
+#: apps/kitchen/models.py
+#: templates/kitchen/station_list.html
+msgid "Tatlı"
+msgstr "Dessert"
+
+#: templates/backups/detail.html
+msgid "Taşınabilir döküm (JSON)"
+msgstr "Portable dump (JSON)"
+
+#: apps/inventory/models.py
+#: templates/inventory/purchase_list.html
+#: templates/inventory/supplier_list.html
+msgid "Tedarikçi"
+msgstr "Supplier"
+
+#: apps/inventory/models.py
+#: apps/reports/models.py
+msgid "tedarikçi"
+msgstr "supplier"
+
+#: apps/inventory/models.py
+msgid "Tedarikçi fiyatları"
+msgstr "Supplier prices"
+
+#: apps/inventory/models.py
+msgid "Tedarikçi fiyatı"
+msgstr "Supplier price"
+
+#: templates/inventory/supplier_list.html
+msgid "Tedarikçi yok."
+msgstr "No suppliers."
+
+#: apps/inventory/models.py
+msgid "Tedarikçiden alınan birim (ör. kg, koli)."
+msgstr "Unit purchased from the supplier (e.g. kg, case)."
+
+#: apps/inventory/models.py
+#: templates/inventory/purchase_list.html
+msgid "Tedarikçiler"
+msgstr "Suppliers"
+
+#: apps/inventory/models.py
+msgid "Tedarikçiye iade"
+msgstr "Return to supplier"
+
+#: templates/reports/statistics.html
+msgid "Tekrar gelen"
+msgstr "Returning"
+
+#: templates/training/index.html
+msgid "Tekrar oku"
+msgstr "Read again"
+
+#: apps/hr/models.py
+msgid "tekrarlayan"
+msgstr "recurring"
+
+#: apps/accounts/models.py
+#: apps/crm/models.py
+#: apps/floor/models.py
+#: apps/inventory/models.py
+msgid "telefon"
+msgstr "phone"
+
+#: apps/floor/models.py
+#: templates/accounts/user_list.html
+#: templates/crm/customer_detail.html
+#: templates/floor/reservation_list.html
+msgid "Telefon"
+msgstr "Phone"
+
+#: apps/accounts/models.py
+msgid "tema"
+msgstr "theme"
+
+#: templates/accounts/login.html
+msgid "Tema"
+msgstr "Theme"
+
+#: templates/base.html
+msgid "Temayı değiştir"
+msgstr "Switch theme"
+
+#: apps/inventory/models.py
+msgid "temel birim"
+msgstr "base unit"
+
+#: templates/catalog/recipe_detail.html
+msgid "Temel birim"
+msgstr "Base unit"
+
+#: apps/inventory/models.py
+msgid "Temel birim başına maliyet."
+msgstr "Cost per base unit."
+
+#: apps/inventory/models.py
+msgid "Temel birimde. Çıkışlar negatiftir."
+msgstr "In base units. Outgoing movements are negative."
+
+#: apps/inventory/models.py
+msgid "temel birime katsayı"
+msgstr "factor to base unit"
+
+#: apps/floor/models.py
+#: templates/floor/table_map.html
+msgid "Temizlikte"
+msgstr "Being cleaned"
+
+#: apps/floor/models.py
+msgid "tercih"
+msgstr "preference"
+
+#: apps/floor/models.py
+msgid "tercih edilen bölüm"
+msgstr "preferred area"
+
+#: apps/ai/models.py
+msgid "tercih edilen model"
+msgstr "preferred model"
+
+#: apps/ai/models.py
+msgid "tercih edilen sağlayıcı"
+msgstr "preferred provider"
+
+#: apps/crm/models.py
+msgid "tercihler"
+msgstr "preferences"
+
+#: templates/crm/customer_detail.html
+msgid "Tercihler:"
+msgstr "Preferences:"
+
+#: apps/orders/models.py
+msgid "terminal"
+msgstr "terminal"
+
+#: templates/devcenter/index.html
+#: templates/orders/cash_session.html
+msgid "Terminal"
+msgstr "Terminal"
+
+#: templates/orders/cash_session.html
+msgid "Terminal adı"
+msgstr "Terminal name"
+
+#: apps/devcenter/models.py
+msgid "Terminal komutları"
+msgstr "Terminal commands"
+
+#: apps/core/models.py
+#: apps/devcenter/models.py
+msgid "Terminal komutu"
+msgstr "Terminal command"
+
+#: templates/devcenter/index.html
+msgid "Terminal yalnızca izinli komutları çalıştırır; silme/biçimlendirme/ağ komutları engellidir."
+msgstr "The terminal runs allow-listed commands only; delete, format and network commands are blocked."
+
+#: apps/kitchen/models.py
+msgid "teslim"
+msgstr "delivery"
+
+#: templates/orders/delivery_board.html
+msgid "Teslim"
+msgstr "Delivery"
+
+#: templates/inventory/purchase_detail.html
+msgid "Teslim al ve stoğa ekle"
+msgstr "Receive and add to stock"
+
+#: templates/inventory/purchase_detail.html
+msgid "Teslim alma"
+msgstr "Goods receipt"
+
+#: apps/inventory/models.py
+msgid "teslim alınan"
+msgstr "received"
+
+#: templates/inventory/purchase_detail.html
+msgid "Teslim alınan"
+msgstr "Received"
+
+#: apps/inventory/models.py
+msgid "Teslim alındı"
+msgstr "Received"
+
+#: apps/inventory/models.py
+msgid "teslim deposu"
+msgstr "receiving warehouse"
+
+#: apps/kitchen/models.py
+#: templates/kitchen/_ticket_board.html
+msgid "Teslim edildi"
+msgstr "Delivered"
+
+#: templates/inventory/supplier_list.html
+msgid "Teslim süresi"
+msgstr "Lead time"
+
+#: apps/inventory/models.py
+msgid "teslim süresi (gün)"
+msgstr "lead time (days)"
+
+#: apps/inventory/models.py
+#: apps/orders/models.py
+msgid "teslim zamanı"
+msgstr "delivered at"
+
+#: templates/inventory/purchase_detail.html
+msgid "Teslim zamanı"
+msgstr "Delivery time"
+
+#: apps/orders/models.py
+msgid "teslimat adresi"
+msgstr "delivery address"
+
+#: apps/crm/models.py
+msgid "Teslimat platformu"
+msgstr "Delivery platform"
+
+#: templates/orders/delivery_board.html
+msgid "Teslimat siparişi yok."
+msgstr "No delivery orders."
+
+#: apps/orders/models.py
+msgid "teslimat telefonu"
+msgstr "delivery phone"
+
+#: apps/orders/models.py
+msgid "teslimat ücreti"
+msgstr "delivery fee"
+
+#: templates/devcenter/index.html
+msgid "Test"
+msgstr "Test"
+
+#: templates/ai/providers.html
+msgid "Test et"
+msgstr "Test"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Test komutu"
+msgstr "Test command"
+
+#: apps/devcenter/models.py
+msgid "test çalıştırıldı"
+msgstr "tests ran"
+
+#: apps/devcenter/models.py
+msgid "test çıktısı"
+msgstr "test output"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Testler başarısız. Değişiklik uygulanamaz."
+msgstr "Tests failed. The change cannot be applied."
+
+#: templates/devcenter/index.html
+msgid "Testler başarısızsa değişiklik uygulanamaz."
+msgstr "If the tests fail, the change cannot be applied."
+
+#: apps/devcenter/models.py
+msgid "testler geçti"
+msgstr "tests passed"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Testleri çalıştır"
+msgstr "Run the tests"
+
+#: templates/ai/usage.html
+msgid "Token"
+msgstr "Tokens"
+
+#: templates/inventory/purchase_detail.html
+#: templates/orders/order_detail.html
+msgid "Toplam"
+msgstr "Total"
+
+#: templates/crm/customer_list.html
+#: templates/reports/profitability.html
+msgid "Toplam ciro"
+msgstr "Total revenue"
+
+#: templates/inventory/waste_list.html
+msgid "Toplam fire maliyeti"
+msgstr "Total waste cost"
+
+#: apps/crm/models.py
+msgid "toplam harcama"
+msgstr "total spending"
+
+#: templates/crm/customer_detail.html
+#: templates/crm/customer_list.html
+msgid "Toplam harcama"
+msgstr "Total spending"
+
+#: templates/reports/dashboard.html
+msgid "Toplam indirim"
+msgstr "Total discount"
+
+#: apps/orders/models.py
+msgid "toplam kullanım limiti"
+msgstr "total usage limit"
+
+#: templates/ai/usage.html
+#: templates/reports/profitability.html
+msgid "Toplam maliyet"
+msgstr "Total cost"
+
+#: templates/floor/table_map.html
+msgid "Toplam masa"
+msgstr "Total tables"
+
+#: templates/crm/customer_list.html
+msgid "Toplam müşteri"
+msgstr "Total customers"
+
+#: templates/ai/providers.html
+msgid "Toplam token"
+msgstr "Total tokens"
+
+#: templates/orders/order_list.html
+msgid "Toplam tutar"
+msgstr "Total amount"
+
+#: templates/training/index.html
+msgid "Toplam yaklaşık %(total_minutes)s dakika"
+msgstr "About %(total_minutes)s minutes in total"
+
+#: templates/ai/providers.html
+msgid "Toplam çağrı"
+msgstr "Total calls"
+
+#: templates/ai/usage.html
+msgid "Toplam çağrı (30 gün)"
+msgstr "Total calls (30 days)"
+
+#: templates/catalog/product_list.html
+msgid "Toplam ürün"
+msgstr "Total products"
+
+#: apps/orders/models.py
+#: apps/reports/models.py
+msgid "tutar"
+msgstr "amount"
+
+#: templates/crm/customer_detail.html
+#: templates/inventory/purchase_list.html
+#: templates/orders/cash_session.html
+#: templates/orders/delivery_board.html
+msgid "Tutar"
+msgstr "Amount"
+
+#: apps/orders/models.py
+msgid "Tutar indirimi"
+msgstr "Fixed discount"
+
+#: templates/orders/order_detail.html
+msgid "Tutar özeti"
+msgstr "Amount summary"
+
+#: templates/catalog/qr_menu.html
+#: templates/inventory/ingredient_detail.html
+#: templates/inventory/ingredient_list.html
+msgid "Tükendi"
+msgstr "Out of stock"
+
+#: templates/ai/analysis_hub.html
+msgid "Tüketim hızına göre hangi malzemenin ne zaman biteceği."
+msgstr "Which ingredient runs out and when, based on consumption rate."
+
+#: apps/inventory/models.py
+msgid "tüketim yöntemi"
+msgstr "consumption method"
+
+#: templates/inventory/ingredient_detail.html
+msgid "Tüketim yöntemi"
+msgstr "Consumption method"
+
+#: templates/training/index.html
+msgid "Tüm dersleri tamamladınız"
+msgstr "You have completed every lesson"
+
+#: templates/accounts/user_list.html
+msgid "Tüm roller"
+msgstr "All roles"
+
+#: templates/ai/analysis_hub.html
+#: templates/ai/insights.html
+#: templates/base.html
+#: templates/catalog/product_list.html
+msgid "Tümü"
+msgstr "See all"
+
+#: templates/core/notifications.html
+msgid "Tümünü okundu işaretle"
+msgstr "Mark all as read"
+
+#: templates/ai/providers.html
+msgid "Tümünü test et"
+msgstr "Test all"
+
+#: apps/ai/models.py
+#: apps/backups/models.py
+#: apps/catalog/models.py
+#: apps/core/models.py
+msgid "tür"
+msgstr "type"
+
+#: templates/ai/insights.html
+#: templates/backups/detail.html
+#: templates/backups/index.html
+#: templates/crm/customer_detail.html
+msgid "Tür"
+msgstr "Type"
+
+#: apps/core/models.py
+#: templates/kitchen/station_list.html
+msgid "Uyarı"
+msgstr "Warning"
+
+#: templates/kitchen/station_list.html
+msgid "Uyarı (dk)"
+msgstr "Warning (min)"
+
+#: apps/kitchen/models.py
+msgid "uyarı süresi (dk)"
+msgstr "warning time (min)"
+
+#: templates/inventory/ingredient_list.html
+msgid "Uyarılar"
+msgstr "Warnings"
+
+#: templates/crm/customer_detail.html
+#: templates/orders/pos.html
+#: templates/reports/expense_list.html
+#: templates/reports/profitability.html
+msgid "Uygula"
+msgstr "Apply"
+
+#: apps/devcenter/models.py
+msgid "Uygulama başarısız"
+msgstr "Application failed"
+
+#: apps/devcenter/models.py
+msgid "uygulama zamanı"
+msgstr "applied at"
+
+#: templates/ai/providers.html
+msgid "Uygulamayı yeniden başlatın ve \"Test et\" düğmesine basın."
+msgstr "Restart the application and press the \"Test\" button."
+
+#: apps/devcenter/models.py
+#: apps/inventory/models.py
+msgid "Uygulandı"
+msgstr "Applied"
+
+#: apps/inventory/models.py
+msgid "uygulanma zamanı"
+msgstr "applied at"
+
+#: templates/backups/detail.html
+msgid "Uyuşmuyor"
+msgstr "Does not match"
+
+#: apps/orders/models.py
+msgid "Uzun bekleme"
+msgstr "Long wait"
+
+#: templates/inventory/supplier_list.html
+msgid "Vade"
+msgstr "Payment term"
+
+#: apps/inventory/models.py
+msgid "vade (gün)"
+msgstr "payment term (days)"
+
+#: apps/reports/models.py
+msgid "Vadeli"
+msgstr "On credit"
+
+#: apps/hr/models.py
+#: templates/hr/employee_list.html
+msgid "Vardiya"
+msgstr "Shift"
+
+#: apps/hr/models.py
+msgid "vardiya"
+msgstr "shift"
+
+#: templates/hr/shift_schedule.html
+msgid "Vardiya ata"
+msgstr "Assign shift"
+
+#: apps/hr/models.py
+msgid "Vardiya atamaları"
+msgstr "Shift assignments"
+
+#: apps/hr/models.py
+msgid "vardiya ataması"
+msgstr "shift assignment"
+
+#: apps/hr/models.py
+msgid "Vardiya ataması"
+msgstr "Shift assignment"
+
+#: templates/hr/shift_schedule.html
+msgid "Vardiya seç"
+msgstr "Choose shift"
+
+#: templates/hr/employee_detail.html
+msgid "Vardiya yok."
+msgstr "No shifts."
+
+#: apps/hr/models.py
+msgid "Vardiyalar"
+msgstr "Shifts"
+
+#: apps/catalog/models.py
+#: apps/inventory/models.py
+msgid "varsayılan"
+msgstr "default"
+
+#: templates/core/settings.html
+msgid "Varsayılan KDV"
+msgstr "Default VAT"
+
+#: apps/inventory/models.py
+msgid "varsayılan tedarikçi"
+msgstr "default supplier"
+
+#: templates/accounts/user_form.html
+#: templates/accounts/user_permissions.html
+#: templates/catalog/category_form.html
+#: templates/catalog/product_form.html
+msgid "Vazgeç"
+msgstr "Cancel"
+
+#: apps/ai/models.py
+msgid "Vektör gömme"
+msgstr "Vector embedding"
+
+#: apps/crm/models.py
+#: apps/inventory/models.py
+msgid "vergi no"
+msgstr "tax number"
+
+#: apps/ai/models.py
+msgid "veri noktası sayısı"
+msgstr "data point count"
+
+#: apps/core/models.py
+msgid "Veri silme talebi (KVKK)"
+msgstr "Data erasure request (GDPR/KVKK)"
+
+#: templates/hr/performance.html
+#: templates/reports/sales.html
+msgid "Veri yok."
+msgstr "No data."
+
+#: apps/crm/models.py
+msgid "verildi"
+msgstr "issued"
+
+#: apps/hr/models.py
+msgid "verilen indirim"
+msgstr "discount given"
+
+#: apps/catalog/models.py
+msgid "verim (porsiyon)"
+msgstr "yield (portions)"
+
+#: templates/catalog/recipe_form.html
+msgid "Verim (porsiyon)"
+msgstr "Yield (portions)"
+
+#: templates/backups/detail.html
+#: templates/core/settings.html
+msgid "Veritabanı"
+msgstr "Database"
+
+#: templates/devcenter/terminal.html
+msgid "Veritabanı boşaltma / DROP TABLE"
+msgstr "Emptying the database / DROP TABLE"
+
+#: templates/backups/index.html
+msgid "Veritabanı büyüklüğüne göre birkaç saniye sürebilir."
+msgstr "It may take a few seconds depending on the database size."
+
+#: apps/crm/models.py
+msgid "VIP"
+msgstr "VIP"
+
+#: apps/floor/models.py
+msgid "X konumu (%)"
+msgstr "X position (%)"
+
+#: apps/floor/models.py
+msgid "Y konumu (%)"
+msgstr "Y position (%)"
+
+#: templates/inventory/alerts.html
+msgid "Yaklaşan son kullanma tarihi yok."
+msgstr "Nothing is expiring soon."
+
+#: templates/hr/employee_detail.html
+msgid "Yaklaşan vardiyalar"
+msgstr "Upcoming shifts"
+
+#: templates/reports/statistics.html
+msgid "Yalnızca %(days)s gün gözlendi"
+msgstr "Observed on only %(days)s days"
+
+#: templates/crm/review_list.html
+msgid "Yalnızca çözüm bekleyen olumsuzlar"
+msgstr "Only unresolved negative reviews"
+
+#: apps/orders/models.py
+msgid "Yanlış sipariş"
+msgstr "Wrong order"
+
+#: apps/ai/models.py
+msgid "yanıt önizleme"
+msgstr "response preview"
+
+#: templates/training/lesson.html
+msgid "Yanıtları gönder ve tamamla"
+msgstr "Submit answers and complete"
+
+#: templates/backups/index.html
+msgid "Yapan"
+msgstr "Performed by"
+
+#: apps/core/context_processors.py
+msgid "Yapay Zekâ"
+msgstr "Artificial intelligence"
+
+#: apps/core/models.py
+msgid "Yapay zekâ"
+msgstr "Artificial intelligence"
+
+#: templates/reports/voids.html
+msgid "Yapay zekâ ile anormallik taraması yap"
+msgstr "Run an anomaly scan with AI"
+
+#: templates/ai/usage.html
+msgid "Yapay zekâ kullanım kaydı yok."
+msgstr "No AI usage records."
+
+#: templates/ai/analysis_hub.html
+msgid "Yapay zekâ sağlayıcısı yapılandırılmamış."
+msgstr "No AI provider is configured."
+
+#: apps/catalog/models.py
+msgid "Yapay zekâ tarafından önerilen açıklama; onaylanıp kullanılabilir."
+msgstr "Description suggested by artificial intelligence; can be reviewed and used."
+
+#: apps/crm/models.py
+msgid "Yapay zekâ tarafından önerilen kampanya."
+msgstr "Campaign suggested by artificial intelligence."
+
+#: templates/ai/assistant.html
+msgid "Yapay zekâ yanıtları sistem verilerinize dayanır ancak hata içerebilir. Önemli kararlar öncesinde ilgili raporu doğrulayın. Müşteri kişisel verileri, istem gönderilmeden önce otomatik olarak maskelenir."
+msgstr "AI answers are based on your system data but can be wrong. Verify the relevant report before making an important decision. Customer personal data is masked automatically before the prompt is sent."
+
+#: templates/catalog/product_detail.html
+msgid "Yapay zekâ önerisi:"
+msgstr "AI suggestion:"
+
+#: templates/crm/campaign_list.html
+msgid "Yapay zekâdan kampanya önerisi al"
+msgstr "Get a campaign suggestion from AI"
+
+#: templates/devcenter/git.html
+msgid "Yapay zekâdan öneri al"
+msgstr "Get a suggestion from AI"
+
+#: templates/devcenter/index.html
+msgid "Yapay zekânın önerdiği hiçbir kod, siz diff'i görüp onaylamadan uygulanmaz."
+msgstr "No AI-suggested code is applied until you have seen the diff and approved it."
+
+#: templates/base.html
+msgid "Yardım"
+msgstr "Help"
+
+#: apps/hr/models.py
+msgid "Yarı zamanlı"
+msgstr "Part time"
+
+#: templates/kitchen/kot_print.html
+#: templates/orders/receipt.html
+msgid "Yazdır"
+msgstr "Print"
+
+#: apps/kitchen/models.py
+msgid "yazdırma zamanı"
+msgstr "printed at"
+
+#: apps/kitchen/models.py
+msgid "yazıcı adı"
+msgstr "printer name"
+
+#: templates/kitchen/station_list.html
+msgid "Yazıcı adı"
+msgstr "Printer name"
+
+#: apps/catalog/models.py
+msgid "yağ (g)"
+msgstr "fat (g)"
+
+#: apps/backups/models.py
+msgid "Yedek"
+msgstr "Backup"
+
+#: templates/backups/index.html
+msgid "Yedek al"
+msgstr "Take a backup"
+
+#: templates/backups/detail.html
+msgid "Yedek alındıktan sonra girilen <strong>her sipariş, ödeme ve müşteri kaydı silinir</strong>."
+msgstr "<strong>Every order, payment and customer record</strong> entered after the backup <strong>is removed</strong>."
+
+#: apps/devcenter/models.py
+msgid "yedek dizini"
+msgstr "backup directory"
+
+#: templates/backups/index.html
+msgid "Yedek dosyası <strong>tüm müşteri bilgilerini ve satış geçmişini</strong> içerir. Şifrelenmemiştir; güvenli bir yerde saklayın."
+msgstr "The backup file contains <strong>all customer information and the sales history</strong>. It is not encrypted; keep it somewhere secure."
+
+#: templates/backups/detail.html
+msgid "Yedek dosyası diskte bulunamadı. Elle silinmiş veya taşınmış olabilir."
+msgstr "The backup file was not found on disk. It may have been deleted or moved by hand."
+
+#: apps/ai/models.py
+msgid "Yedek sağlayıcıya düşüldü"
+msgstr "Fell back to secondary provider"
+
+#: apps/core/context_processors.py
+msgid "Yedekleme"
+msgstr "Backups"
+
+#: templates/backups/detail.html
+msgid "Yedekleme sırasındaki uyarılar"
+msgstr "Warnings during the backup"
+
+#: apps/devcenter/models.py
+msgid "yedeklenen dosyalar"
+msgstr "backed-up files"
+
+#: apps/backups/models.py
+#: templates/backups/detail.html
+#: templates/backups/index.html
+msgid "Yedekler"
+msgstr "Backups"
+
+#: templates/backups/index.html
+msgid "Yedekler <code>%(folder)s</code> klasöründe tutulur. Aynı diskteki bir yedek, disk arızasına karşı koruma sağlamaz — düzenli olarak <strong>başka bir diske veya harici belleğe</strong> kopyalayın."
+msgstr "Backups are kept in <code>%(folder)s</code>. A backup on the same disk gives no protection against disk failure — copy it regularly <strong>to another disk or an external drive</strong>."
+
+#: templates/backups/detail.html
+msgid "Yedeği indir (%(size)s MB)"
+msgstr "Download the backup (%(size)s MB)"
+
+#: templates/backups/detail.html
+msgid "Yedeği sil"
+msgstr "Delete the backup"
+
+#: apps/catalog/models.py
+msgid "Yemek"
+msgstr "Food"
+
+#: apps/orders/models.py
+msgid "Yemek kartı"
+msgstr "Meal card"
+
+#: apps/orders/models.py
+#: templates/kitchen/station_list.html
+msgid "Yeni"
+msgstr "New"
+
+#: templates/orders/pos.html
+msgid "Yeni adisyon"
+msgstr "New check"
+
+#: templates/orders/pos.html
+msgid "Yeni Adisyon"
+msgstr "New check"
+
+#: apps/catalog/models.py
+msgid "yeni fiyat"
+msgstr "new price"
+
+#: templates/hr/task_list.html
+msgid "Yeni görev"
+msgstr "New task"
+
+#: templates/kitchen/station_list.html
+msgid "Yeni istasyon"
+msgstr "New station"
+
+#: templates/hr/leave_list.html
+msgid "Yeni izin talebi"
+msgstr "New leave request"
+
+#: templates/crm/campaign_list.html
+msgid "Yeni kampanya"
+msgstr "New campaign"
+
+#: templates/catalog/category_list.html
+msgid "Yeni kategori"
+msgstr "New category"
+
+#: templates/devcenter/index.html
+msgid "Yeni kod önerisi iste"
+msgstr "Request a new code proposal"
+
+#: templates/accounts/user_list.html
+msgid "Yeni kullanıcı"
+msgstr "New user"
+
+#: apps/accounts/forms.py
+msgid "Yeni kullanıcı için parola zorunludur."
+msgstr "A password is required for a new user."
+
+#: templates/inventory/ingredient_list.html
+msgid "Yeni malzeme"
+msgstr "New ingredient"
+
+#: templates/floor/table_list.html
+msgid "Yeni masa"
+msgstr "New table"
+
+#: apps/crm/models.py
+#: templates/crm/customer_list.html
+#: templates/reports/statistics.html
+msgid "Yeni müşteri"
+msgstr "New customer"
+
+#: templates/hr/employee_list.html
+msgid "Yeni personel"
+msgstr "New employee"
+
+#: templates/accounts/set_pin.html
+msgid "Yeni PIN"
+msgstr "New PIN"
+
+#: templates/floor/reservation_list.html
+msgid "Yeni rezervasyon"
+msgstr "New reservation"
+
+#: templates/inventory/count_list.html
+msgid "Yeni sayım"
+msgstr "New stock count"
+
+#: templates/inventory/purchase_list.html
+msgid "Yeni sipariş"
+msgstr "New order"
+
+#: templates/ai/assistant.html
+msgid "Yeni sohbet"
+msgstr "New conversation"
+
+#: templates/inventory/supplier_list.html
+msgid "Yeni tedarikçi"
+msgstr "New supplier"
+
+#: templates/backups/index.html
+msgid "Yeni yedek al"
+msgstr "Take a new backup"
+
+#: templates/catalog/product_list.html
+msgid "Yeni ürün"
+msgstr "New product"
+
+#: templates/ai/providers.html
+msgid "Yeniden deneme"
+msgstr "Retry"
+
+#: templates/orders/order_list.html
+#: templates/orders/pos.html
+msgid "Yer"
+msgstr "Place"
+
+#: templates/ai/providers.html
+msgid "yerel"
+msgstr "local"
+
+#: templates/ai/providers.html
+msgid "Yerel / bulut"
+msgstr "Local / cloud"
+
+#: apps/ai/models.py
+msgid "yerel model"
+msgstr "local model"
+
+#: templates/ai/usage.html
+msgid "Yerel model"
+msgstr "Local model"
+
+#: templates/ai/assistant.html
+msgid "Yerel modeller ücretsizdir, bütçeye yazılmaz."
+msgstr "Local models are free and are not charged to the budget."
+
+#: apps/core/models.py
+msgid "Yetki değişikliği"
+msgstr "Permission change"
+
+#: apps/inventory/models.py
+msgid "yetkili"
+msgstr "manager"
+
+#: templates/inventory/supplier_list.html
+msgid "Yetkili"
+msgstr "Manager"
+
+#: templates/orders/pos.html
+msgid "Yetkili kullanıcı adı"
+msgstr "Manager username"
+
+#: apps/accounts/models.py
+msgid "Yetkili onayları"
+msgstr "Manager approvals"
+
+#: apps/accounts/models.py
+msgid "Yetkili onayı"
+msgstr "Manager approval"
+
+#: templates/orders/pos.html
+msgid "Yetkili PIN"
+msgstr "Manager PIN"
+
+#: templates/accounts/profile.html
+msgid "Yok"
+msgstr "None"
+
+#: apps/crm/models.py
+msgid "yorum"
+msgstr "comment"
+
+#: templates/crm/review_list.html
+msgid "Yorum"
+msgstr "Review"
+
+#: apps/ai/models.py
+msgid "Yorum duygu analizi"
+msgstr "Review sentiment analysis"
+
+#: templates/crm/customer_detail.html
+#: templates/crm/review_list.html
+msgid "Yorum yok."
+msgstr "No reviews."
+
+#: templates/crm/customer_detail.html
+#: templates/crm/customer_list.html
+msgid "Yorumlar"
+msgstr "Reviews"
+
+#: apps/floor/models.py
+msgid "Yuvarlak"
+msgstr "Round"
+
+#: templates/ai/providers.html
+msgid "Yönlendirme politikası"
+msgstr "Routing policy"
+
+#: apps/orders/models.py
+msgid "yöntem"
+msgstr "method"
+
+#: templates/backups/detail.html
+msgid "Yüklenen dosyalar"
+msgstr "Uploaded files"
+
+#: templates/backups/index.html
+msgid "Yüklenen dosyaları da ekle"
+msgstr "Include uploaded files too"
+
+#: apps/crm/models.py
+msgid "yüklenen tutar"
+msgstr "loaded amount"
+
+#: templates/base.html
+msgid "Yükleniyor"
+msgstr "Loading"
+
+#: apps/ai/models.py
+#: apps/hr/models.py
+#: apps/kitchen/models.py
+#: templates/crm/customer_list.html
+msgid "Yüksek"
+msgstr "High"
+
+#: templates/orders/pos.html
+msgid "Yüzde (%)"
+msgstr "Percentage (%)"
+
+#: apps/orders/models.py
+msgid "Yüzde indirim"
+msgstr "Percentage discount"
+
+#: apps/orders/models.py
+msgid "Yüzde indirimde oran, tutar indiriminde tutar."
+msgstr "A rate for percentage discounts, an amount for fixed discounts."
+
+#: apps/hr/models.py
+msgid "Yıllık izin"
+msgstr "Annual leave"
+
+#: apps/accounts/models.py
+#: apps/ai/models.py
+#: apps/core/models.py
+#: apps/crm/models.py
+msgid "zaman"
+msgstr "time"
+
+#: templates/ai/usage.html
+#: templates/core/audit_log.html
+msgid "Zaman"
+msgstr "Time"
+
+#: apps/ai/models.py
+#: apps/devcenter/models.py
+#: templates/ai/providers.html
+msgid "Zaman aşımı"
+msgstr "Timeout"
+
+#: templates/crm/customer_detail.html
+#: templates/crm/customer_list.html
+msgid "Ziyaret"
+msgstr "Visits"
+
+#: apps/crm/models.py
+msgid "ziyaret sayısı"
+msgstr "visit count"
+
+#: apps/catalog/models.py
+msgid "zorunlu"
+msgstr "required"
+
+#: apps/devcenter/models.py
+msgid "çalışma dalı"
+msgstr "working branch"
+
+#: apps/devcenter/models.py
+msgid "çalışma dizini"
+msgstr "working directory"
+
+#: apps/hr/models.py
+msgid "çalışma şekli"
+msgstr "employment type"
+
+#: templates/hr/employee_list.html
+msgid "Çalışma şekli"
+msgstr "Employment type"
+
+#: templates/ai/analysis_hub.html
+#: templates/devcenter/terminal.html
+msgid "Çalıştır"
+msgstr "Run"
+
+#: apps/hr/models.py
+msgid "çalışılan saat"
+msgstr "hours worked"
+
+#: templates/hr/performance.html
+msgid "Çalışılan saat"
+msgstr "Hours worked"
+
+#: apps/devcenter/models.py
+msgid "Çalışıyor"
+msgstr "Running"
+
+#: apps/reports/statistics.py
+msgid "Çar"
+msgstr "Wed"
+
+#: apps/catalog/models.py
+#: apps/reports/statistics.py
+msgid "Çarşamba"
+msgstr "Wednesday"
+
+#: apps/floor/models.py
+msgid "Çağrıldı"
+msgstr "Called"
+
+#: apps/floor/models.py
+msgid "çağrılma zamanı"
+msgstr "called at"
+
+#: templates/floor/reservation_list.html
+msgid "Çağır"
+msgstr "Call"
+
+#: templates/core/429.html
+msgid "Çok fazla istek"
+msgstr "Too many requests"
+
+#: apps/crm/models.py
+msgid "çözen"
+msgstr "resolved by"
+
+#: apps/crm/models.py
+msgid "çözüldü"
+msgstr "resolved"
+
+#: templates/crm/review_list.html
+msgid "Çözüldü"
+msgstr "Resolved"
+
+#: templates/crm/review_list.html
+msgid "Çözüm bekleyen"
+msgstr "Unresolved"
+
+#: apps/crm/models.py
+msgid "çözüm notu"
+msgstr "resolution note"
+
+#: apps/ai/models.py
+msgid "çıktı token"
+msgstr "output tokens"
+
+#: apps/core/models.py
+#: templates/base.html
+#: templates/hr/employee_detail.html
+msgid "Çıkış"
+msgstr "Sign out"
+
+#: apps/hr/models.py
+msgid "çıkış"
+msgstr "clock-out"
+
+#: apps/devcenter/models.py
+msgid "çıkış kodu"
+msgstr "exit code"
+
+#: apps/orders/models.py
+msgid "Çıkışlar negatif kaydedilir."
+msgstr "Outgoing movements are recorded as negative."
+
+#: apps/orders/models.py
+#: templates/reports/expense_list.html
+msgid "Ödeme"
+msgstr "Payment"
+
+#: templates/orders/pos.html
+msgid "Ödeme Al"
+msgstr "Take payment"
+
+#: apps/reports/models.py
+msgid "ödeme dağılımı"
+msgstr "payment breakdown"
+
+#: templates/reports/closing_detail.html
+msgid "Ödeme dağılımı"
+msgstr "Payment breakdown"
+
+#: templates/reports/dashboard.html
+msgid "Ödeme dağılımı (bugün)"
+msgstr "Payment breakdown (today)"
+
+#: apps/reports/models.py
+msgid "ödeme yöntemi"
+msgstr "payment method"
+
+#: templates/orders/pos.html
+#: templates/reports/statistics.html
+msgid "Ödeme yöntemi"
+msgstr "Payment method"
+
+#: templates/reports/sales.html
+msgid "Ödeme yöntemleri"
+msgstr "Payment methods"
+
+#: apps/orders/models.py
+msgid "ödeme zamanı"
+msgstr "paid at"
+
+#: apps/orders/models.py
+#: templates/orders/order_detail.html
+msgid "Ödemeler"
+msgstr "Payments"
+
+#: templates/orders/pos.html
+msgid "Ödemeyi tamamla"
+msgstr "Complete payment"
+
+#: apps/orders/models.py
+msgid "Ödendi"
+msgstr "Paid"
+
+#: apps/orders/models.py
+msgid "ödenen"
+msgstr "paid"
+
+#: templates/orders/_order_panel.html
+#: templates/orders/order_detail.html
+msgid "Ödenen"
+msgstr "Paid"
+
+#: apps/inventory/models.py
+msgid "Ölçü birimi"
+msgstr "Unit of measure"
+
+#: apps/inventory/models.py
+msgid "Ölçü birimleri"
+msgstr "Units of measure"
+
+#: templates/reports/statistics.html
+msgid "Ölçülen sipariş"
+msgstr "Measured orders"
+
+#: templates/includes/_pagination.html
+msgid "Önceki"
+msgstr "Previous"
+
+#: templates/reports/statistics.html
+msgid "önceki:"
+msgstr "previous:"
+
+#: apps/hr/models.py
+#: apps/kitchen/models.py
+msgid "öncelik"
+msgstr "priority"
+
+#: templates/hr/task_list.html
+msgid "Öncelik"
+msgstr "Priority"
+
+#: apps/catalog/models.py
+msgid "öne çıkan"
+msgstr "featured"
+
+#: templates/catalog/product_detail.html
+msgid "Öne çıkan"
+msgstr "Featured"
+
+#: apps/core/models.py
+msgid "önem"
+msgstr "severity"
+
+#: templates/core/audit_log.html
+msgid "Önem"
+msgstr "Severity"
+
+#: templates/devcenter/proposal_detail.html
+msgid "Öneri bilgisi"
+msgstr "Suggestion details"
+
+#: apps/devcenter/models.py
+msgid "Öneri hazırlandı"
+msgstr "Proposal prepared"
+
+#: templates/devcenter/index.html
+msgid "Öneri oluştur (diff olarak)"
+msgstr "Create a proposal (as a diff)"
+
+#: templates/orders/pos.html
+msgid "Ör. müşteri şikâyeti telafisi"
+msgstr "e.g. compensation for a customer complaint"
+
+#: templates/crm/customer_detail.html
+msgid "Ör. telafi bonusu"
+msgstr "e.g. goodwill bonus"
+
+#: templates/backups/index.html
+msgid "örn. menü güncellemesi öncesi"
+msgstr "e.g. before the menu update"
+
+#: apps/floor/models.py
+msgid "özel gün"
+msgstr "special occasion"
+
+#: apps/floor/models.py
+msgid "özel istekler"
+msgstr "special requests"
+
+#: apps/ai/models.py
+msgid "özellik"
+msgstr "feature"
+
+#: templates/ai/usage.html
+msgid "Özellik"
+msgstr "Feature"
+
+#: apps/ai/models.py
+msgid "özet"
+msgstr "summary"
+
+#: apps/hr/models.py
+msgid "Ücretsiz izin"
+msgstr "Unpaid leave"
+
+#: apps/orders/models.py
+msgid "Ücretsiz ürün"
+msgstr "Free item"
+
+#: apps/orders/models.py
+msgid "ücretsiz ürün"
+msgstr "free item"
+
+#: apps/inventory/models.py
+msgid "Üretim tüketimi"
+msgstr "Production consumption"
+
+#: apps/catalog/models.py
+#: apps/orders/models.py
+msgid "ürün"
+msgstr "product"
+
+#: apps/catalog/models.py
+#: templates/catalog/category_list.html
+#: templates/catalog/product_list.html
+#: templates/orders/order_detail.html
+msgid "Ürün"
+msgstr "Product"
+
+#: apps/orders/models.py
+msgid "ürün adı"
+msgstr "product name"
+
+#: templates/catalog/product_list.html
+msgid "Ürün adı veya kod"
+msgstr "Product name or code"
+
+#: templates/orders/pos.html
+msgid "Ürün ara"
+msgstr "Search products"
+
+#: templates/orders/pos.html
+msgid "Ürün ara (ad veya kod)…"
+msgstr "Search products (name or code)…"
+
+#: apps/catalog/models.py
+msgid "Ürün fiyatına eklenecek tutar (negatif olabilir)."
+msgstr "Amount added to the product price (may be negative)."
+
+#: templates/backups/index.html
+msgid "Ürün görselleri, belgeler"
+msgstr "Product images, documents"
+
+#: apps/orders/models.py
+msgid "Ürün kalitesi"
+msgstr "Product quality"
+
+#: apps/orders/models.py
+msgid "Ürün kullanılmadıysa malzemeler stoğa geri yüklenir."
+msgstr "If the product was not used, ingredients are returned to stock."
+
+#: templates/reports/index.html
+msgid "Ürün, kategori, ödeme yöntemi ve personel bazında satış analizi."
+msgstr "Sales analysis by product, category, payment method and staff member."
+
+#: apps/catalog/models.py
+msgid "ürünler"
+msgstr "products"
+
+#: apps/catalog/models.py
+msgid "Ürünler"
+msgstr "Products"
+
+#: templates/ai/analysis_hub.html
+msgid "Ürünleri yıldız / işçi / bulmaca / düşük performans olarak sınıflandırır."
+msgstr "Classifies products as stars, workhorses, puzzles or poor performers."
+
+#: apps/catalog/models.py
+msgid "üst kategori"
+msgstr "parent category"
+
+#: templates/catalog/category_list.html
+msgid "Üst kategori"
+msgstr "Parent category"
+
+#: apps/accounts/permissions.py
+msgid "Şef"
+msgstr "Chef"
+
+#: apps/accounts/permissions.py
+msgid "Şef garson"
+msgstr "Head server"
+
+#: apps/floor/models.py
+msgid "şekil"
+msgstr "shape"
+
+#: templates/kitchen/performance.html
+msgid "Şu an geciken siparişler"
+msgstr "Orders running late right now"
+
+#: templates/backups/detail.html
+msgid "Şu anki tüm veriler bu yedekteki hâliyle değiştirilir."
+msgstr "All current data is replaced with what is in this backup."
+
+#: templates/floor/table_map.html
+msgid "— Atama yok —"
+msgstr "— Unassigned —"
+
+#: templates/hr/task_list.html
+msgid "— Herkes —"
+msgstr "— Everyone —"
+
+#: templates/orders/delivery_board.html
+msgid "— Kurye seç —"
+msgstr "— Choose a courier —"
+
+#: templates/ai/assistant.html
+msgid "🔒 işaretli sağlayıcılar yereldir; veri bilgisayarınızdan çıkmaz."
+msgstr "Providers marked 🔒 are local; data never leaves your computer."
+
+# ---- Kaynakta artık bulunmayan çeviriler ----
+# Silmeden bırakıldı: metin geri gelirse çeviri kaybolmasın.
+
+#~ msgid "başka bir diske veya harici belleğe"
+#~ msgstr "to another disk or an external drive"
+
+#~ msgid "her sipariş, ödeme ve müşteri kaydı silinir"
+#~ msgstr "every order, payment and customer record is removed"
+
+#~ msgid "ortalama sipariş sayısıdır"
+#~ msgstr "is the average number of orders"
+
+#~ msgid "tüm müşteri bilgilerini ve satış geçmişini"
+#~ msgstr "all customer information and the sales history"

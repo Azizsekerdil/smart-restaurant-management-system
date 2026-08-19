@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'ai:analysis_hub' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-graph-up me-1"></i>{% trans "Analizler" %}</a>
+<a href="{% url 'ai:providers' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-hdd-network"></i></a>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-3">
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-cpu me-2"></i>{% trans "Model" %}</div>
+      <div class="card-body">
+        <label class="form-label">{% trans "Sağlayıcı" %}</label>
+        <select class="form-select mb-2" id="provider-select" onchange="loadModels()">
+          <option value="">{% trans "Otomatik (yerel öncelikli)" %}</option>
+          {% for provider in providers %}
+            <option value="{{ provider.key }}">{{ provider.label }}{% if provider.is_local %} 🔒{% endif %}</option>
+          {% endfor %}
+        </select>
+        <label class="form-label">{% trans "Görev türü" %}</label>
+        <select class="form-select mb-2" id="task-select">
+          {% for value, label in tasks %}<option value="{{ value }}" {% if value == 'reasoning' %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+        <div class="form-text">
+          {% trans "🔒 işaretli sağlayıcılar yereldir; veri bilgisayarınızdan çıkmaz." %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-wallet2 me-2"></i>{% trans "Bütçe" %}</div>
+      <div class="card-body">
+        <div class="small d-flex justify-content-between"><span class="text-muted">{% trans "Bugün" %}</span>
+          <span>{{ budget.spent_today|floatformat:4 }} / {{ budget.daily_limit }} USD</span></div>
+        <div class="stock-bar my-1"><span style="width:{{ budget.daily_percent }}%;background:{% if budget.daily_percent > 80 %}var(--danger){% else %}var(--ok){% endif %};"></span></div>
+        <div class="small d-flex justify-content-between mt-2"><span class="text-muted">{% trans "Bu ay" %}</span>
+          <span>{{ budget.spent_month|floatformat:4 }} / {{ budget.monthly_limit }} USD</span></div>
+        <div class="stock-bar my-1"><span style="width:{{ budget.monthly_percent }}%;background:{% if budget.monthly_percent > 80 %}var(--danger){% else %}var(--ok){% endif %};"></span></div>
+        <div class="form-text mt-2">{% trans "Yerel modeller ücretsizdir, bütçeye yazılmaz." %}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="bi bi-clock-history me-2"></i>{% trans "Sohbetler" %}</div>
+      <div class="card-body p-0" style="max-height:280px;overflow-y:auto;">
+        <div class="list-group list-group-flush">
+          <a href="{% url 'ai:assistant' %}" class="list-group-item list-group-item-action small">
+            <i class="bi bi-plus-lg me-1"></i>{% trans "Yeni sohbet" %}</a>
+          {% for conversation in conversations %}
+            <a href="?c={{ conversation.pk }}" class="list-group-item list-group-item-action small {% if active_conversation.pk == conversation.pk %}active{% endif %}">
+              {{ conversation.title|truncatechars:32 }}
+              <small class="d-block text-muted">{{ conversation.updated_at|date:"d.m H:i" }}</small></a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-9">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-stars me-2"></i>{% trans "Restoran Asistanı" %}</span>
+        <span id="model-badge" class="badge-soft muted">{% trans "hazır" %}</span>
+      </div>
+      <div class="card-body">
+        <div class="ai-chat mb-3" id="chat-box">
+          {% for message in messages_list %}
+            <div class="ai-msg {{ message.role }}">{{ message.content }}
+              {% if message.provider %}<div class="meta">{{ message.provider }} / {{ message.model }}</div>{% endif %}
+            </div>
+          {% empty %}
+            <div class="text-center text-muted py-4">
+              <i class="bi bi-chat-dots" style="font-size:36px;opacity:.4;"></i>
+              <p class="mt-2 mb-0">Restoranınızla ilgili bir soru sorun.<br>
+                <small>{% trans "Sistem verileriniz otomatik olarak yanıta eklenir." %}</small></p>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          {% for question in quick_questions %}
+            <button class="btn btn-sm btn-outline-secondary" onclick="askQuestion(this.textContent.trim())">{{ question }}</button>
+          {% endfor %}
+        </div>
+
+        <form onsubmit="event.preventDefault(); askQuestion(document.getElementById('question').value);">
+          <div class="input-group">
+            <input type="text" class="form-control form-control-lg" id="question"
+                   placeholder="{% trans 'Sorunuzu yazın… (ör. bu hafta hangi ürün en çok kâr getirdi?)' %}" autocomplete="off">
+            <button class="btn btn-primary btn-touch" type="submit" id="ask-btn">
+              <i class="bi bi-send"></i></button>
+          </div>
+        </form>
+
+        <div class="ai-disclaimer mt-3">
+          <i class="bi bi-info-circle me-1"></i>
+          {% trans "Yapay zekâ yanıtları sistem verilerinize dayanır ancak hata içerebilir. Önemli kararlar öncesinde ilgili raporu doğrulayın. Müşteri kişisel verileri, istem gönderilmeden önce otomatik olarak maskelenir." %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let conversationId = {{ active_conversation.pk|default:"null" }};
+
+function appendMessage(role, text, meta) {
+  const box = document.getElementById('chat-box');
+  if (box.querySelector('.text-center')) box.innerHTML = '';
+  const element = document.createElement('div');
+  element.className = 'ai-msg ' + role;
+  element.textContent = text;
+  if (meta) {
+    const metaEl = document.createElement('div');
+    metaEl.className = 'meta';
+    metaEl.textContent = meta;
+    element.appendChild(metaEl);
+  }
+  box.appendChild(element);
+  box.scrollTop = box.scrollHeight;
+  return element;
+}
+
+async function askQuestion(question) {
+  question = (question || '').trim();
+  if (!question) return;
+  document.getElementById('question').value = '';
+  appendMessage('user', question);
+
+  const thinking = appendMessage('assistant', 'Düşünüyor…');
+  const button = document.getElementById('ask-btn');
+  button.disabled = true;
+
+  try {
+    const result = await apiPost('{% url "ai:assistant_ask" %}', {
+      question: question,
+      conversation_id: conversationId || '',
+      provider: document.getElementById('provider-select').value,
+      task: document.getElementById('task-select').value,
+    });
+    conversationId = result.conversation_id;
+    thinking.textContent = result.answer;
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.textContent = result.provider + ' / ' + result.model + ' · ' +
+      result.latency_ms + ' ms · ' + result.tokens + ' token';
+    thinking.appendChild(meta);
+    document.getElementById('model-badge').textContent = result.provider;
+    document.getElementById('model-badge').className = 'badge-soft ok';
+  } catch (e) {
+    thinking.textContent = e.message;
+    thinking.style.borderLeft = '3px solid var(--warn)';
+    document.getElementById('model-badge').textContent = 'erişilemedi';
+    document.getElementById('model-badge').className = 'badge-soft danger';
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function loadModels() { /* sağlayıcı değişince otomatik model seçimi gateway tarafından yapılır */ }
+</script>
+{% endblock %}

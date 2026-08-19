@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'hr:shift_schedule' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-calendar-week me-1"></i>{% trans "Vardiya" %}</a>
+<a href="{% url 'hr:leave_list' %}" class="btn btn-sm btn-outline-secondary">
+  İzinler {% if pending_leaves %}<span class="badge bg-warning text-dark">{{ pending_leaves }}</span>{% endif %}</a>
+<a href="{% url 'hr:task_list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-check2-square"></i></a>
+<a href="{% url 'hr:employee_create' %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>{% trans "Yeni personel" %}</a>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <div class="card"><div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead><tr><th class="ps-3">{% trans "Personel" %}</th><th>{% trans "Rol" %}</th><th>{% trans "Çalışma şekli" %}</th><th>{% trans "İşe giriş" %}</th>
+          <th>{% trans "Durum" %}</th><th class="pe-3 text-end">{% trans "Puantaj" %}</th></tr></thead>
+        <tbody>
+        {% for employee in employees %}
+          <tr>
+            <td class="ps-3">
+              <a href="{% url 'hr:employee_detail' employee.pk %}" class="fw-semibold">{{ employee.user.display_name }}</a>
+              <small class="d-block text-muted">{{ employee.user.username }}</small>
+            </td>
+            <td><span class="badge-soft info">{{ employee.user.get_role_display }}</span></td>
+            <td class="small">{{ employee.get_employment_type_display }}</td>
+            <td class="small">{{ employee.hire_date|date:"d.m.Y" }}</td>
+            <td>
+              {% if employee.pk in open_attendances %}
+                <span class="badge-soft ok"><i class="bi bi-circle-fill" style="font-size:7px;"></i> {% trans "Mesaide" %}</span>
+              {% else %}<span class="badge-soft muted">{% trans "Mesai dışı" %}</span>{% endif %}
+            </td>
+            <td class="pe-3 text-end">
+              <button class="btn btn-sm btn-outline-{% if employee.pk in open_attendances %}danger{% else %}success{% endif %}"
+                      onclick="toggleAttendance({{ employee.pk }})">
+                <i class="bi bi-box-arrow-{% if employee.pk in open_attendances %}right{% else %}in-right{% endif %} me-1"></i>
+                {% if employee.pk in open_attendances %}Çıkış{% else %}Giriş{% endif %}
+              </button>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6"><div class="empty-state"><i class="bi bi-person-badge"></i>{% trans "Personel kaydı yok." %}</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-calendar-day me-2"></i>{% trans "Bugünkü vardiyalar" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          {% for assignment in today_shifts %}
+            <tr><td class="ps-3">{{ assignment.employee.user.display_name }}
+              <small class="d-block text-muted">{{ assignment.shift.name }}</small></td>
+              <td class="text-end pe-3 small">{{ assignment.shift.start_time|time:"H:i" }}–{{ assignment.shift.end_time|time:"H:i" }}</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-4">{% trans "Bugün için vardiya planlanmamış." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+    <a href="{% url 'hr:performance' %}" class="btn btn-outline-primary w-100 mt-3">
+      <i class="bi bi-graph-up me-1"></i>{% trans "Personel performans raporu" %}</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function toggleAttendance(id) {
+  try {
+    const result = await apiPost('/personel/' + id + '/puantaj/', {});
+    showToast(result.action === 'check_in'
+      ? ('Giriş kaydedildi.' + (result.late ? ' (geç kalma)' : ''))
+      : ('Çıkış kaydedildi. Çalışılan süre: ' + result.hours + ' saat'), 'success');
+    setTimeout(() => location.reload(), 900);
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+</script>
+{% endblock %}

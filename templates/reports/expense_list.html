@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load humanize i18n %}
+{% block content %}
+<div class="card mb-3"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-6 col-md-3"><label class="form-label">{% trans "Başlangıç" %}</label>
+      <input type="date" name="from" class="form-control" value="{{ start|date:'Y-m-d' }}"></div>
+    <div class="col-6 col-md-3"><label class="form-label">{% trans "Bitiş" %}</label>
+      <input type="date" name="to" class="form-control" value="{{ end|date:'Y-m-d' }}"></div>
+    <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Uygula" %}</button></div>
+  </form>
+</div></div>
+
+<div class="row g-3 mb-3">
+  <div class="col-12 col-md-4"><div class="card stat-card"><div class="label">{% trans "Gelir" %}</div>
+    <div class="value money text-success">{{ revenue|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }}</div></div></div>
+  <div class="col-12 col-md-4"><div class="card stat-card"><div class="label">{% trans "Gider" %}</div>
+    <div class="value money text-danger">{{ total_expense|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }}</div></div></div>
+  <div class="col-12 col-md-4"><div class="card stat-card"><div class="label">{% trans "Net" %}</div>
+    <div class="value money {% if net >= 0 %}text-success{% else %}text-danger{% endif %}">{{ net|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }}</div>
+    <small class="text-muted">{% trans "Malzeme maliyetleri satın alma kayıtlarındadır" %}</small></div></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <div class="card"><div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead><tr><th class="ps-3">{% trans "Tarih" %}</th><th>{% trans "Açıklama" %}</th><th>{% trans "Kategori" %}</th><th>{% trans "Ödeme" %}</th><th class="text-end pe-3">{% trans "Tutar" %}</th></tr></thead>
+        <tbody>
+        {% for expense in expenses %}
+          <tr><td class="ps-3 small">{{ expense.expense_date|date:"d.m.Y" }}</td>
+            <td>{{ expense.description }}
+              {% if expense.invoice_number %}<small class="d-block text-muted">Belge: {{ expense.invoice_number }}</small>{% endif %}</td>
+            <td><span class="badge-soft muted">{{ expense.category.name }}</span></td>
+            <td class="small">{{ expense.get_payment_method_display }}</td>
+            <td class="text-end pe-3 money">{{ expense.amount|floatformat:2 }}</td></tr>
+        {% empty %}
+          <tr><td colspan="5"><div class="empty-state"><i class="bi bi-wallet"></i>{% trans "Gider kaydı yok." %}</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Kategoriye göre" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          {% for row in by_category %}
+            <tr><td class="ps-3">{{ row.category__name }}</td>
+              <td class="text-end pe-3 money">{{ row.total|floatformat:2 }}</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Kayıt yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">{% trans "Gider ekle" %}</div>
+      <div class="card-body">
+        <form method="post" action="{% url 'reports:expense_create' %}">
+          {% csrf_token %}
+          <div class="mb-2"><label class="form-label">{% trans "Kategori" %}</label>
+            <select name="category_id" class="form-select" required>
+              {% for category in categories %}<option value="{{ category.pk }}">{{ category.name }}</option>{% endfor %}
+            </select></div>
+          <div class="mb-2"><label class="form-label">{% trans "Açıklama" %}</label>
+            <input type="text" name="description" class="form-control" required></div>
+          <div class="row g-2">
+            <div class="col-6"><label class="form-label">{% trans "Tutar" %}</label>
+              <input type="number" step="0.01" min="0" name="amount" class="form-control" required></div>
+            <div class="col-6"><label class="form-label">KDV</label>
+              <input type="number" step="0.01" min="0" name="tax_amount" class="form-control" value="0"></div>
+            <div class="col-6"><label class="form-label">{% trans "Tarih" %}</label>
+              <input type="date" name="expense_date" class="form-control"></div>
+            <div class="col-6"><label class="form-label">{% trans "Ödeme" %}</label>
+              <select name="payment_method" class="form-select">
+                {% for value, label in payment_methods %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+              </select></div>
+          </div>
+          <div class="mb-2 mt-2"><label class="form-label">{% trans "Belge no" %}</label>
+            <input type="text" name="invoice_number" class="form-control"></div>
+          <button class="btn btn-primary w-100 mt-2">{% trans "Kaydet" %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

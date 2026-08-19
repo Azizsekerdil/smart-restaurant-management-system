@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-4">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-info-circle me-2"></i>{% trans "Sistem bilgisi" %}</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr><td class="text-muted">{% trans "İşletme" %}</td><td class="text-end fw-semibold">{{ restaurant.NAME }}</td></tr>
+            <tr><td class="text-muted">{% trans "Para birimi" %}</td><td class="text-end">{{ restaurant.CURRENCY }} ({{ restaurant.CURRENCY_SYMBOL }})</td></tr>
+            <tr><td class="text-muted">{% trans "Varsayılan KDV" %}</td><td class="text-end">%{{ restaurant.DEFAULT_TAX_RATE }}</td></tr>
+            <tr><td class="text-muted">{% trans "Servis bedeli" %}</td><td class="text-end">%{{ restaurant.SERVICE_CHARGE_RATE }}</td></tr>
+            <tr><td class="text-muted">{% trans "Ortam" %}</td><td class="text-end"><span class="badge-soft {% if environment == 'production' %}danger{% else %}info{% endif %}">{{ environment }}</span></td></tr>
+            <tr><td class="text-muted">{% trans "Veritabanı" %}</td><td class="text-end">{{ db_engine }}</td></tr>
+            <tr><td class="text-muted">{% trans "Sürüm" %}</td><td class="text-end">{{ APP_VERSION }}</td></tr>
+          </tbody>
+        </table>
+        <div class="alert alert-info mt-3 mb-0 py-2 small">
+          İşletme adı, para birimi ve vergi oranı gibi değerler <code>.env</code> dosyasından
+          okunur. Değiştirmek için <code>.env</code> dosyasını düzenleyip uygulamayı yeniden başlatın.
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-3">
+      <div class="card-header"><i class="bi bi-shield-check me-2"></i>{% trans "Güvenlik durumu" %}</div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">{% trans "Geliştirme Merkezi" %}</span>
+          <span class="badge-soft {% if devcenter_enabled %}warn{% else %}ok{% endif %}">
+            {% if devcenter_enabled %}Açık{% else %}Kapalı{% endif %}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="text-muted">{% trans "Güvenli terminal" %}</span>
+          <span class="badge-soft {% if terminal_enabled %}warn{% else %}ok{% endif %}">
+            {% if terminal_enabled %}Açık{% else %}Kapalı{% endif %}</span>
+        </div>
+        <a href="{% url 'core:audit_log' %}" class="btn btn-sm btn-outline-secondary w-100 mt-2">
+          <i class="bi bi-journal-text me-1"></i>{% trans "Denetim kayıtları" %}
+        </a>
+        <a href="{% url 'accounts:user_list' %}" class="btn btn-sm btn-outline-secondary w-100 mt-2">
+          <i class="bi bi-people me-1"></i>{% trans "Kullanıcılar ve yetkiler" %}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-8">
+    <form method="post" action="{% url 'core:settings_update' %}">
+      {% csrf_token %}
+      {% for group, settings_list in grouped_settings.items %}
+        <div class="card mb-3">
+          <div class="card-header text-capitalize">{{ group }}</div>
+          <div class="card-body">
+            {% for setting in settings_list %}
+              <div class="mb-3">
+                <label class="form-label">{{ setting.label }}</label>
+                {% if setting.value_type == 'boolean' %}
+                  <select name="setting_{{ setting.key }}" class="form-select" {% if not setting.is_editable %}disabled{% endif %}>
+                    <option value="true" {% if setting.typed_value %}selected{% endif %}>{% trans "Evet" %}</option>
+                    <option value="false" {% if not setting.typed_value %}selected{% endif %}>{% trans "Hayır" %}</option>
+                  </select>
+                {% else %}
+                  <input type="{% if setting.value_type in 'integer decimal' %}number{% else %}text{% endif %}"
+                         step="0.01" class="form-control" name="setting_{{ setting.key }}"
+                         value="{{ setting.value }}" {% if not setting.is_editable %}readonly{% endif %}>
+                {% endif %}
+                {% if setting.description %}<div class="form-text">{{ setting.description }}</div>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% empty %}
+        <div class="card"><div class="card-body">
+          <div class="empty-state"><i class="bi bi-sliders"></i>
+            Çalışma zamanı ayarı tanımlanmamış.<br>
+            <small>{% trans "Demo veri yüklerseniz örnek ayarlar oluşturulur." %}</small></div>
+        </div></div>
+      {% endfor %}
+      {% if grouped_settings %}
+        <button class="btn btn-primary"><i class="bi bi-save me-1"></i>{% trans "Ayarları kaydet" %}</button>
+      {% endif %}
+    </form>
+  </div>
+</div>
+{% endblock %}

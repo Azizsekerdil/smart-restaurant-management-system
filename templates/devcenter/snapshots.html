@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="alert alert-info small">
+  <i class="bi bi-info-circle me-1"></i>
+  {% trans "Her kod uygulamasından önce otomatik olarak geri alma noktası oluşturulur. Bir değişiklik sorun çıkarırsa buradan önceki dosya haline dönebilirsiniz." %}
+</div>
+
+<div class="card"><div class="card-body p-0">
+  <table class="table table-hover mb-0">
+    <thead><tr><th class="ps-3">{% trans "Etiket" %}</th><th>{% trans "Dosya" %}</th><th>{% trans "Git dalı" %}</th><th>{% trans "Commit" %}</th>
+      <th>{% trans "Oluşturulma" %}</th><th>{% trans "Durum" %}</th><th class="pe-3 text-end">{% trans "İşlem" %}</th></tr></thead>
+    <tbody>
+    {% for snapshot in snapshots %}
+      <tr>
+        <td class="ps-3">{{ snapshot.label|truncatechars:60 }}</td>
+        <td>{{ snapshot.file_count }}</td>
+        <td class="small">{{ snapshot.git_branch|default:"—" }}</td>
+        <td class="small font-monospace">{{ snapshot.git_commit|default:"—" }}</td>
+        <td class="small">{{ snapshot.created_at|date:"d.m.Y H:i" }}</td>
+        <td>{% if snapshot.is_restored %}<span class="badge-soft warn">{% trans "Geri yüklendi" %}</span>
+          {% else %}<span class="badge-soft ok">{% trans "Hazır" %}</span>{% endif %}</td>
+        <td class="pe-3 text-end">
+          <form method="post" action="{% url 'devcenter:snapshot_restore' snapshot.pk %}"
+                onsubmit="return confirm('Bu geri alma noktasındaki {{ snapshot.file_count }} dosya geri yüklenecek. Mevcut değişiklikler kaybolacak. Devam edilsin mi?');">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-outline-danger"><i class="bi bi-arrow-counterclockwise me-1"></i>{% trans "Geri yükle" %}</button>
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7"><div class="empty-state"><i class="bi bi-clock-history"></i>{% trans "Geri alma noktası yok." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}

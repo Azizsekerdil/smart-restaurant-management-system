@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'inventory:supplier_create' %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>{% trans "Yeni tedarikçi" %}</a>
+{% endblock %}
+{% block content %}
+<div class="card"><div class="card-body p-0">
+  <table class="table table-hover mb-0">
+    <thead><tr><th class="ps-3">{% trans "Tedarikçi" %}</th><th>{% trans "Yetkili" %}</th><th>{% trans "Telefon" %}</th><th>{% trans "Vade" %}</th><th>{% trans "Teslim süresi" %}</th><th>{% trans "Puan" %}</th><th class="pe-3 text-end">{% trans "İşlem" %}</th></tr></thead>
+    <tbody>
+    {% for supplier in suppliers %}
+      <tr>
+        <td class="ps-3"><strong>{{ supplier.name }}</strong>
+          {% if supplier.tax_number %}<small class="d-block text-muted">VN: {{ supplier.tax_number }}</small>{% endif %}</td>
+        <td>{{ supplier.contact_name|default:"—" }}</td>
+        <td class="small">{{ supplier.phone|default:"—" }}</td>
+        <td>{{ supplier.payment_terms_days }} gün</td>
+        <td>{{ supplier.lead_time_days }} gün</td>
+        <td>{% for i in "12345"|make_list %}<i class="bi bi-star{% if forloop.counter <= supplier.rating %}-fill text-warning{% endif %}"></i>{% endfor %}</td>
+        <td class="pe-3 text-end">
+          <a href="{% url 'inventory:supplier_edit' supplier.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7"><div class="empty-state"><i class="bi bi-truck"></i>{% trans "Tedarikçi yok." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}

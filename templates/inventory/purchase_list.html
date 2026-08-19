@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'inventory:supplier_list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-truck me-1"></i>{% trans "Tedarikçiler" %}</a>
+<a href="{% url 'inventory:purchase_create' %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>{% trans "Yeni sipariş" %}</a>
+{% endblock %}
+{% block content %}
+{% if suggestions %}
+  <div class="alert alert-warning d-flex justify-content-between align-items-center">
+    <div>
+      <strong><i class="bi bi-lightbulb me-1"></i>{{ suggestions|length }} malzeme kritik seviyede.</strong>
+      <div class="small">{% for ingredient in suggestions|slice:":8" %}{{ ingredient.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</div>
+    </div>
+    <form method="post" action="{% url 'inventory:purchase_auto_suggest' %}">{% csrf_token %}
+      <button class="btn btn-sm btn-warning text-nowrap">{% trans "Otomatik taslak oluştur" %}</button>
+    </form>
+  </div>
+{% endif %}
+
+<div class="card mb-3"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-12 col-md-4"><label class="form-label">{% trans "Durum" %}</label>
+      <select name="status" class="form-select"><option value="">{% trans "Tümü" %}</option>
+        {% for value, label in statuses %}<option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select></div>
+    <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Filtrele" %}</button></div>
+  </form>
+</div></div>
+
+<div class="card"><div class="card-body p-0">
+  <table class="table table-hover mb-0">
+    <thead><tr><th class="ps-3">{% trans "Belge no" %}</th><th>{% trans "Tedarikçi" %}</th><th>{% trans "Depo" %}</th><th>{% trans "Beklenen" %}</th><th>{% trans "Durum" %}</th><th class="text-end pe-3">{% trans "Tutar" %}</th></tr></thead>
+    <tbody>
+    {% for order in orders %}
+      <tr class="cursor-pointer" onclick="location.href='{% url 'inventory:purchase_detail' order.pk %}'">
+        <td class="ps-3 fw-semibold">{{ order.number }}</td>
+        <td>{{ order.supplier.name }}</td>
+        <td class="small">{{ order.warehouse.name }}</td>
+        <td class="small">{{ order.expected_date|date:"d.m.Y"|default:"—" }}</td>
+        <td><span class="badge-soft {% if order.status == 'received' %}ok{% elif order.status == 'cancelled' %}danger{% elif order.status == 'draft' %}muted{% else %}info{% endif %}">
+          {{ order.get_status_display }}</span></td>
+        <td class="text-end pe-3 money">{{ order.grand_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6"><div class="empty-state"><i class="bi bi-cart"></i>{% trans "Satın alma siparişi yok." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}

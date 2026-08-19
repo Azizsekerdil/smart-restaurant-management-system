@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load humanize i18n %}
+{% block topbar_actions %}
+<a href="{% url 'orders:pos' %}" class="btn btn-sm btn-primary"><i class="bi bi-cart3 me-1"></i>POS</a>
+{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-4"><div class="card stat-card"><div class="label">{% trans "Filtreli sipariş" %}</div><div class="value">{{ totals.count }}</div></div></div>
+  <div class="col-6 col-lg-4"><div class="card stat-card"><div class="label">{% trans "Toplam tutar" %}</div>
+    <div class="value money">{{ totals.total|default:0|floatformat:2|intcomma }} {{ CURRENCY_SYMBOL }}</div></div></div>
+  <div class="col-6 col-lg-4"><div class="card stat-card"><div class="label">{% trans "Tahsil edilen" %}</div>
+    <div class="value money text-success">{{ totals.paid|default:0|floatformat:2|intcomma }} {{ CURRENCY_SYMBOL }}</div></div></div>
+</div>
+
+<div class="card mb-3"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-6 col-md-2"><label class="form-label">{% trans "Durum" %}</label>
+      <select name="status" class="form-select"><option value="">{% trans "Tümü" %}</option>
+        {% for value, label in statuses %}<option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select></div>
+    <div class="col-6 col-md-2"><label class="form-label">{% trans "Tür" %}</label>
+      <select name="type" class="form-select"><option value="">{% trans "Tümü" %}</option>
+        {% for value, label in types %}<option value="{{ value }}" {% if filters.type == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select></div>
+    <div class="col-6 col-md-2"><label class="form-label">{% trans "Başlangıç" %}</label>
+      <input type="date" name="from" class="form-control" value="{{ filters.from }}"></div>
+    <div class="col-6 col-md-2"><label class="form-label">{% trans "Bitiş" %}</label>
+      <input type="date" name="to" class="form-control" value="{{ filters.to }}"></div>
+    <div class="col-12 col-md-3"><label class="form-label">{% trans "Ara" %}</label>
+      <input type="search" name="q" class="form-control" value="{{ filters.q }}" placeholder="{% trans 'Adisyon no, masa, müşteri' %}"></div>
+    <div class="col-12 col-md-1 d-grid"><button class="btn btn-primary"><i class="bi bi-search"></i></button></div>
+  </form>
+</div></div>
+
+<div class="card"><div class="card-body p-0" style="overflow-x:auto;">
+  <table class="table table-hover mb-0">
+    <thead><tr><th class="ps-3">{% trans "Adisyon" %}</th><th>{% trans "Tür" %}</th><th>{% trans "Yer" %}</th><th>{% trans "Müşteri" %}</th><th>{% trans "Garson" %}</th>
+      <th>{% trans "Açılış" %}</th><th>{% trans "Süre" %}</th><th>{% trans "Durum" %}</th><th class="text-end pe-3">{% trans "Tutar" %}</th></tr></thead>
+    <tbody>
+    {% for order in page_obj %}
+      <tr class="cursor-pointer" onclick="location.href='{% url 'orders:order_detail' order.pk %}'">
+        <td class="ps-3 fw-semibold">{{ order.number }}</td>
+        <td><span class="badge-soft muted">{{ order.get_order_type_display }}</span></td>
+        <td>{{ order.table.name|default:"—" }}</td>
+        <td class="small">{{ order.customer.full_name|default:"—" }}</td>
+        <td class="small">{{ order.waiter.display_name|default:"—" }}</td>
+        <td class="small text-nowrap">{{ order.opened_at|date:"d.m.Y H:i" }}</td>
+        <td class="small">{{ order.duration_minutes }} dk</td>
+        <td><span class="badge-soft {% if order.status == 'paid' %}ok{% elif order.status == 'cancelled' %}danger{% else %}info{% endif %}">
+          {{ order.get_status_display }}</span></td>
+        <td class="text-end pe-3 money">{{ order.grand_total|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="9"><div class="empty-state"><i class="bi bi-receipt"></i>{% trans "Sipariş bulunamadı." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% include "includes/_pagination.html" %}
+{% endblock %}

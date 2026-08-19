@@ -1,0 +1,20 @@
+# İsteğe bağlı bileşenler. Temel uygulama bunlar olmadan da çalışır.
+# Kurulum:  pip install -r requirements-optional.txt
+
+# PostgreSQL sürücüsü (DB_ENGINE=postgres kullanacaksanız)
+psycopg[binary]==3.2.3
+
+# Arka plan görevleri (CELERY_ENABLED=True kullanacaksanız)
+celery==5.4.0
+redis==5.2.1
+django-celery-beat==2.7.0
+
+# Çok sunuculu WebSocket dağıtımı (CHANNEL_LAYER=redis)
+channels-redis==4.2.1
+
+# Gelişmiş veri analizi (talep tahmini için isteğe bağlı hızlandırma)
+pandas==2.2.3
+
+# Uçtan uca UI testleri
+playwright==1.49.1
+pytest-playwright==0.6.2

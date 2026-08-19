@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+{% load humanize static i18n %}
+{% block title %}İstatistik Merkezi · {{ RESTAURANT.NAME }}{% endblock %}
+{% block page_heading %}İstatistik Merkezi{% endblock %}
+
+{% block topbar_actions %}
+{% if can_export %}
+<a class="btn btn-sm btn-outline-secondary"
+   href="{% url 'reports:export_statistics' %}?from={{ start|date:'Y-m-d' }}&to={{ end|date:'Y-m-d' }}">
+  <i class="bi bi-file-earmark-excel"></i> {% trans "Excel" %}
+</a>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .matrix-table { border-collapse: separate; border-spacing: 2px; font-size: .75rem; }
+  .matrix-table th { font-weight: 600; color: var(--bs-secondary-color); padding: 2px 4px; }
+  .matrix-cell {
+    width: 34px; height: 26px; text-align: center; border-radius: 4px;
+    color: var(--bs-body-color); position: relative;
+  }
+  .matrix-cell.faint { opacity: .45; }
+  .trend-up { color: var(--bs-success); }
+  .trend-down { color: var(--bs-danger); }
+  .metric-tile { padding: .9rem 1rem; }
+  .metric-tile .label { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; }
+  .metric-tile .value { font-size: 1.35rem; font-weight: 600; }
+  .metric-tile .prev { font-size: .75rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{# ---------------- dönem seçimi ---------------- #}
+<div class="card mb-3"><div class="card-body">
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    {% for preset in presets %}
+      <a class="btn btn-sm {% if preset_key == preset.key %}btn-primary{% else %}btn-outline-secondary{% endif %}"
+         href="?donem={{ preset.key }}">{{ preset.label }}</a>
+    {% endfor %}
+  </div>
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-6 col-md-3"><label class="form-label">{% trans "Başlangıç" %}</label>
+      <input type="date" name="from" class="form-control" value="{{ start|date:'Y-m-d' }}"></div>
+    <div class="col-6 col-md-3"><label class="form-label">{% trans "Bitiş" %}</label>
+      <input type="date" name="to" class="form-control" value="{{ end|date:'Y-m-d' }}"></div>
+    <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Uygula" %}</button></div>
+    <div class="col-12 col-md-4 text-md-end">
+      <small class="text-muted">
+        {% blocktrans with start=comparison.previous_start|date:"d.m.Y" finish=comparison.previous_end|date:"d.m.Y" %}Karşılaştırma dönemi: {{ start }} – {{ finish }}{% endblocktrans %}
+      </small>
+    </div>
+  </form>
+</div></div>
+
+{# ---------------- karşılaştırmalı ölçütler ---------------- #}
+<div class="row g-3 mb-3">
+  {% for metric in comparison.metrics %}
+  <div class="col-6 col-md-4 col-xl-3">
+    <div class="card h-100 metric-tile">
+      <div class="label text-muted">{{ metric.label }}</div>
+      <div class="value">
+        {% if metric.kind == 'money' %}
+          {{ metric.current|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }}
+        {% else %}
+          {{ metric.current|intcomma }}
+        {% endif %}
+      </div>
+      <div class="prev">
+        {% if metric.change > 0 %}
+          <span class="{% if metric.higher_is_better %}trend-up{% else %}trend-down{% endif %}">
+            <i class="bi bi-arrow-up-right"></i> %{{ metric.change|floatformat:1 }}
+          </span>
+        {% elif metric.change < 0 %}
+          <span class="{% if metric.higher_is_better %}trend-down{% else %}trend-up{% endif %}">
+            <i class="bi bi-arrow-down-right"></i> %{{ metric.change|floatformat:1 }}
+          </span>
+        {% else %}
+          <span class="text-muted">{% trans "değişim yok" %}</span>
+        {% endif %}
+        <span class="text-muted">
+          · {% trans "önceki:" %}
+          {% if metric.kind == 'money' %}{{ metric.previous|floatformat:0|intcomma }}{% else %}{{ metric.previous|intcomma }}{% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{# ---------------- eğilim ---------------- #}
+<div class="row g-3 mb-3">
+  <div class="col-12 col-xl-8">
+    <div class="card h-100">
+      <div class="card-header">{% trans "Günlük ciro — önceki dönemle" %}</div>
+      <div class="card-body"><canvas id="dailyChart" height="110"></canvas></div>
+    </div>
+  </div>
+  <div class="col-12 col-xl-4">
+    <div class="card h-100">
+      <div class="card-header">{% trans "Aylık eğilim" %}</div>
+      <div class="card-body"><canvas id="monthlyChart" height="190"></canvas></div>
+    </div>
+  </div>
+</div>
+
+{# ---------------- gün × saat matrisi ---------------- #}
+<div class="card mb-3">
+  <div class="card-header d-flex align-items-center flex-wrap gap-2">
+    <span>{% trans "Gün ve saate göre yoğunluk" %}</span>
+    <small class="text-muted ms-auto">
+      {% blocktrans with count=matrix.total_orders|intcomma %}Hücreler o gün ve saatteki <strong>ortalama sipariş sayısıdır</strong> ({{ count }} siparişten hesaplandı){% endblocktrans %}
+    </small>
+  </div>
+  <div class="card-body">
+    {% if matrix.total_orders %}
+    <div class="table-responsive">
+      <table class="matrix-table">
+        <thead>
+          <tr><th></th>{% for hour in matrix.hours %}<th>{{ hour }}</th>{% endfor %}<th></th></tr>
+        </thead>
+        <tbody>
+        {% for row in matrix.rows %}
+          <tr>
+            <th class="text-nowrap pe-2">{{ row.short }}</th>
+            {% for cell in row.cells %}
+              <td class="matrix-cell{% if not cell.reliable %} faint{% endif %}"
+                  style="background: color-mix(in srgb, var(--bs-primary) {{ cell.intensity }}%, transparent);"
+                  title="{% blocktrans with day=row.name hour=cell.hour average=cell.average total=cell.total days=row.observed_days %}{{ day }} {{ hour }}:00 — ortalama {{ average }} sipariş ({{ total }} toplam, {{ days }} gün gözlendi){% endblocktrans %}">
+                {% if cell.average %}{{ cell.average }}{% endif %}
+              </td>
+            {% endfor %}
+            <td class="small text-muted ps-2 text-nowrap">
+              {% blocktrans with days=row.observed_days %}{{ days }} gün{% endblocktrans %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <small class="text-muted d-block mt-2">
+      {% blocktrans with minimum=matrix.min_observations %}Soluk hücreler {{ minimum }} günden az gözleme dayanır; düzenli bir örüntü değil, tek seferlik bir yoğunluk olabilir. Personel planını yalnızca koyu hücrelere göre yapın.{% endblocktrans %}
+    </small>
+    {% else %}
+      <div class="empty-state"><i class="bi bi-calendar3"></i>{% trans "Bu dönemde tamamlanmış sipariş yok." %}</div>
+    {% endif %}
+  </div>
+</div>
+
+{# ---------------- haftanın günleri + dağılımlar ---------------- #}
+<div class="row g-3 mb-3">
+  <div class="col-12 col-lg-6">
+    <div class="card h-100">
+      <div class="card-header">{% trans "Haftanın günleri" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead><tr>
+            <th class="ps-3">{% trans "Gün" %}</th><th class="text-end">{% trans "Günlük ort." %}</th>
+            <th class="text-end">{% trans "Sipariş ort." %}</th><th class="text-end pe-3">{% trans "Pay" %}</th>
+          </tr></thead>
+          <tbody>
+          {% for day in weekday %}
+            <tr{% if not day.reliable %} class="opacity-50"{% endif %}>
+              <td class="ps-3">{{ day.name }}
+                {% if not day.reliable %}
+                  <i class="bi bi-info-circle text-muted"
+                     title="{% blocktrans with days=day.observed_days %}Yalnızca {{ days }} gün gözlendi{% endblocktrans %}"></i>
+                {% endif %}
+              </td>
+              <td class="text-end money">{{ day.average_revenue|floatformat:0|intcomma }}</td>
+              <td class="text-end">{{ day.average_orders }}</td>
+              <td class="text-end pe-3" style="width:120px">
+                <div class="progress" style="height:6px">
+                  <div class="progress-bar" style="width: {{ day.share_percent }}%"></div>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-3">
+    <div class="card h-100">
+      <div class="card-header">{% trans "Ödeme yöntemi" %}</div>
+      <div class="card-body"><canvas id="paymentChart" height="200"></canvas></div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-3">
+    <div class="card h-100">
+      <div class="card-header">{% trans "Sipariş türü" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+          {% for row in order_types %}
+            <tr><td class="ps-3">{{ row.label }}</td>
+                <td class="text-end">{{ row.count }}</td>
+                <td class="text-end pe-3 money">{{ row.total|floatformat:0|intcomma }}</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Kayıt yok." %}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ---------------- ürün, personel ---------------- #}
+<div class="row g-3 mb-3">
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header">{% trans "En çok satanlar" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+          {% for p in top_products %}
+            <tr><td class="ps-3">{{ p.product__name }}</td>
+                <td class="text-end">{{ p.total_quantity|floatformat:0 }}</td>
+                <td class="text-end pe-3 money">{{ p.revenue|floatformat:0|intcomma }}</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Satış yok." %}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header">{% trans "Kategori dağılımı" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+          {% for c in categories %}
+            <tr><td class="ps-3">{{ c.category }}</td>
+                <td class="text-end pe-3 money">{{ c.revenue|floatformat:0|intcomma }}</td>
+                <td class="text-end pe-3 text-muted small">%{{ c.percent }}</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Satış yok." %}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header">{% trans "Personel performansı" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead><tr><th class="ps-3">{% trans "Personel" %}</th><th class="text-end">{% trans "Sipariş" %}</th>
+            <th class="text-end pe-3">{% trans "Ort. sepet" %}</th></tr></thead>
+          <tbody>
+          {% for s in staff %}
+            <tr><td class="ps-3">{{ s.name }}</td>
+                <td class="text-end">{{ s.orders }}</td>
+                <td class="text-end pe-3 money">{{ s.average_ticket|floatformat:0|intcomma }}</td></tr>
+          {% empty %}<tr><td colspan="3" class="text-center text-muted py-3">{% trans "Kayıt yok." %}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ---------------- müşteri, stok, servis ---------------- #}
+<div class="row g-3">
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header">{% trans "Müşteri" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr><td class="ps-3 text-muted">{% trans "Tanımlı müşteri" %}</td>
+                <td class="text-end pe-3">{{ customers.identified_customers }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Yeni müşteri" %}</td>
+                <td class="text-end pe-3">{{ customers.new_customers }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Tekrar gelen" %}</td>
+                <td class="text-end pe-3">{{ customers.repeat_customers }} (%{{ customers.repeat_rate }})</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Ortalama ziyaret" %}</td>
+                <td class="text-end pe-3">{{ customers.average_visits }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Siparişte müşteri tanımlama" %}</td>
+                <td class="text-end pe-3">%{{ customers.identification_rate }}</td></tr>
+          </tbody>
+        </table>
+        {% if customers.top_customers %}
+        <div class="card-header border-top">{% trans "En değerli müşteriler" %}</div>
+        <table class="table table-sm mb-0">
+          <tbody>
+          {% for row in customers.top_customers %}
+            <tr><td class="ps-3">{{ row.customer.full_name|default:row.customer.code }}</td>
+                <td class="text-end">{{ row.visits }} ziyaret</td>
+                <td class="text-end pe-3 money">{{ row.revenue|floatformat:0|intcomma }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header">{% trans "Stok ve fire" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr><td class="ps-3 text-muted">{% trans "Fire tutarı" %}</td>
+                <td class="text-end pe-3 money text-danger">{{ inventory.waste_value|floatformat:0|intcomma }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Fire oranı" %}</td>
+                <td class="text-end pe-3">%{{ inventory.waste_percent }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Satıştan tüketim" %}</td>
+                <td class="text-end pe-3 money">{{ inventory.consumption_value|floatformat:0|intcomma }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Satın alma" %}</td>
+                <td class="text-end pe-3 money">{{ inventory.purchase_value|floatformat:0|intcomma }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Mevcut stok değeri" %}</td>
+                <td class="text-end pe-3 money">{{ inventory.stock_value|floatformat:0|intcomma }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Kritik seviyede" %}</td>
+                <td class="text-end pe-3">{{ inventory.critical_count }} malzeme</td></tr>
+          </tbody>
+        </table>
+        {% if inventory.top_waste %}
+        <div class="card-header border-top">{% trans "En çok fire veren" %}</div>
+        <table class="table table-sm mb-0">
+          <tbody>
+          {% for row in inventory.top_waste %}
+            <tr><td class="ps-3">{{ row.ingredient__name }}</td>
+                <td class="text-end text-muted small">{{ row.total_quantity|floatformat:1 }} {{ row.ingredient__base_unit__code }}</td>
+                <td class="text-end pe-3 money">{{ row.value|floatformat:0|intcomma }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-header">{% trans "Servis" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr><td class="ps-3 text-muted">{% trans "Ortalama servis süresi" %}</td>
+                <td class="text-end pe-3">{{ service.average_service_minutes }} dk</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Ölçülen sipariş" %}</td>
+                <td class="text-end pe-3">{{ service.measured_orders|intcomma }}</td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Masa devir hızı" %}</td>
+                <td class="text-end pe-3">
+                  {% blocktrans with value=service.table_turnover %}{{ value }} / gün{% endblocktrans %}
+                </td></tr>
+            <tr><td class="ps-3 text-muted">{% trans "Aktif masa" %}</td>
+                <td class="text-end pe-3">{{ service.table_count }}</td></tr>
+          </tbody>
+        </table>
+        {% if service.busiest_day %}
+        <div class="card-body border-top">
+          <div class="text-muted small">{% trans "En yoğun gün" %}</div>
+          <div class="fw-semibold">
+            {{ service.busiest_day.date|date:"d.m.Y" }} · {{ service.busiest_day.weekday }}
+          </div>
+          <div class="small text-muted">
+            {% blocktrans with count=service.busiest_day.orders %}{{ count }} sipariş{% endblocktrans %} ·
+            {{ service.busiest_day.revenue|floatformat:0|intcomma }} {{ CURRENCY_SYMBOL }}
+          </div>
+        </div>
+        {% endif %}
+        <div class="card-body border-top small text-muted">
+          {% trans "Servis süresi, adisyonun açılışı ile ödemesi arasındaki süredir. 8 saatten uzun süren adisyonlar (kapatılması unutulmuş olanlar) ortalamaya katılmaz." %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'vendor/js/chart.umd.min.js' %}"></script>
+{{ daily|json_script:"daily-data" }}
+{{ monthly|json_script:"monthly-data" }}
+{{ payment_chart|json_script:"payment-data" }}
+<script>
+(function () {
+  const css = getComputedStyle(document.documentElement);
+  const primary = css.getPropertyValue('--bs-primary').trim() || '#1f6feb';
+  const muted = css.getPropertyValue('--bs-secondary-color').trim() || '#6c757d';
+  const grid = 'rgba(128,128,128,.15)';
+
+  const baseOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: muted, boxWidth: 12 } } },
+    scales: {
+      x: { ticks: { color: muted }, grid: { color: grid } },
+      y: { ticks: { color: muted }, grid: { color: grid }, beginAtZero: true }
+    }
+  };
+
+  const daily = JSON.parse(document.getElementById('daily-data').textContent);
+  new Chart(document.getElementById('dailyChart'), {
+    type: 'line',
+    data: {
+      labels: daily.labels,
+      datasets: [
+        { label: 'Bu dönem', data: daily.current, borderColor: primary,
+          backgroundColor: 'rgba(31,111,235,.12)', fill: true, tension: .35, borderWidth: 2 },
+        { label: daily.previous_label || 'Önceki dönem', data: daily.previous || [],
+          borderColor: muted, borderDash: [5, 4], fill: false, tension: .35, borderWidth: 1.5,
+          pointRadius: 0 }
+      ]
+    },
+    options: baseOptions
+  });
+
+  const monthly = JSON.parse(document.getElementById('monthly-data').textContent);
+  new Chart(document.getElementById('monthlyChart'), {
+    type: 'bar',
+    data: {
+      labels: monthly.labels,
+      datasets: [{ label: 'Aylık ciro', data: monthly.revenue, backgroundColor: primary,
+                   borderRadius: 4 }]
+    },
+    options: { ...baseOptions, plugins: { legend: { display: false } } }
+  });
+
+  const payments = JSON.parse(document.getElementById('payment-data').textContent);
+  if (payments.length) {
+    new Chart(document.getElementById('paymentChart'), {
+      type: 'doughnut',
+      data: {
+        labels: payments.map(p => p.label),
+        datasets: [{ data: payments.map(p => Number(p.total)) }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { color: muted, boxWidth: 10 } } }
+      }
+    });
+  }
+})();
+</script>
+{% endblock %}

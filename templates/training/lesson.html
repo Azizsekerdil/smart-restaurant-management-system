@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ lesson.display_title }} · {{ RESTAURANT.NAME }}{% endblock %}
+{% block page_heading %}{{ lesson.display_title }}{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'training:index' %}" class="btn btn-sm btn-outline-secondary">
+  <i class="bi bi-arrow-left"></i> {% trans "Dersler" %}
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <span class="stat-icon"><i class="bi bi-{{ lesson.icon }}"></i></span>
+          <div>
+            <div class="text-muted small">
+              <i class="bi bi-clock"></i> {{ lesson.minutes }} {% trans "dk" %}
+              {% if progress.is_completed %}
+                · <span class="text-success"><i class="bi bi-check-circle"></i> {% trans "Tamamlandı" %}</span>
+              {% endif %}
+            </div>
+          </div>
+          {% if lesson.target_url %}
+            <a href="{% url lesson.target_url %}" class="btn btn-sm btn-outline-primary ms-auto">
+              <i class="bi bi-box-arrow-up-right"></i> {% trans "Ekranı aç" %}
+            </a>
+          {% endif %}
+        </div>
+        <p class="mb-0 text-muted">{{ lesson.display_summary }}</p>
+      </div>
+    </div>
+
+    {% for step in lesson.steps %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex gap-3">
+          <span class="rounded-circle d-grid flex-shrink-0"
+                style="width:28px;height:28px;place-items:center;background:var(--brand);color:#fff;font-size:13px;font-weight:700;">
+            {{ forloop.counter }}
+          </span>
+          <div class="flex-grow-1">
+            <h3 class="h6 mb-2">{{ step.display_title }}</h3>
+            <p class="mb-0" style="line-height:1.65">{{ step.display_body }}</p>
+
+            {% if step.kind == 'warning' %}
+              <div class="alert alert-warning mt-3 mb-0 small d-flex gap-2">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div>{% if step.display_note %}{{ step.display_note }}{% else %}{% trans "Bu adımı atlamayın." %}{% endif %}</div>
+              </div>
+            {% elif step.kind == 'tip' %}
+              <div class="alert alert-info mt-3 mb-0 small d-flex gap-2">
+                <i class="bi bi-lightbulb-fill"></i>
+                <div>{% if step.display_note %}{{ step.display_note }}{% else %}{% trans "İpucu" %}{% endif %}</div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+    {% if lesson.questions %}
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Kısa kontrol" %}</div>
+      <div class="card-body">
+        <p class="text-muted small">
+          {% blocktrans %}Amaç puan toplamak değil: yanlış yanıt verirseniz açıklamasını
+          okuyup tekrar deneyebilirsiniz.{% endblocktrans %}
+        </p>
+
+        <form method="post" action="{% url 'training:complete' lesson.key %}">
+          {% csrf_token %}
+          {% for question in lesson.questions %}
+            <fieldset class="mb-4">
+              <legend class="h6">{{ forloop.counter }}. {{ question.display_text }}</legend>
+              {% for option in question.display_options %}
+                <div class="form-check">
+                  <input class="form-check-input" type="radio"
+                         name="q{{ forloop.parentloop.counter0 }}"
+                         id="q{{ forloop.parentloop.counter0 }}o{{ forloop.counter0 }}"
+                         value="{{ forloop.counter0 }}" required>
+                  <label class="form-check-label"
+                         for="q{{ forloop.parentloop.counter0 }}o{{ forloop.counter0 }}">{{ option }}</label>
+                </div>
+              {% endfor %}
+              {% if progress.quiz_total %}
+                <small class="text-muted d-block mt-2">
+                  <i class="bi bi-info-circle"></i> {{ question.display_explanation }}
+                </small>
+              {% endif %}
+            </fieldset>
+          {% endfor %}
+
+          <button class="btn btn-primary">
+            <i class="bi bi-check2-circle"></i> {% trans "Yanıtları gönder ve tamamla" %}
+          </button>
+        </form>
+      </div>
+    </div>
+    {% else %}
+    <form method="post" action="{% url 'training:complete' lesson.key %}" class="mb-3">
+      {% csrf_token %}
+      <button class="btn btn-primary">
+        <i class="bi bi-check2-circle"></i> {% trans "Bu dersi tamamladım" %}
+      </button>
+    </form>
+    {% endif %}
+
+    <div class="d-flex gap-2">
+      {% if previous %}
+        <a href="{% url 'training:lesson' previous.key %}" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-chevron-left"></i> {{ previous.display_title }}
+        </a>
+      {% endif %}
+      {% if next %}
+        <a href="{% url 'training:lesson' next.key %}" class="btn btn-sm btn-outline-secondary ms-auto">
+          {{ next.display_title }} <i class="bi bi-chevron-right"></i>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Bu derste" %}</div>
+      <ol class="list-group list-group-flush list-group-numbered">
+        {% for step in lesson.steps %}
+          <li class="list-group-item small">{{ step.display_title }}</li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    {% if progress.quiz_total %}
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="text-muted small">{% trans "Son sınav sonucunuz" %}</div>
+        <div class="h5 mb-0">{{ progress.quiz_correct }}/{{ progress.quiz_total }}</div>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if progress %}
+    <form method="post" action="{% url 'training:reset' lesson.key %}"
+          onsubmit="return confirm('{% trans "Bu dersteki ilerlemeniz sıfırlansın mı?" %}');">
+      {% csrf_token %}
+      <button class="btn btn-sm btn-outline-secondary w-100">
+        <i class="bi bi-arrow-counterclockwise"></i> {% trans "İlerlemeyi sıfırla" %}
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

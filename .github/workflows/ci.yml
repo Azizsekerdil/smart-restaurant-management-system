@@ -1,0 +1,205 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege: the workflow only reads the repository.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DJANGO_ENV: test
+  DJANGO_DEBUG: "False"
+  # Throwaway value for CI only. Never a real key.
+  DJANGO_SECRET_KEY: ci-icin-gecici-anahtar-gercek-degil
+  DB_ENGINE: sqlite
+  # Every AI provider is disabled in CI: the test suite must never
+  # reach a real model or the network.
+  LMSTUDIO_ENABLED: "False"
+  OLLAMA_ENABLED: "False"
+  NVIDIA_ENABLED: "False"
+  OPENAI_ENABLED: "False"
+  ANTHROPIC_ENABLED: "False"
+  GEMINI_ENABLED: "False"
+  OPENROUTER_ENABLED: "False"
+  # The developer console executes commands; it stays off in CI.
+  DEVCENTER_ENABLED: "False"
+  DEVCENTER_TERMINAL_ENABLED: "False"
+
+jobs:
+  test:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Django configuration check
+        run: python manage.py check
+
+      - name: No missing migrations
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Migration dry run
+        run: python manage.py migrate --plan
+
+      - name: Tests and coverage
+        run: python -m pytest -q --cov=apps --cov-report=xml --cov-report=term
+
+      - name: Upload coverage
+        if: matrix.python-version == '3.12'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 14
+
+  quality:
+    name: Code quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Ruff
+        run: python -m ruff check . --output-format=github
+
+      - name: Black
+        run: python -m black --check --diff .
+
+      - name: Mypy
+        run: python -m mypy apps
+        continue-on-error: true # gradual typing; not yet a gate
+
+  security:
+    name: Security scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # gitleaks needs history
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Bandit (static analysis)
+        run: python -m bandit -c pyproject.toml -r apps config
+
+      - name: pip-audit (dependency vulnerabilities)
+        run: python -m pip_audit --strict
+
+      - name: Project secret scan
+        run: python scripts/secret_scan.py
+
+      - name: gitleaks (history and working tree)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tracked-file hygiene
+        run: |
+          echo "Checking that no secret or data file is tracked..."
+          FOUND=0
+          if git ls-files --error-unmatch .env 2>/dev/null; then
+            echo "::error::.env is tracked by git"
+            FOUND=1
+          fi
+          if git ls-files | grep -qE '\.(sqlite3|db|dump|sql)$'; then
+            echo "::error::a database file is tracked by git"
+            FOUND=1
+          fi
+          if git ls-files | grep -qE '^patent/'; then
+            echo "::error::patent/ must never be tracked"
+            FOUND=1
+          fi
+          if [ "$FOUND" -eq 0 ]; then echo "OK"; fi
+          exit $FOUND
+
+      - name: Public release gate
+        run: python scripts/public_release_check.py
+
+  sbom:
+    name: SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install cyclonedx-bom
+
+      - name: Generate CycloneDX SBOM
+        run: cyclonedx-py environment --output-format json --outfile sbom.cdx.json
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.cdx.json
+          retention-days: 90
+
+  docker:
+    name: Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t restaurant:ci .
+
+      - name: Image smoke test
+        run: |
+          docker run --rm \
+            -e DJANGO_SECRET_KEY=ci-icin-gecici-anahtar-gercek-degil \
+            -e DB_ENGINE=sqlite \
+            -e DJANGO_ENV=development \
+            restaurant:ci python manage.py check

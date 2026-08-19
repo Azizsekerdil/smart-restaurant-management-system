@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'reports:daily_closing_pdf' closing.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-file-pdf me-1"></i>{% trans "PDF indir" %}</a>
+<button class="btn btn-sm btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer"></i></button>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-6">
+    <div class="card mb-3">
+      <div class="card-header">Satış özeti — {{ closing.closing_date|date:"d.m.Y" }}</div>
+      <div class="card-body p-0">
+        <table class="table mb-0"><tbody>
+          <tr><td class="ps-3 text-muted">{% trans "Sipariş sayısı" %}</td><td class="text-end pe-3">{{ closing.order_count }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "Misafir sayısı" %}</td><td class="text-end pe-3">{{ closing.guest_count }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "Brüt satış" %}</td><td class="text-end pe-3 money">{{ closing.gross_sales|floatformat:2 }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "İndirimler" %}</td><td class="text-end pe-3 money">{{ closing.discount_total|floatformat:2 }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "İadeler" %}</td><td class="text-end pe-3 money text-danger">{{ closing.refund_total|floatformat:2 }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "Servis bedeli" %}</td><td class="text-end pe-3 money">{{ closing.service_charge_total|floatformat:2 }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "KDV (dahil)" %}</td><td class="text-end pe-3 money">{{ closing.tax_total|floatformat:2 }}</td></tr>
+          <tr class="fw-bold"><td class="ps-3">{% trans "Net satış" %}</td><td class="text-end pe-3 money">{{ closing.net_sales|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "Bahşiş" %}</td><td class="text-end pe-3 money">{{ closing.tip_total|floatformat:2 }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "Ortalama adisyon" %}</td><td class="text-end pe-3 money">{{ closing.average_ticket|floatformat:2 }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "Kişi başı ortalama" %}</td><td class="text-end pe-3 money">{{ closing.average_per_guest|floatformat:2 }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "İptal edilen adisyon" %}</td>
+            <td class="text-end pe-3">{{ closing.void_count }} ({{ closing.void_total|floatformat:2 }} {{ CURRENCY_SYMBOL }})</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">{% trans "Kasa" %}</div>
+      <div class="card-body p-0">
+        <table class="table mb-0"><tbody>
+          <tr><td class="ps-3 text-muted">{% trans "Beklenen nakit" %}</td><td class="text-end pe-3 money">{{ closing.cash_expected|floatformat:2 }}</td></tr>
+          <tr><td class="ps-3 text-muted">{% trans "Sayılan nakit" %}</td><td class="text-end pe-3 money">{{ closing.cash_counted|floatformat:2 }}</td></tr>
+          <tr class="fw-bold"><td class="ps-3">{% trans "Fark" %}</td>
+            <td class="text-end pe-3 money {% if closing.cash_variance < 0 %}text-danger{% elif closing.cash_variance > 0 %}text-success{% endif %}">
+              {{ closing.cash_variance|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Ödeme dağılımı" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          {% for method, amount in closing.payment_breakdown.items %}
+            <tr><td class="ps-3">{{ method }}</td><td class="text-end pe-3 money">{{ amount }} {{ CURRENCY_SYMBOL }}</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Kayıt yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Kategori dağılımı" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          {% for category, amount in closing.category_breakdown.items %}
+            <tr><td class="ps-3">{{ category }}</td><td class="text-end pe-3 money">{{ amount }} {{ CURRENCY_SYMBOL }}</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Kayıt yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+
+    {% if closing.ai_summary %}
+      <div class="card">
+        <div class="card-header"><i class="bi bi-stars me-2"></i>{% trans "AI günlük özeti" %}</div>
+        <div class="card-body" style="white-space:pre-wrap;">{{ closing.ai_summary }}</div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="alert alert-secondary mt-3 small">{{ closing.legal_notice }}</div>
+{% endblock %}

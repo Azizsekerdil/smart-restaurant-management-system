@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="alert alert-info">
+  <strong>{{ user_obj.display_name }}</strong> — rol: <strong>{{ user_obj.get_role_display }}</strong>.
+  Rolün getirdiği izinler otomatik uygulanır. Aşağıdan bu kullanıcıya <em>{% trans "ek izin" %}</em> verebilir
+  veya rolündeki bir izni <em>{% trans "kapatabilirsiniz" %}</em>.
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">Geçerli izinler ({{ role_permissions|length }})</div>
+  <div class="card-body">
+    <div class="d-flex flex-wrap gap-1">
+      {% for permission in role_permissions %}
+        <span class="badge-soft ok" style="font-family:monospace;">{{ permission }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="row g-3">
+    <div class="col-12 col-lg-6">
+      <div class="card h-100">
+        <div class="card-header text-success"><i class="bi bi-plus-circle me-2"></i>{% trans "Ek izinler" %}</div>
+        <div class="card-body" style="max-height:520px;overflow-y:auto;">
+          {% for choice in form.extra %}
+            <div class="form-check">{{ choice.tag }}
+              <label class="form-check-label small" for="{{ choice.id_for_label }}" style="font-family:monospace;">{{ choice.choice_label }}</label>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6">
+      <div class="card h-100">
+        <div class="card-header text-danger"><i class="bi bi-dash-circle me-2"></i>{% trans "Kapatılan izinler" %}</div>
+        <div class="card-body" style="max-height:520px;overflow-y:auto;">
+          {% for choice in form.denied %}
+            <div class="form-check">{{ choice.tag }}
+              <label class="form-check-label small" for="{{ choice.id_for_label }}" style="font-family:monospace;">{{ choice.choice_label }}</label>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex gap-2 mt-3">
+    <button class="btn btn-primary"><i class="bi bi-save me-1"></i>{% trans "İzinleri kaydet" %}</button>
+    <a href="{% url 'accounts:user_list' %}" class="btn btn-outline-secondary">{% trans "Vazgeç" %}</a>
+  </div>
+</form>
+{% endblock %}

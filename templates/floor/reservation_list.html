@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'floor:reservation_create' %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>{% trans "Yeni rezervasyon" %}</a>
+{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Bugünkü rezervasyon" %}</div><div class="value">{{ stats.today }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Beklenen misafir" %}</div><div class="value">{{ stats.today_guests }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Onay bekleyen" %}</div><div class="value text-warning">{{ stats.pending }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "No-show (30 gün)" %}</div><div class="value text-danger">{{ stats.no_show_month }}</div></div></div>
+</div>
+
+<div class="card mb-3"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-12 col-md-3"><label class="form-label">{% trans "Tarih" %}</label>
+      <input type="date" name="date" class="form-control" value="{{ filters.date }}"></div>
+    <div class="col-12 col-md-3"><label class="form-label">{% trans "Durum" %}</label>
+      <select name="status" class="form-select"><option value="">{% trans "Tümü" %}</option>
+        {% for value, label in statuses %}<option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select></div>
+    <div class="col-12 col-md-4"><label class="form-label">{% trans "Ara" %}</label>
+      <input type="search" name="q" class="form-control" value="{{ filters.q }}" placeholder="{% trans 'Ad, kod veya telefon' %}"></div>
+    <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Filtrele" %}</button></div>
+  </form>
+</div></div>
+
+<div class="row g-3">
+  <div class="col-12 col-xl-8">
+    <div class="card"><div class="card-body p-0" style="overflow-x:auto;">
+      <table class="table table-hover mb-0">
+        <thead><tr><th class="ps-3">{% trans "Kod" %}</th><th>{% trans "Tarih / saat" %}</th><th>{% trans "Misafir" %}</th><th>{% trans "Kişi" %}</th>
+          <th>{% trans "Masa" %}</th><th>{% trans "Durum" %}</th><th class="pe-3 text-end">{% trans "İşlem" %}</th></tr></thead>
+        <tbody>
+        {% for reservation in reservations %}
+          <tr class="{% if reservation.is_late %}table-warning{% endif %}">
+            <td class="ps-3 small fw-semibold">{{ reservation.code }}</td>
+            <td class="small text-nowrap">{{ reservation.reserved_at|date:"d.m.Y H:i" }}
+              <small class="d-block text-muted">{{ reservation.duration_minutes }} dk</small></td>
+            <td>
+              {{ reservation.guest_name }}
+              {# Misafir telefonu kişisel veridir: maskesiz görmek `customer.pii` ister. #}
+              {% if reservation.guest_phone %}<small class="d-block text-muted">{% if can_see_customer_pii %}{{ reservation.guest_phone }}{% else %}{{ reservation.masked_guest_phone }}{% endif %}</small>{% endif %}
+              {% if reservation.allergy_notes %}<span class="badge-soft danger">{% trans "Alerji" %}</span>{% endif %}
+              {% if reservation.occasion %}<span class="badge-soft info">{{ reservation.occasion }}</span>{% endif %}
+            </td>
+            <td>{{ reservation.party_size }}</td>
+            <td class="small">{% for table in reservation.tables.all %}{{ table.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</td>
+            <td><span class="badge-soft {% if reservation.status == 'confirmed' %}info{% elif reservation.status == 'seated' %}ok{% elif reservation.status == 'no_show' or reservation.status == 'cancelled' %}danger{% else %}muted{% endif %}">
+              {{ reservation.get_status_display }}</span></td>
+            <td class="pe-3 text-end text-nowrap">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-success" onclick="setStatus({{ reservation.pk }}, 'seated')" title="{% trans 'Oturdu' %}"><i class="bi bi-person-check"></i></button>
+                <button class="btn btn-outline-danger" onclick="setStatus({{ reservation.pk }}, 'no_show')" title="{% trans 'Gelmedi' %}"><i class="bi bi-person-x"></i></button>
+                <a class="btn btn-outline-secondary" href="{% url 'floor:reservation_edit' reservation.pk %}"><i class="bi bi-pencil"></i></a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7"><div class="empty-state"><i class="bi bi-calendar"></i>{% trans "Rezervasyon yok." %}</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-hourglass-split me-2"></i>{% trans "Bekleme listesi" %}</div>
+      <div class="card-body">
+        <form method="post" action="{% url 'floor:waitlist_add' %}" class="row g-2 mb-3">
+          {% csrf_token %}
+          <div class="col-7"><input type="text" name="guest_name" class="form-control form-control-sm" placeholder="{% trans 'Misafir adı' %}" required></div>
+          <div class="col-5"><input type="number" name="party_size" class="form-control form-control-sm" placeholder="{% trans 'Kişi' %}" value="2" min="1"></div>
+          <div class="col-7"><input type="text" name="guest_phone" class="form-control form-control-sm" placeholder="{% trans 'Telefon' %}"></div>
+          <div class="col-5"><button class="btn btn-sm btn-primary w-100">{% trans "Ekle" %}</button></div>
+        </form>
+        <div class="list-group">
+          {% for entry in waitlist %}
+            <div class="list-group-item d-flex justify-content-between align-items-center py-2">
+              <div>
+                <div class="fw-semibold" style="font-size:13px;">{{ entry.guest_name }} ({{ entry.party_size }})</div>
+                <small class="text-muted">{{ entry.waiting_minutes }} dk bekliyor</small>
+              </div>
+              <button class="btn btn-sm btn-outline-success" onclick="notifyWaitlist({{ entry.pk }})" title="{% trans 'Çağır' %}">
+                <i class="bi bi-bell"></i></button>
+            </div>
+          {% empty %}
+            <div class="text-muted small text-center py-3">{% trans "Bekleyen misafir yok." %}</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function setStatus(id, status) {
+  if (status === 'no_show' && !confirm('Bu rezervasyon "gelmedi" olarak işaretlensin mi?')) return;
+  try { await apiPost('/salon/rezervasyon/' + id + '/durum/', { status }); location.reload(); }
+  catch (e) { showToast(e.message, 'danger'); }
+}
+async function notifyWaitlist(id) {
+  try { await apiPost('/salon/bekleme/' + id + '/guncelle/', { status: 'notified' }); location.reload(); }
+  catch (e) { showToast(e.message, 'danger'); }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+MIT License
+
+Copyright (c) 2026 Aziz Şekerdil
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+ADDITIONAL NOTICE / EK BİLDİRİM
+
+This software produces documents (receipts, order slips, "day-end reports")
+that are for INTERNAL BUSINESS INFORMATION ONLY. They do not constitute
+legally valid fiscal documents. In Türkiye, legally valid Z-reports must be
+produced by an approved fiscal device (ÖKC / new-generation cash register),
+and e-Fatura / e-Arşiv documents must be issued through an authorized
+integrator. The authors make no claim that this software produces legally
+valid fiscal documents and accept no liability arising from such use.
+
+Bu yazılımın ürettiği fiş, adisyon ve "gün sonu raporu" belgeleri YALNIZCA
+İŞLETME İÇİ BİLGİLENDİRME amaçlıdır ve yasal mali belge yerine geçmez.
+Türkiye'de yasal Z raporu onaylı ödeme kaydedici cihaz (ÖKC / yeni nesil
+yazarkasa) tarafından, e-Fatura ve e-Arşiv ise yetkili bir özel entegratör
+üzerinden üretilmelidir. Yazarlar bu yazılımın yasal mali belge ürettiği
+iddiasında bulunmaz ve bu yönde kullanımdan doğacak sorumluluğu kabul etmez.
+
+AI DISCLAIMER / YAPAY ZEKÂ UYARISI
+
+Analyses, forecasts and suggestions produced by the artificial intelligence
+features are estimates based on historical data. They are not guarantees and
+must not be the sole basis for business, financial, medical or dietary
+decisions. Allergen information provided by the system is not medical advice.
+
+Yapay zekâ özellikleri tarafından üretilen analiz, tahmin ve öneriler geçmiş
+verilere dayanan kestirimlerdir. Kesinlik taşımaz ve ticari, mali, tıbbi veya
+beslenmeye ilişkin kararların tek dayanağı olarak kullanılmamalıdır. Sistemin
+sunduğu alerjen bilgisi tıbbi tavsiye niteliği taşımaz.

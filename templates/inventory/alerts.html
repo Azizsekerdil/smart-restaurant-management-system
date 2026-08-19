@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<form method="post" action="{% url 'inventory:purchase_auto_suggest' %}">{% csrf_token %}
+  <button class="btn btn-sm btn-primary"><i class="bi bi-magic me-1"></i>{% trans "Otomatik sipariş taslağı oluştur" %}</button>
+</form>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-6">
+    <div class="card h-100">
+      <div class="card-header text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Kritik stok ({{ low_stock|length }})</div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th class="ps-3">{% trans "Malzeme" %}</th><th class="text-end">{% trans "Mevcut" %}</th><th class="text-end">{% trans "Kritik" %}</th><th class="pe-3 text-end">{% trans "Tahminî gün" %}</th></tr></thead>
+          <tbody>
+          {% for ingredient in low_stock %}
+            <tr>
+              <td class="ps-3"><a href="{% url 'inventory:ingredient_detail' ingredient.pk %}">{{ ingredient.name }}</a></td>
+              <td class="text-end money {% if ingredient.is_out_of_stock %}text-danger{% endif %}">
+                {{ ingredient.total_on_hand|floatformat:2 }} {{ ingredient.base_unit.code }}</td>
+              <td class="text-end text-muted">{{ ingredient.critical_level|floatformat:0 }}</td>
+              <td class="pe-3 text-end">{% with days=ingredient.days_until_stockout %}{% if days %}{{ days }} gün{% else %}—{% endif %}{% endwith %}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="4"><div class="empty-state py-4"><i class="bi bi-check2-circle"></i>{% trans "Kritik seviyede malzeme yok." %}</div></td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card h-100">
+      <div class="card-header text-warning"><i class="bi bi-calendar-x me-2"></i>{% trans "Son kullanma tarihi yaklaşanlar" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th class="ps-3">{% trans "Malzeme" %}</th><th>{% trans "Depo" %}</th><th class="text-end">{% trans "Kalan" %}</th><th class="text-end">SKT</th><th class="pe-3 text-end">{% trans "Değer" %}</th></tr></thead>
+          <tbody>
+          {% for batch in expiring %}
+            <tr class="{% if batch.is_expired %}table-danger{% endif %}">
+              <td class="ps-3">{{ batch.ingredient.name }}<small class="d-block text-muted">{{ batch.lot_code|default:"—" }}</small></td>
+              <td class="small">{{ batch.warehouse.code }}</td>
+              <td class="text-end money">{{ batch.remaining_quantity|floatformat:2 }}</td>
+              <td class="text-end">
+                {{ batch.expiry_date|date:"d.m.Y" }}
+                <span class="badge-soft {% if batch.days_to_expiry <= 2 %}danger{% else %}warn{% endif %}">{{ batch.days_to_expiry }} gün</span>
+              </td>
+              <td class="pe-3 text-end money">{{ batch.value|floatformat:2 }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5"><div class="empty-state py-4"><i class="bi bi-check2-circle"></i>{% trans "Yaklaşan son kullanma tarihi yok." %}</div></td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

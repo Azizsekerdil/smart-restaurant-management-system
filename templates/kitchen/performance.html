@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="card mb-3">
+  <div class="card-header"><i class="bi bi-speedometer me-2"></i>{% trans "İstasyon bazlı hazırlık süresi (son 7 gün)" %}</div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th class="ps-3">{% trans "İstasyon" %}</th><th class="text-end">{% trans "Tamamlanan KOT" %}</th>
+        <th class="text-end">{% trans "Ortalama süre" %}</th><th class="text-end">{% trans "Hedef" %}</th><th class="pe-3">{% trans "Durum" %}</th></tr></thead>
+      <tbody>
+      {% for row in rows %}
+        <tr>
+          <td class="ps-3">{{ row.station }}</td>
+          <td class="text-end">{{ row.count }}</td>
+          <td class="text-end fw-semibold">{{ row.avg_minutes }} dk</td>
+          <td class="text-end text-muted">{{ row.target }} dk</td>
+          <td class="pe-3">
+            {% if row.over_target %}<span class="badge-soft danger">{% trans "Hedefin üstünde" %}</span>
+            {% else %}<span class="badge-soft ok">{% trans "Hedefte" %}</span>{% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5"><div class="empty-state"><i class="bi bi-speedometer"></i>{% trans "Bu dönemde tamamlanmış KOT yok." %}</div></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header text-danger"><i class="bi bi-clock-history me-2"></i>{% trans "Şu an geciken siparişler" %}</div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th class="ps-3">KOT</th><th>{% trans "İstasyon" %}</th><th>{% trans "Masa" %}</th><th class="text-end">{% trans "Bekleme" %}</th><th class="pe-3">{% trans "Durum" %}</th></tr></thead>
+      <tbody>
+      {% for ticket in delayed %}
+        <tr class="table-danger">
+          <td class="ps-3">{{ ticket.number }}</td>
+          <td>{{ ticket.station.name }}</td>
+          <td>{{ ticket.table_label }}</td>
+          <td class="text-end fw-bold">{{ ticket.elapsed_minutes }} dk</td>
+          <td class="pe-3">{{ ticket.get_status_display }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5"><div class="empty-state py-4"><i class="bi bi-check2-circle"></i>{% trans "Geciken sipariş yok." %}</div></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

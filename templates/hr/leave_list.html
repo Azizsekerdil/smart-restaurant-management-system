@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <div class="card"><div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead><tr><th class="ps-3">{% trans "Personel" %}</th><th>{% trans "Tür" %}</th><th>{% trans "Tarih" %}</th><th>{% trans "Gün" %}</th><th>{% trans "Durum" %}</th><th class="pe-3 text-end">{% trans "İşlem" %}</th></tr></thead>
+        <tbody>
+        {% for leave in leaves %}
+          <tr>
+            <td class="ps-3">{{ leave.employee.user.display_name }}</td>
+            <td><span class="badge-soft muted">{{ leave.get_kind_display }}</span></td>
+            <td class="small">{{ leave.start_date|date:"d.m.Y" }} – {{ leave.end_date|date:"d.m.Y" }}</td>
+            <td>{{ leave.days }}</td>
+            <td><span class="badge-soft {% if leave.status == 'approved' %}ok{% elif leave.status == 'rejected' %}danger{% else %}warn{% endif %}">
+              {{ leave.get_status_display }}</span></td>
+            <td class="pe-3 text-end">
+              {% if leave.status == 'pending' %}
+                <button class="btn btn-sm btn-outline-success" onclick="decide({{ leave.pk }}, 'approved')"><i class="bi bi-check"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="decide({{ leave.pk }}, 'rejected')"><i class="bi bi-x"></i></button>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6"><div class="empty-state"><i class="bi bi-calendar-x"></i>{% trans "İzin talebi yok." %}</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card">
+      <div class="card-header">{% trans "Yeni izin talebi" %}</div>
+      <div class="card-body">
+        <form method="post" action="{% url 'hr:leave_create' %}">
+          {% csrf_token %}
+          <div class="mb-2"><label class="form-label">{% trans "Personel" %}</label>
+            <select name="employee_id" class="form-select" required>
+              {% for employee in employees %}<option value="{{ employee.pk }}">{{ employee.user.display_name }}</option>{% endfor %}
+            </select></div>
+          <div class="mb-2"><label class="form-label">{% trans "İzin türü" %}</label>
+            <select name="kind" class="form-select">
+              {% for value, label in kinds %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+            </select></div>
+          <div class="row g-2">
+            <div class="col-6"><label class="form-label">{% trans "Başlangıç" %}</label>
+              <input type="date" name="start_date" class="form-control" required></div>
+            <div class="col-6"><label class="form-label">{% trans "Bitiş" %}</label>
+              <input type="date" name="end_date" class="form-control" required></div>
+          </div>
+          <div class="mb-3 mt-2"><label class="form-label">{% trans "Gerekçe" %}</label>
+            <textarea name="reason" class="form-control" rows="2"></textarea></div>
+          <button class="btn btn-primary w-100">{% trans "Talep oluştur" %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function decide(id, decision) {
+  const note = decision === 'rejected' ? (prompt('Ret gerekçesi:') || '') : '';
+  try { await apiPost('/personel/izin/' + id + '/karar/', { decision, note }); location.reload(); }
+  catch (e) { showToast(e.message, 'danger'); }
+}
+</script>
+{% endblock %}

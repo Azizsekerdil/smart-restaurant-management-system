@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<button class="btn btn-sm btn-primary" onclick="testAll()"><i class="bi bi-lightning me-1"></i>{% trans "Tümünü test et" %}</button>
+<a href="{% url 'ai:usage_log' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-list-columns"></i></a>
+{% endblock %}
+{% block content %}
+<div class="alert alert-info">
+  <strong><i class="bi bi-shield-lock me-1"></i>{% trans "Güvenlik:" %}</strong>
+  API anahtarları yalnızca <code>.env</code> dosyasında saklanır, veritabanına yazılmaz ve
+  bu ekranda maskeli gösterilir. Anahtar eklemek/değiştirmek için <code>.env</code> dosyasını
+  düzenleyip uygulamayı yeniden başlatın.
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-12 col-md-6">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-diagram-2 me-2"></i>{% trans "Yönlendirme politikası" %}</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0"><tbody>
+          <tr><td class="text-muted">{% trans "Politika" %}</td><td class="text-end"><code>{{ ai_settings.ROUTING_POLICY }}</code></td></tr>
+          <tr><td class="text-muted">{% trans "Kişisel veri maskeleme" %}</td>
+            <td class="text-end">{% if ai_settings.MASK_PII %}<span class="badge-soft ok">{% trans "Açık" %}</span>{% else %}<span class="badge-soft danger">{% trans "Kapalı" %}</span>{% endif %}</td></tr>
+          <tr><td class="text-muted">{% trans "Hassas veri → yalnızca yerel" %}</td>
+            <td class="text-end">{% if ai_settings.SENSITIVE_LOCAL_ONLY %}<span class="badge-soft ok">{% trans "Açık" %}</span>{% else %}<span class="badge-soft warn">{% trans "Kapalı" %}</span>{% endif %}</td></tr>
+          <tr><td class="text-muted">{% trans "Zaman aşımı" %}</td><td class="text-end">{{ ai_settings.TIMEOUT_SECONDS }} sn</td></tr>
+          <tr><td class="text-muted">{% trans "Yeniden deneme" %}</td><td class="text-end">{{ ai_settings.MAX_RETRIES }}</td></tr>
+          <tr><td class="text-muted">{% trans "Devre kesici eşiği" %}</td><td class="text-end">{{ ai_settings.CIRCUIT_BREAKER_THRESHOLD }} hata</td></tr>
+        </tbody></table>
+        <form method="post" action="{% url 'ai:reset_breakers' %}" class="mt-3">{% csrf_token %}
+          <button class="btn btn-sm btn-outline-secondary w-100">{% trans "Devre kesicileri sıfırla" %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-6">
+    <div class="card h-100">
+      <div class="card-header"><i class="bi bi-wallet2 me-2"></i>{% trans "Bütçe ve kullanım (30 gün)" %}</div>
+      <div class="card-body">
+        <div class="small d-flex justify-content-between"><span class="text-muted">{% trans "Günlük" %}</span>
+          <span>{{ budget.spent_today|floatformat:4 }} / {{ budget.daily_limit }} USD</span></div>
+        <div class="stock-bar my-1"><span style="width:{{ budget.daily_percent }}%;background:var(--brand);"></span></div>
+        <div class="small d-flex justify-content-between mt-2"><span class="text-muted">{% trans "Aylık" %}</span>
+          <span>{{ budget.spent_month|floatformat:4 }} / {{ budget.monthly_limit }} USD</span></div>
+        <div class="stock-bar my-1"><span style="width:{{ budget.monthly_percent }}%;background:var(--brand);"></span></div>
+        <table class="table table-sm mt-3 mb-0"><tbody>
+          <tr><td class="text-muted">{% trans "Toplam çağrı" %}</td><td class="text-end">{{ usage.total_calls }}</td></tr>
+          <tr><td class="text-muted">{% trans "Yerel / bulut" %}</td><td class="text-end">{{ usage.local_calls }} / {{ usage.cloud_calls }}</td></tr>
+          <tr><td class="text-muted">{% trans "Başarısız" %}</td><td class="text-end">{{ usage.failed }}</td></tr>
+          <tr><td class="text-muted">{% trans "Toplam token" %}</td><td class="text-end">{{ usage.total_tokens }}</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  {% for provider in providers %}
+    <div class="col-12 col-lg-6">
+      <div class="card h-100" id="provider-{{ provider.key }}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>
+            <span class="provider-dot {% if provider.configured %}online{% else %}offline{% endif %}"></span>
+            {{ provider.label }}
+            {% if provider.is_local %}<span class="badge-soft ok ms-1">{% trans "yerel" %}</span>{% endif %}
+          </span>
+          <button class="btn btn-sm btn-outline-primary" onclick="testProvider('{{ provider.key }}')">{% trans "Test et" %}</button>
+        </div>
+        <div class="card-body">
+          <table class="table table-sm mb-2"><tbody>
+            <tr><td class="text-muted" style="width:40%;">{% trans "Durum" %}</td><td>
+              {% if not provider.enabled %}<span class="badge-soft muted">{% trans "Devre dışı" %}</span>
+              {% elif provider.configured %}<span class="badge-soft ok">{% trans "Hazır" %}</span>
+              {% else %}<span class="badge-soft warn">{% trans "Anahtar eksik" %}</span>{% endif %}</td></tr>
+            <tr><td class="text-muted">{% trans "Adres" %}</td><td class="small" style="word-break:break-all;">{{ provider.base_url }}</td></tr>
+            <tr><td class="text-muted">{% trans "Anahtar değişkeni" %}</td><td><code class="small">{{ provider.api_key_env }}</code></td></tr>
+            <tr><td class="text-muted">{% trans "Anahtar" %}</td><td class="small font-monospace">{{ provider.api_key_masked }}</td></tr>
+            <tr><td class="text-muted">{% trans "Fiyat (1M token)" %}</td>
+              <td class="small">girdi ${{ provider.price_input }} · çıktı ${{ provider.price_output }}</td></tr>
+            {% if provider.governance %}
+            <tr><td class="text-muted">{% trans "Veri bölgesi" %}</td>
+              <td class="small">{{ provider.governance.region }}</td></tr>
+            <tr><td class="text-muted">{% trans "Eğitimde kullanım" %}</td>
+              <td class="small">{{ provider.governance.training_use }}</td></tr>
+            <tr><td class="text-muted">{% trans "Sağlayıcı saklama" %}</td>
+              <td class="small">{{ provider.governance.retention }}
+                {% if provider.governance.terms_url %}
+                  · <a href="{{ provider.governance.terms_url }}" target="_blank" rel="noopener">{% trans "resmî şartlar" %}</a>
+                {% endif %}</td></tr>
+            {% if not provider.governance.reviewed and not provider.is_local %}
+            <tr><td colspan="2" class="small text-warning">
+              <i class="bi bi-exclamation-triangle me-1"></i>{% trans "Bu sağlayıcının veri işleme şartları henüz doğrulanmadı. Etkinleştirmeden önce resmî belgelerden bölge/saklama/eğitim şartlarını kontrol edin (bkz. docs/ROPA_HAZIRLIK.md F-06)." %}
+            </td></tr>
+            {% endif %}
+            {% endif %}
+          </tbody></table>
+          <div class="small text-muted mb-1">{% trans "Görev → model eşlemesi:" %}</div>
+          <div class="d-flex flex-wrap gap-1">
+            {% for task, model in provider.models.items %}
+              <span class="badge-soft muted" style="font-size:10.5px;">{{ task }}: {{ model }}</span>
+            {% endfor %}
+          </div>
+          <div class="mt-3" id="test-result-{{ provider.key }}"></div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<div class="card mt-3">
+  <div class="card-header"><i class="bi bi-book me-2"></i>{% trans "Nasıl yapılandırılır?" %}</div>
+  <div class="card-body small">
+    <p><strong>{% trans "LM Studio (yerel, ücretsiz, internet gerektirmez):" %}</strong></p>
+    <ol>
+      <li>LM Studio'yu açın ve bir model indirin (ör. <code>google/gemma-4-12b-qat</code>).</li>
+      <li><em>{% trans "Developer" %}</em> sekmesine geçin ve <em>{% trans "Start Server" %}</em> düğmesine basın.</li>
+      <li>Sunucunun <code>http://127.0.0.1:1234</code> adresinde çalıştığını doğrulayın.</li>
+      <li>{% trans 'Bu sayfadan "Test et" düğmesine basın.' %}</li>
+    </ol>
+    <p class="mb-1"><strong>{% trans "NVIDIA NIM (bulut):" %}</strong></p>
+    <ol>
+      <li><a href="https://build.nvidia.com" target="_blank" rel="noopener">{% trans "build.nvidia.com" %}</a> adresinden bir API anahtarı oluşturun (<code>nvapi-</code> ile başlar).</li>
+      <li><code>.env</code> dosyasına yazın: <code>NVIDIA_ENABLED=True</code> ve <code>NVIDIA_API_KEY=nvapi-...</code></li>
+      <li>{% trans 'Uygulamayı yeniden başlatın ve "Test et" düğmesine basın.' %}</li>
+    </ol>
+    <p class="mb-0 text-muted">
+      Ücretsiz kota sınırlıdır; bütçe aşımını önlemek için <code>AI_DAILY_BUDGET_USD</code>
+      değerini düşük tutun. Bütçe dolduğunda sistem otomatik olarak yerel modele düşer.
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function testProvider(key) {
+  const box = document.getElementById('test-result-' + key);
+  box.innerHTML = '<div class="text-muted small"><span class="spinner-border spinner-border-sm me-1"></span>Test ediliyor…</div>';
+  try {
+    const result = await apiPost('/ai/saglayicilar/' + key + '/test/', {});
+    let html = '<div class="alert alert-' + (result.ok ? 'success' : 'danger') + ' py-2 mb-0 small">' +
+      '<strong>' + (result.ok ? '✓ Bağlantı başarılı' : '✗ Bağlantı başarısız') + '</strong> (' + result.latency_ms + ' ms)<br>' +
+      result.message + '</div>';
+    if (result.models && result.models.length) {
+      html += '<div class="mt-2 small"><strong>Sunucudaki modeller (' + result.models.length + '):</strong><div class="d-flex flex-wrap gap-1 mt-1">' +
+        result.models.slice(0, 20).map(m => '<span class="badge-soft info" style="font-size:10px;">' + m + '</span>').join('') + '</div></div>';
+    }
+    box.innerHTML = html;
+  } catch (e) {
+    box.innerHTML = '<div class="alert alert-danger py-2 mb-0 small">' + e.message + '</div>';
+  }
+}
+async function testAll() {
+  {% for provider in providers %}await testProvider('{{ provider.key }}');{% endfor %}
+}
+</script>
+{% endblock %}

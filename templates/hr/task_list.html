@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-8">
+    <div class="card"><div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead><tr><th class="ps-3">{% trans "Görev" %}</th><th>{% trans "Atanan" %}</th><th>{% trans "Son tarih" %}</th><th>{% trans "Öncelik" %}</th><th>{% trans "Durum" %}</th><th class="pe-3"></th></tr></thead>
+        <tbody>
+        {% for task in tasks %}
+          <tr class="{% if task.is_overdue %}table-danger{% endif %}">
+            <td class="ps-3"><strong>{{ task.title }}</strong>
+              {% if task.description %}<small class="d-block text-muted">{{ task.description|truncatechars:70 }}</small>{% endif %}</td>
+            <td class="small">{{ task.assigned_to.display_name|default:"—" }}</td>
+            <td class="small">{{ task.due_date|date:"d.m.Y"|default:"—" }}</td>
+            <td><span class="badge-soft {% if task.priority == 3 %}danger{% elif task.priority == 2 %}info{% else %}muted{% endif %}">
+              {{ task.get_priority_display }}</span></td>
+            <td><span class="badge-soft {% if task.status == 'done' %}ok{% else %}warn{% endif %}">{{ task.get_status_display }}</span></td>
+            <td class="pe-3 text-end">
+              {% if task.status != 'done' %}
+                <button class="btn btn-sm btn-outline-success" onclick="completeTask({{ task.pk }})"><i class="bi bi-check-lg"></i></button>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6"><div class="empty-state"><i class="bi bi-check2-square"></i>{% trans "Açık görev yok." %}</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <div class="card">
+      <div class="card-header">{% trans "Yeni görev" %}</div>
+      <div class="card-body">
+        <form method="post" action="{% url 'hr:task_create' %}">
+          {% csrf_token %}
+          <div class="mb-2"><label class="form-label">{% trans "Başlık" %}</label>
+            <input type="text" name="title" class="form-control" required></div>
+          <div class="mb-2"><label class="form-label">{% trans "Açıklama" %}</label>
+            <textarea name="description" class="form-control" rows="2"></textarea></div>
+          <div class="mb-2"><label class="form-label">{% trans "Atanan" %}</label>
+            <select name="assigned_to" class="form-select"><option value="">{% trans "— Herkes —" %}</option>
+              {% for u in users %}<option value="{{ u.pk }}">{{ u.display_name }}</option>{% endfor %}
+            </select></div>
+          <div class="row g-2">
+            <div class="col-7"><label class="form-label">{% trans "Son tarih" %}</label>
+              <input type="date" name="due_date" class="form-control"></div>
+            <div class="col-5"><label class="form-label">{% trans "Öncelik" %}</label>
+              <select name="priority" class="form-select">
+                <option value="1">{% trans "Düşük" %}</option><option value="2" selected>{% trans "Normal" %}</option><option value="3">{% trans "Yüksek" %}</option>
+              </select></div>
+          </div>
+          <button class="btn btn-primary w-100 mt-3">{% trans "Görev oluştur" %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function completeTask(id) {
+  try { await apiPost('/personel/gorevler/' + id + '/tamamla/', {}); location.reload(); }
+  catch (e) { showToast(e.message, 'danger'); }
+}
+</script>
+{% endblock %}

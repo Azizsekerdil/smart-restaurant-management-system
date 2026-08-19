@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<a href="{% url 'catalog:recipe_edit' product.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-list-check me-1"></i>{% trans "Reçete" %}</a>
+<a href="{% url 'catalog:product_edit' product.pk %}" class="btn btn-sm btn-primary"><i class="bi bi-pencil me-1"></i>{% trans "Düzenle" %}</a>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-lg-7">
+    <div class="card mb-3">
+      <div class="card-body">
+        <div class="d-flex gap-3">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="rounded" style="width:120px;height:120px;object-fit:cover;">
+          {% else %}
+            <div class="rounded d-grid" style="width:120px;height:120px;place-items:center;background:var(--bg-sunken);font-size:32px;color:var(--text-muted);">
+              <i class="bi bi-image"></i></div>
+          {% endif %}
+          <div class="flex-grow-1">
+            <h2 class="h4 mb-1">{{ product.name }}</h2>
+            <p class="text-muted mb-2">{{ product.category.full_path }} · {{ product.get_kind_display }}</p>
+            <div class="h3 money mb-2">{{ product.price|floatformat:2 }} {{ CURRENCY_SYMBOL }}
+              <small class="text-muted fs-6">KDV %{{ product.tax_rate|floatformat:0 }} dahil</small></div>
+            {% if product.is_available %}<span class="badge-soft ok">{% trans "Satışta" %}</span>
+            {% else %}<span class="badge-soft danger">{{ product.unavailable_reason|default:"Satışa kapalı" }}</span>{% endif %}
+            {% if product.is_featured %}<span class="badge-soft info">{% trans "Öne çıkan" %}</span>{% endif %}
+          </div>
+        </div>
+        {% if product.description %}<hr><p class="mb-0">{{ product.description }}</p>{% endif %}
+        {% if product.ai_description %}
+          <div class="ai-disclaimer mt-3">
+            <strong>{% trans "Yapay zekâ önerisi:" %}</strong> {{ product.ai_description }}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header d-flex justify-content-between">
+        <span><i class="bi bi-list-check me-2"></i>{% trans "Reçete ve maliyet" %}</span>
+        <a href="{% url 'catalog:recipe_edit' product.pk %}" class="btn btn-sm btn-outline-primary">{% trans "Düzenle" %}</a>
+      </div>
+      <div class="card-body p-0">
+        {% if product.recipe %}
+          <table class="table mb-0">
+            <thead><tr><th class="ps-3">{% trans "Malzeme" %}</th><th class="text-end">{% trans "Miktar" %}</th><th class="text-end">{% trans "Fire" %}</th><th class="text-end pe-3">{% trans "Maliyet" %}</th></tr></thead>
+            <tbody>
+            {% for item in product.recipe.items.all %}
+              <tr>
+                <td class="ps-3">{{ item.ingredient.name }}{% if item.is_optional %}<span class="badge-soft muted ms-1">{% trans "opsiyonel" %}</span>{% endif %}</td>
+                <td class="text-end">{{ item.quantity|floatformat:3 }} {{ item.unit.code }}</td>
+                <td class="text-end">%{{ item.waste_percent|floatformat:0 }}</td>
+                <td class="text-end pe-3 money">{{ item.line_cost|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr class="fw-semibold"><td class="ps-3" colspan="3">{% trans "Porsiyon maliyeti" %}</td>
+                <td class="text-end pe-3 money">{{ product.recipe_cost|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td></tr>
+            </tfoot>
+          </table>
+        {% else %}
+          <div class="empty-state py-4"><i class="bi bi-list-check"></i>
+            Reçete tanımlanmamış. Maliyet ve otomatik stok düşümü çalışmaz.
+            <div class="mt-2"><a href="{% url 'catalog:recipe_edit' product.pk %}" class="btn btn-sm btn-primary">{% trans "Reçete oluştur" %}</a></div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-5">
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-graph-up-arrow me-2"></i>{% trans "Kârlılık" %}</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0">
+          <tbody>
+            <tr><td class="text-muted">{% trans "Satış fiyatı (KDV dahil)" %}</td><td class="text-end money">{{ product.price|floatformat:2 }}</td></tr>
+            <tr><td class="text-muted">{% trans "KDV tutarı" %}</td><td class="text-end money">{{ product.tax_amount|floatformat:2 }}</td></tr>
+            <tr><td class="text-muted">{% trans "Net fiyat" %}</td><td class="text-end money">{{ product.net_price|floatformat:2 }}</td></tr>
+            <tr><td class="text-muted">{% trans "Malzeme maliyeti" %}</td><td class="text-end money">{{ product.recipe_cost|floatformat:2 }}</td></tr>
+            <tr class="fw-semibold"><td>{% trans "Brüt kâr" %}</td><td class="text-end money">{{ product.gross_profit|floatformat:2 }}</td></tr>
+            <tr><td class="text-muted">{% trans "Kâr marjı" %}</td><td class="text-end"><span class="badge-soft {% if product.margin_percent >= 60 %}ok{% elif product.margin_percent >= 40 %}warn{% else %}danger{% endif %}">%{{ product.margin_percent|floatformat:1 }}</span></td></tr>
+            <tr><td class="text-muted">{% trans "Gıda maliyet oranı" %}</td><td class="text-end">
+              <span class="badge-soft {% if product.food_cost_percent <= 35 %}ok{% else %}warn{% endif %}">%{{ product.food_cost_percent|floatformat:1 }}</span>
+              <div class="form-text">{% trans "Hedef: %25-35" %}</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-info-circle me-2"></i>{% trans "Detaylar" %}</div>
+      <div class="card-body">
+        <table class="table table-sm mb-0"><tbody>
+          <tr><td class="text-muted">{% trans "Hazırlık süresi" %}</td><td class="text-end">{{ product.preparation_minutes }} dk</td></tr>
+          <tr><td class="text-muted">{% trans "İstasyon" %}</td><td class="text-end">{{ product.station.name|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Alerjenler" %}</td><td class="text-end">{{ product.allergen_names|default:"—" }}</td></tr>
+          <tr><td class="text-muted">{% trans "Kalori" %}</td><td class="text-end">{{ product.calories|default:"—" }} kcal</td></tr>
+          <tr><td class="text-muted">{% trans "Porsiyonlar" %}</td><td class="text-end">
+            {% for variant in product.variants.all %}{{ variant.name }} ({{ variant.price|floatformat:2 }}){% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    {% if price_history %}
+      <div class="card">
+        <div class="card-header"><i class="bi bi-clock-history me-2"></i>{% trans "Fiyat geçmişi" %}</div>
+        <div class="card-body p-0">
+          <table class="table table-sm mb-0"><tbody>
+            {% for entry in price_history %}
+              <tr><td class="ps-3 small">{{ entry.changed_at|date:"d.m.Y" }}</td>
+                <td class="text-end small">{{ entry.old_price|floatformat:2 }} → <strong>{{ entry.new_price|floatformat:2 }}</strong></td>
+                <td class="pe-3 small text-muted">{{ entry.changed_by.display_name|default:"—" }}</td></tr>
+            {% endfor %}
+          </tbody></table>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

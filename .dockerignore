@@ -1,0 +1,43 @@
+# Gizli bilgiler ve yerel veri imaja ASLA girmemelidir
+.env
+.env.*
+!.env.example
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+backups/
+media/
+logs/
+.devcenter/
+
+# Sanal ortam ve derleme çıktıları
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+staticfiles/
+
+# Test ve araç önbellekleri
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Sürüm kontrolü ve editör
+.git/
+.github/
+.gitignore
+.vscode/
+.idea/
+
+# Node
+node_modules/
+
+# Windows'a özgü scriptler kapsayıcıda gereksiz
+*.ps1
+*.bat

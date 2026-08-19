@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-12 col-xl-8">
+  <div class="card">
+    <div class="card-header">{{ page_title }}</div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        {% include "includes/_form_fields.html" with wide_fields="address notes" %}
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-primary"><i class="bi bi-save me-1"></i>{% trans "Kaydet" %}</button>
+          <a href="{% url 'inventory:supplier_list' %}" class="btn btn-outline-secondary">{% trans "Vazgeç" %}</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div></div>
+{% endblock %}

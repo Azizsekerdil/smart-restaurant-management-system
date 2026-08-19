@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="alert alert-info">
+  <i class="bi bi-info-circle me-1"></i>
+  {{ start|date:"d.m.Y" }} – {{ end|date:"d.m.Y" }} arası performans özeti.
+  Satış rakamları yalnızca garson olarak kapatılan adisyonları içerir.
+</div>
+
+<div class="card"><div class="card-body p-0">
+  <table class="table table-hover mb-0">
+    <thead><tr><th class="ps-3">{% trans "Personel" %}</th><th>{% trans "Rol" %}</th><th class="text-end">{% trans "Sipariş" %}</th>
+      <th class="text-end">{% trans "Satış" %}</th><th class="text-end">{% trans "Ort. adisyon" %}</th>
+      <th class="text-end">{% trans "Çalışılan saat" %}</th><th class="text-end pe-3">{% trans "Saatlik satış" %}</th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td class="ps-3">
+          {% if forloop.counter <= 3 %}<i class="bi bi-trophy-fill text-warning me-1"></i>{% endif %}
+          <a href="{% url 'hr:employee_detail' row.employee.pk %}">{{ row.employee.user.display_name }}</a>
+        </td>
+        <td><span class="badge-soft muted">{{ row.employee.user.get_role_display }}</span></td>
+        <td class="text-end">{{ row.orders }}</td>
+        <td class="text-end money">{{ row.sales|floatformat:2 }} {{ CURRENCY_SYMBOL }}</td>
+        <td class="text-end money">{{ row.avg_ticket|floatformat:2 }}</td>
+        <td class="text-end">{{ row.hours }} sa</td>
+        <td class="text-end pe-3 money">{{ row.sales_per_hour|floatformat:2 }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7"><div class="empty-state"><i class="bi bi-graph-up"></i>{% trans "Veri yok." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}

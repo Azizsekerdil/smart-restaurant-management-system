@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+      <div class="col-12 col-md-3">
+        <label class="form-label">{% trans "İşlem" %}</label>
+        <select name="action" class="form-select">
+          <option value="">{% trans "Tümü" %}</option>
+          {% for value, label in actions %}<option value="{{ value }}" {% if current_action == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-12 col-md-3">
+        <label class="form-label">{% trans "Önem" %}</label>
+        <select name="severity" class="form-select">
+          <option value="">{% trans "Tümü" %}</option>
+          {% for value, label in severities %}<option value="{{ value }}" {% if current_severity == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label">{% trans "Ara" %}</label>
+        <input type="search" name="q" class="form-control" value="{{ search }}" placeholder="{% trans 'Açıklama, kullanıcı, nesne…' %}">
+      </div>
+      <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Filtrele" %}</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0" style="overflow-x:auto;">
+    <table class="table table-hover table-sticky mb-0">
+      <thead><tr>
+        <th class="ps-3">{% trans "Zaman" %}</th><th>{% trans "Kullanıcı" %}</th><th>{% trans "İşlem" %}</th><th>{% trans "Önem" %}</th>
+        <th>{% trans "Nesne" %}</th><th>{% trans "Açıklama" %}</th><th class="pe-3">IP</th>
+      </tr></thead>
+      <tbody>
+      {% for log in page_obj %}
+        <tr>
+          <td class="ps-3 text-nowrap small">{{ log.timestamp|date:"d.m.Y H:i:s" }}</td>
+          <td class="small">{{ log.username_snapshot }}</td>
+          <td><span class="badge-soft muted">{{ log.get_action_display }}</span></td>
+          <td><span class="badge-soft {% if log.severity == 'critical' %}danger{% elif log.severity == 'warning' %}warn{% elif log.severity == 'notice' %}info{% else %}muted{% endif %}">
+            {{ log.get_severity_display }}</span></td>
+          <td class="small text-muted">{{ log.object_type }}{% if log.object_id %} #{{ log.object_id }}{% endif %}</td>
+          <td class="small">{{ log.description }}</td>
+          <td class="pe-3 small text-muted">{{ log.ip_address|default:"—" }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7"><div class="empty-state"><i class="bi bi-journal"></i>{% trans "Kayıt bulunamadı." %}</div></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% include "includes/_pagination.html" %}
+{% endblock %}

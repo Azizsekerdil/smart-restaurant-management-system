@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block topbar_actions %}
+<form method="post" action="{% url 'crm:review_analyze' %}">{% csrf_token %}
+  <input type="hidden" name="limit" value="25">
+  <button class="btn btn-sm btn-outline-info"><i class="bi bi-stars me-1"></i>{% trans "AI ile analiz et" %}</button>
+</form>
+{% endblock %}
+{% block content %}
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Ortalama puan" %}</div>
+    <div class="value">{{ stats.average_rating }}<small class="text-muted fs-6"> / 5</small></div>
+    <small class="text-muted">Son {{ stats.period_days }} gün · {{ stats.total }} yorum</small></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Olumlu" %}</div><div class="value text-success">{{ stats.positive }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Olumsuz" %}</div><div class="value text-danger">{{ stats.negative }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat-card"><div class="label">{% trans "Çözüm bekleyen" %}</div>
+    <div class="value text-warning">{{ stats.unresolved_negative }}</div></div></div>
+</div>
+
+{% if stats.top_topics %}
+  <div class="card mb-3">
+    <div class="card-header"><i class="bi bi-tags me-2"></i>{% trans "En sık geçen konular (AI analizi)" %}</div>
+    <div class="card-body d-flex flex-wrap gap-2">
+      {% for topic, count in stats.top_topics %}
+        <span class="badge-soft info">{{ topic }} <strong>({{ count }})</strong></span>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+<div class="card mb-3"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-12 col-md-4"><label class="form-label">{% trans "Duygu" %}</label>
+      <select name="sentiment" class="form-select"><option value="">{% trans "Tümü" %}</option>
+        {% for value, label in sentiments %}<option value="{{ value }}" {% if filters.sentiment == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select></div>
+    <div class="col-12 col-md-4">
+      <div class="form-check mt-4">
+        <input class="form-check-input" type="checkbox" name="unresolved" value="1" id="unres" {% if filters.unresolved %}checked{% endif %}>
+        <label class="form-check-label" for="unres">{% trans "Yalnızca çözüm bekleyen olumsuzlar" %}</label>
+      </div></div>
+    <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Filtrele" %}</button></div>
+  </form>
+</div></div>
+
+<div class="card"><div class="card-body p-0">
+  <table class="table table-hover mb-0">
+    <thead><tr><th class="ps-3">{% trans "Tarih" %}</th><th>{% trans "Müşteri" %}</th><th>{% trans "Puan" %}</th><th>{% trans "Yorum" %}</th>
+      <th>{% trans "Duygu" %}</th><th>{% trans "Konular" %}</th><th class="pe-3 text-end">{% trans "İşlem" %}</th></tr></thead>
+    <tbody>
+    {% for review in reviews %}
+      <tr class="{% if review.needs_attention %}table-warning{% endif %}">
+        <td class="ps-3 small">{{ review.created_at|date:"d.m.Y" }}</td>
+        <td class="small">{{ review.customer.full_name|default:"Anonim" }}</td>
+        <td class="text-nowrap">{% for i in "12345"|make_list %}<i class="bi bi-star{% if forloop.counter <= review.rating %}-fill text-warning{% endif %}" style="font-size:11px;"></i>{% endfor %}</td>
+        <td style="max-width:340px;">
+          <div class="small">{{ review.comment|truncatechars:120 }}</div>
+          {% if review.ai_summary %}<small class="text-muted fst-italic">AI: {{ review.ai_summary }}</small>{% endif %}
+        </td>
+        <td><span class="badge-soft {% if review.sentiment == 'positive' %}ok{% elif review.sentiment == 'negative' %}danger{% elif review.sentiment == 'neutral' %}muted{% else %}info{% endif %}">
+          {{ review.get_sentiment_display }}</span></td>
+        <td>{% for topic in review.topics %}<span class="badge-soft muted">{{ topic }}</span> {% endfor %}</td>
+        <td class="pe-3 text-end">
+          {% if review.needs_attention %}
+            <button class="btn btn-sm btn-outline-success" onclick="resolveReview({{ review.pk }})">{% trans "Çözüldü" %}</button>
+          {% elif review.is_resolved %}<span class="badge-soft ok">{% trans "Çözüldü" %}</span>{% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7"><div class="empty-state"><i class="bi bi-chat-left"></i>{% trans "Yorum yok." %}</div></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function resolveReview(id) {
+  const note = prompt('Çözüm notu:');
+  if (note === null) return;
+  try { await apiPost('/musteri/yorumlar/' + id + '/cozuldu/', { note }); location.reload(); }
+  catch (e) { showToast(e.message, 'danger'); }
+}
+</script>
+{% endblock %}

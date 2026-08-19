@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block topbar_actions %}
+  <span class="badge-soft info">Doluluk: %{{ stats.occupancy_rate }}</span>
+  <a href="{% url 'floor:reservation_list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-calendar-check"></i></a>
+  {% if perms_table_manage %}{% endif %}
+  <a href="{% url 'floor:table_list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-gear"></i></a>
+{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-3">
+  <div class="col-6 col-md-3 col-xl">
+    <div class="card stat-card"><div class="label">{% trans "Toplam masa" %}</div><div class="value">{{ stats.total }}</div></div>
+  </div>
+  <div class="col-6 col-md-3 col-xl">
+    <div class="card stat-card"><div class="label">{% trans "Boş" %}</div><div class="value text-success">{{ stats.free }}</div></div>
+  </div>
+  <div class="col-6 col-md-3 col-xl">
+    <div class="card stat-card"><div class="label">{% trans "Dolu" %}</div><div class="value text-danger">{{ stats.occupied }}</div></div>
+  </div>
+  <div class="col-6 col-md-3 col-xl">
+    <div class="card stat-card"><div class="label">{% trans "Rezerve" %}</div><div class="value text-warning">{{ stats.reserved }}</div></div>
+  </div>
+  <div class="col-6 col-md-3 col-xl">
+    <div class="card stat-card"><div class="label">{% trans "Temizlikte" %}</div><div class="value text-info">{{ stats.cleaning }}</div></div>
+  </div>
+</div>
+
+{% for area in areas %}
+  <div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span>
+        <i class="bi bi-{% if area.is_outdoor %}tree{% else %}building{% endif %} me-2"></i>{{ area.name }}
+        <small class="text-muted ms-2">{{ area.table_count }} masa · {{ area.occupied_count }} dolu</small>
+      </span>
+      {% if area.service_charge_rate %}
+        <span class="badge-soft muted">Servis %{{ area.service_charge_rate|floatformat:0 }}</span>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      <div class="floor-canvas">
+        {% for table in area.tables.all %}
+          <div class="table-node {{ table.status }} {% if table.shape == 'round' %}round{% endif %}"
+               style="left:{{ table.pos_x }}%; top:{{ table.pos_y }}%;"
+               onclick="openTable({{ table.pk }}, '{{ table.name|escapejs }}', '{{ table.status }}')"
+               title="{{ table.name }} — {{ table.get_status_display }}"
+               tabindex="0" role="button"
+               onkeypress="if(event.key==='Enter'){openTable({{ table.pk }}, '{{ table.name|escapejs }}', '{{ table.status }}')}">
+            <span>{{ table.name }}</span>
+            <small>{{ table.capacity }} kişi</small>
+            {% if table.status == 'occupied' and table.occupied_minutes %}
+              <small>{{ table.occupied_minutes }} dk</small>
+            {% endif %}
+            {% if table.assigned_waiter %}<small>{{ table.assigned_waiter.initials }}</small>{% endif %}
+          </div>
+        {% empty %}
+          <div class="empty-state">{% trans "Bu bölümde masa tanımlı değil." %}</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <div class="card"><div class="card-body">
+    <div class="empty-state">
+      <i class="bi bi-grid-3x3-gap"></i>
+      Henüz salon/masa tanımlanmamış.
+      <div class="mt-3"><a href="{% url 'floor:table_create' %}" class="btn btn-primary">{% trans "Masa ekle" %}</a></div>
+    </div>
+  </div></div>
+{% endfor %}
+
+{% if upcoming_reservations %}
+  <div class="card">
+    <div class="card-header"><i class="bi bi-calendar-check me-2"></i>{% trans "Bugünün rezervasyonları" %}</div>
+    <div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead><tr><th class="ps-3">{% trans "Saat" %}</th><th>{% trans "Misafir" %}</th><th>{% trans "Kişi" %}</th><th>{% trans "Masa" %}</th><th>{% trans "Durum" %}</th></tr></thead>
+        <tbody>
+        {% for reservation in upcoming_reservations %}
+          <tr class="{% if reservation.is_late %}table-warning{% endif %}">
+            <td class="ps-3 fw-semibold">{{ reservation.reserved_at|date:"H:i" }}</td>
+            <td>{{ reservation.guest_name }}
+              {% if reservation.occasion %}<span class="badge-soft info ms-1">{{ reservation.occasion }}</span>{% endif %}</td>
+            <td>{{ reservation.party_size }}</td>
+            <td>{% for table in reservation.tables.all %}{{ table.name }}{% if not forloop.last %}, {% endif %}{% empty %}—{% endfor %}</td>
+            <td><span class="badge-soft {% if reservation.is_late %}warn{% else %}info{% endif %}">
+              {{ reservation.get_status_display }}{% if reservation.is_late %} · gecikti{% endif %}</span></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
+
+{# ---------------- Masa işlem modalı ---------------- #}
+<div class="modal fade" id="tableModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title" id="table-modal-title">{% trans "Masa" %}</h5>
+      <button class="btn-close" data-bs-dismiss="modal"></button></div>
+    <div class="modal-body">
+      <div class="d-grid gap-2 mb-3">
+        <a class="btn btn-primary btn-touch" id="btn-open-order"><i class="bi bi-cart-plus me-1"></i>{% trans "Adisyon aç / görüntüle" %}</a>
+      </div>
+      <label class="form-label">{% trans "Masa durumu" %}</label>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        {% for value, label in statuses %}
+          <button class="btn btn-sm btn-outline-secondary" onclick="setStatus('{{ value }}')">{{ label }}</button>
+        {% endfor %}
+      </div>
+      <label class="form-label">{% trans "Garson ata" %}</label>
+      <div class="input-group">
+        <select class="form-select" id="waiter-select">
+          <option value="">{% trans "— Atama yok —" %}</option>
+          {% for waiter in waiters %}<option value="{{ waiter.pk }}">{{ waiter.display_name }} ({{ waiter.get_role_display }})</option>{% endfor %}
+        </select>
+        <button class="btn btn-outline-primary" onclick="assignWaiter()">{% trans "Ata" %}</button>
+      </div>
+      <hr>
+      <a class="btn btn-outline-secondary btn-sm w-100" id="btn-qr" target="_blank">
+        <i class="bi bi-qr-code me-1"></i>{% trans "QR menü kodunu göster" %}
+      </a>
+    </div>
+  </div></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedTableId = null;
+
+function openTable(id, name, status) {
+  selectedTableId = id;
+  document.getElementById('table-modal-title').textContent = name;
+  document.getElementById('btn-open-order').href = '{% url "orders:pos" %}?table=' + id;
+  document.getElementById('btn-qr').href = '/salon/masalar/' + id + '/qr.png';
+  new bootstrap.Modal(document.getElementById('tableModal')).show();
+}
+
+async function setStatus(status) {
+  try {
+    await apiPost('/salon/masalar/' + selectedTableId + '/durum/', { status });
+    location.reload();
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+async function assignWaiter() {
+  try {
+    const result = await apiPost('/salon/masalar/' + selectedTableId + '/garson/',
+      { waiter_id: document.getElementById('waiter-select').value });
+    showToast('Garson atandı: ' + result.waiter, 'success');
+    setTimeout(() => location.reload(), 700);
+  } catch (e) { showToast(e.message, 'danger'); }
+}
+
+setInterval(() => location.reload(), 90000);
+</script>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% load static i18n %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:'tr' }}" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% trans "Giriş" %} · {{ restaurant_name }}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍽️</text></svg>">
+  <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script>
+    (function () {
+      var stored = localStorage.getItem('rest-theme');
+      var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+</head>
+<body class="d-flex align-items-center justify-content-center" style="min-height:100vh;padding:20px;">
+  <div class="w-100" style="max-width:430px;">
+    <div class="text-center mb-4">
+      <div class="d-inline-grid mb-3" style="width:64px;height:64px;place-items:center;border-radius:18px;background:linear-gradient(135deg,var(--brand),var(--accent));color:#fff;font-size:32px;">
+        <i class="bi bi-shop"></i>
+      </div>
+      <h1 class="h4 fw-bold mb-1">{{ restaurant_name }}</h1>
+      <p class="text-muted mb-0">{% trans "Akıllı Restaurant Yönetim Sistemi" %}</p>
+    </div>
+
+    <div class="card">
+      <div class="card-body p-4">
+        {% if is_first_run %}
+          <div class="alert alert-warning">
+            <strong>{% trans "İlk kurulum" %}</strong><br>
+            {% trans "Henüz kullanıcı oluşturulmamış. Terminalden yönetici hesabı açın:" %}
+            <code class="d-block mt-2">python manage.py createsuperuser</code>
+            <small class="d-block mt-2">{% trans "Demo veri için:" %} <code>python manage.py seed_demo</code></small>
+          </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            {{ form.username }}
+            {% for error in form.username.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+            {{ form.password }}
+            {% for error in form.password.errors %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
+          </div>
+          <div class="form-check mb-3">
+            {{ form.remember_me }}
+            <label class="form-check-label" for="{{ form.remember_me.id_for_label }}">{{ form.remember_me.label }}</label>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 btn-touch">
+            <i class="bi bi-box-arrow-in-right me-2"></i>{% trans "Giriş yap" %}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-2 mt-3">
+      <button class="btn btn-sm btn-outline-secondary" onclick="var r=document.documentElement;var n=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',n);localStorage.setItem('rest-theme',n);">
+        <i class="bi bi-circle-half"></i> {% trans "Tema" %}
+      </button>
+
+      {# Giriş ekranında da dil değiştirilebilmeli: kullanıcı henüz yok, #}
+      {# seçim çerezde tutulur ve giriş sonrası profile taşınır.        #}
+      {% get_available_languages as available_languages %}
+      {% for code, name in available_languages %}
+        {% if code != LANGUAGE_CODE %}
+          <form method="post" action="{% url 'accounts:switch_language' %}">
+            {% csrf_token %}
+            <input type="hidden" name="language" value="{{ code }}">
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button class="btn btn-sm btn-outline-secondary" type="submit">
+              <i class="bi bi-translate"></i> {{ name }}
+            </button>
+          </form>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <p class="text-center text-muted mt-3 mb-0" style="font-size:12px;">
+      {% trans "Hesabınız 5 başarısız denemeden sonra 1 saat kilitlenir." %}
+    </p>
+  </div>
+</body>
+</html>

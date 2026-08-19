@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static humanize i18n %}
+{% block topbar_actions %}
+<a href="{% url 'reports:export_sales_excel' %}?from={{ start|date:'Y-m-d' }}&to={{ end|date:'Y-m-d' }}" class="btn btn-sm btn-outline-success"><i class="bi bi-file-earmark-excel"></i></a>
+<a href="{% url 'reports:export_sales_pdf' %}?from={{ start|date:'Y-m-d' }}&to={{ end|date:'Y-m-d' }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-file-earmark-pdf"></i></a>
+<a href="{% url 'reports:export_sales_csv' %}?from={{ start|date:'Y-m-d' }}&to={{ end|date:'Y-m-d' }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-filetype-csv"></i></a>
+{% endblock %}
+{% block content %}
+<div class="card mb-3"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-6 col-md-3"><label class="form-label">{% trans "Başlangıç" %}</label>
+      <input type="date" name="from" class="form-control" value="{{ start|date:'Y-m-d' }}"></div>
+    <div class="col-6 col-md-3"><label class="form-label">{% trans "Bitiş" %}</label>
+      <input type="date" name="to" class="form-control" value="{{ end|date:'Y-m-d' }}"></div>
+    <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Uygula" %}</button></div>
+  </form>
+</div></div>
+
+<div class="card mb-3">
+  <div class="card-header">{% trans "Günlük ciro eğrisi" %}</div>
+  <div class="card-body"><canvas id="salesChart" height="90"></canvas></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-xl-7">
+    <div class="card mb-3">
+      <div class="card-header"><i class="bi bi-trophy me-2"></i>{% trans "En çok satan ürünler" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead><tr><th class="ps-3">#</th><th>{% trans "Ürün" %}</th><th>{% trans "Kategori" %}</th><th class="text-end">{% trans "Adet" %}</th><th class="text-end pe-3">{% trans "Ciro" %}</th></tr></thead>
+          <tbody>
+          {% for item in top_products %}
+            <tr><td class="ps-3 text-muted">{{ forloop.counter }}</td>
+              <td>{{ item.product__name }}</td>
+              <td class="small text-muted">{{ item.product__category__name|default:"—" }}</td>
+              <td class="text-end">{{ item.total_quantity|floatformat:0 }}</td>
+              <td class="text-end pe-3 money">{{ item.revenue|floatformat:2|intcomma }}</td></tr>
+          {% empty %}<tr><td colspan="5" class="text-center text-muted py-4">{% trans "Veri yok." %}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="bi bi-arrow-down-circle me-2"></i>{% trans "En az satan ürünler" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          {% for item in worst_products %}
+            <tr><td class="ps-3">{{ item.product__name }}</td>
+              <td class="text-end pe-3">{{ item.total_quantity|floatformat:0 }} adet</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Veri yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-5">
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Kategori dağılımı" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          {% for row in categories %}
+            <tr><td class="ps-3">{{ row.category }}
+              <div class="stock-bar mt-1"><span style="width:{{ row.percent }}%;background:var(--brand);"></span></div></td>
+              <td class="text-end pe-3 money">{{ row.revenue|floatformat:2 }}<small class="d-block text-muted">%{{ row.percent }}</small></td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Veri yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Ödeme yöntemleri" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          {% for row in payments %}
+            <tr><td class="ps-3">{{ row.label }} <small class="text-muted">({{ row.count }} işlem)</small></td>
+              <td class="text-end pe-3 money">{{ row.total|floatformat:2 }}<small class="d-block text-muted">%{{ row.percent }}</small></td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Veri yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">{% trans "Sipariş türleri" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0"><tbody>
+          {% for row in order_types %}
+            <tr><td class="ps-3">{{ row.label }} <small class="text-muted">({{ row.count }})</small></td>
+              <td class="text-end pe-3 money">{{ row.total|floatformat:2 }}</td></tr>
+          {% empty %}<tr><td class="text-center text-muted py-3">{% trans "Veri yok." %}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">{% trans "Personel satışları" %}</div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0">
+          <thead><tr><th class="ps-3">{% trans "Personel" %}</th><th class="text-end">{% trans "Sipariş" %}</th><th class="text-end pe-3">{% trans "Ciro" %}</th></tr></thead>
+          <tbody>
+          {% for row in staff %}
+            <tr><td class="ps-3">{{ row.name }}</td><td class="text-end">{{ row.orders }}</td>
+              <td class="text-end pe-3 money">{{ row.revenue|floatformat:2 }}</td></tr>
+          {% empty %}<tr><td colspan="3" class="text-center text-muted py-3">{% trans "Veri yok." %}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'vendor/js/chart.umd.min.js' %}"></script>
+{{ series|json_script:"sales-series" }}
+<script>
+const seriesData = JSON.parse(document.getElementById('sales-series').textContent);
+const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+Chart.defaults.color = isDark ? '#9198a1' : '#5b6773';
+new Chart(document.getElementById('salesChart'), {
+  type: 'bar',
+  data: { labels: seriesData.labels, datasets: [
+    { label: 'Ciro (₺)', data: seriesData.revenue, backgroundColor: '#1f6feb', borderRadius: 4 },
+    { type: 'line', label: 'Sipariş', data: seriesData.orders, borderColor: '#f0883e', yAxisID: 'y1', tension: .3 }
+  ]},
+  options: { responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom' } },
+    scales: { y: { beginAtZero: true }, y1: { position: 'right', beginAtZero: true, grid: { display: false } } } }
+});
+</script>
+{% endblock %}

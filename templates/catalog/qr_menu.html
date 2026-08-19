@@ -1,0 +1,72 @@
+{% load static i18n %}<!doctype html>
+<html lang="tr" data-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Menü · {{ table.area.name }} {{ table.name }}</title>
+  <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <script>
+    (function () {
+      var stored = localStorage.getItem('rest-theme');
+      document.documentElement.setAttribute('data-theme',
+        stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    })();
+  </script>
+</head>
+<body>
+<div class="container py-4" style="max-width:720px;">
+  <div class="text-center mb-4">
+    <h1 class="h3 fw-bold">{% trans "Menü" %}</h1>
+    <p class="text-muted mb-0">{{ table.area.name }} · {{ table.name }}</p>
+  </div>
+
+  <div class="category-chips mb-3 justify-content-center">
+    {% for category in categories %}
+      <a href="#kategori-{{ category.pk }}" class="category-chip">{{ category.name }}</a>
+    {% endfor %}
+  </div>
+
+  {% for category in categories %}
+    <h2 class="h5 mt-4 mb-2" id="kategori-{{ category.pk }}"
+        style="border-left:4px solid {{ category.color }};padding-left:10px;">{{ category.name }}</h2>
+    <div class="list-group">
+      {% for product in category.products.all %}
+        {% if product.is_active %}
+          <div class="list-group-item d-flex justify-content-between gap-3 {% if not product.is_available %}opacity-50{% endif %}">
+            <div>
+              <div class="fw-semibold">{{ product.name }}
+                {% if not product.is_available %}<span class="badge-soft danger ms-1">{% trans "Tükendi" %}</span>{% endif %}</div>
+              {% if product.description %}<small class="text-muted d-block">{{ product.description }}</small>{% endif %}
+              {% if product.allergens.all %}
+                <small class="d-block mt-1" style="color:var(--warn);">
+                  <i class="bi bi-exclamation-triangle"></i> Alerjen: {{ product.allergen_names }}
+                </small>
+              {% endif %}
+              {% if product.calories %}<small class="text-muted">{{ product.calories }} kcal</small>{% endif %}
+            </div>
+            <div class="text-end text-nowrap">
+              <div class="money fw-bold">{{ product.price|floatformat:2 }} ₺</div>
+              {% for variant in product.variants.all %}
+                {% if variant.is_active %}<small class="d-block text-muted">{{ variant.name }}: {{ variant.price|floatformat:2 }} ₺</small>{% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% empty %}
+    <div class="empty-state"><i class="bi bi-book"></i>{% trans "Menü henüz hazırlanmadı." %}</div>
+  {% endfor %}
+
+  <div class="card mt-4">
+    <div class="card-body small text-muted">
+      <strong>{% trans "Alerjen bilgisi:" %}</strong> Mutfağımızda çapraz bulaşma riski bulunmaktadır.
+      Ciddi gıda alerjiniz varsa lütfen siparişinizden önce servis personelimize bildirin.
+      Bu bilgi tıbbi tavsiye niteliği taşımaz.
+    </div>
+  </div>
+
+  <p class="text-center text-muted small mt-3">{% trans "Fiyatlara KDV dahildir." %}</p>
+</div>
+</body></html>

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="card mb-3"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-12 col-md-4"><label class="form-label">{% trans "Tür" %}</label>
+      <select name="kind" class="form-select"><option value="">{% trans "Tümü" %}</option>
+        {% for value, label in kinds %}<option value="{{ value }}" {% if current_kind == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select></div>
+    <div class="col-12 col-md-2 d-grid"><button class="btn btn-primary">{% trans "Filtrele" %}</button></div>
+  </form>
+</div></div>
+
+{% for insight in insights %}
+  <div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span><span class="badge-soft muted">{{ insight.get_kind_display }}</span> {{ insight.title }}</span>
+      <span>
+        <span class="badge-soft {{ insight.confidence_color }}">Güven: {{ insight.get_confidence_display }}</span>
+        <small class="text-muted ms-2">{{ insight.created_at|date:"d.m.Y H:i" }}</small>
+      </span>
+    </div>
+    <div class="card-body">
+      <div style="white-space:pre-wrap;">{{ insight.summary }}</div>
+      <div class="ai-disclaimer mt-3">
+        {{ insight.disclaimer }}
+        {% if insight.limitations %}<div class="mt-1"><strong>{% trans "Sınırlamalar:" %}</strong> {{ insight.limitations }}</div>{% endif %}
+        {% with r=insight.receipt %}
+        <div class="mt-1 text-muted small">
+          <strong>{% trans "Gerekçe:" %}</strong>
+          {{ r.uretici }} · {{ r.saglayici }} / {{ r.model }}
+          · {% trans "istem" %} {{ r.istem }} v{{ r.istem_surumu }}
+          · {{ r.veri_noktasi }} {% trans "veri noktası" %}
+          · {% trans "güven" %}: {{ r.guven }}
+          {% if r.donem != "-" %}· {% trans "dönem" %}: {{ r.donem }}{% endif %}
+        </div>
+        {% endwith %}
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <div class="card"><div class="card-body">
+    <div class="empty-state"><i class="bi bi-lightbulb"></i>
+      Henüz içgörü üretilmedi.
+      <div class="mt-3"><a href="{% url 'ai:analysis_hub' %}" class="btn btn-primary">{% trans "Analiz çalıştır" %}</a></div>
+    </div>
+  </div></div>
+{% endfor %}
+{% endblock %}
