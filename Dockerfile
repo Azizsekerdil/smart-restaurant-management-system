@@ -4,7 +4,7 @@
 # ============================================================
 
 # ---------- 1. aşama: bağımlılıkları derle ----------
-FROM python:3.12-slim AS builder
+FROM python:3.14-slim AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -25,7 +25,7 @@ RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install "psycopg[binary]" channels-redis gunicorn
 
 # ---------- 2. aşama: çalışma imajı ----------
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
