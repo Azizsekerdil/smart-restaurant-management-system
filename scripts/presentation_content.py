@@ -535,7 +535,9 @@ SLIDES: list[dict] = [
         "tr": {
             "title": "Kurulum ve kullanım",
             "bullets": [
-                "Tek dosyalık Windows uygulaması (~57 MB) — Python kurulumu gerekmez",
+                "Tek dosyalık uygulama (~57 MB) — Python kurulumu gerekmez",
+                "Windows 10/11 (x64) + macOS (Apple Silicon) — İndirme: github.com/Azizsekerdil/smart-restaurant-management-system/releases (v1.0.0)",
+                "macOS paketi Apple Silicon (arm64) içindir ve notarize edilmemiştir (ilk açılış: sağ tık → Aç)",
                 "Çift tıklayın; ilk açılışta örnek veriyle denemeyi teklif eder",
                 "Veritabanı, dosyalar ve günlükler programın yanındaki klasörde",
                 "İnternet gerekmez; bulut yapay zekâ isteğe bağlıdır",
@@ -547,7 +549,9 @@ SLIDES: list[dict] = [
         "en": {
             "title": "Setup and use",
             "bullets": [
-                "A single-file Windows application (~57 MB) — no Python installation needed",
+                "A single-file application (~57 MB) — no Python installation needed",
+                "Windows 10/11 (x64) & macOS (Apple Silicon) — Download: GitHub Releases (v1.0.0)",
+                "The macOS package targets Apple Silicon (arm64) and is not notarized (first launch: right-click → Open)",
                 "Double-click it; on first run it offers to try the system with demo data",
                 "Database, files and logs live in the folder next to the program",
                 "No internet required; cloud AI is optional",
