@@ -9,6 +9,8 @@
 *.ps1   text eol=crlf
 
 # Kaynak ve yapılandırma dosyaları her zaman LF
+# (*.sh kritik: CRLF ile giderse macOS runner "bad interpreter ^M" verir)
+*.sh    text eol=lf
 *.py    text eol=lf
 *.html  text eol=lf
 *.css   text eol=lf

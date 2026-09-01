@@ -1,0 +1,25 @@
+name: macOS Paketi
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: macOS paketini oluştur
+        run: |
+          chmod +x build_macos.sh
+          ./build_macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Akilli-Restaurant-macOS
+          path: dist/Akilli Restaurant-macOS.zip
+          if-no-files-found: error
